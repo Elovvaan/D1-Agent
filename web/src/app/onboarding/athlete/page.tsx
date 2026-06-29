@@ -25,7 +25,7 @@ export default async function AthleteOnboardingPage() {
     <AppShell>
       <PageHeader
         eyebrow="Athlete onboarding"
-        title="Set up your D1 Agent profile"
+        title="Set up your MyD1 profile"
         description="Create the athlete account, claim public roster data when available, complete profile essentials, connect brand links, invite coach verification, and handle guardian consent for minors."
         action={<Button href={`/athletes/${athlete.id}`} variant="secondary">Preview Public Profile</Button>}
       />

@@ -2,6 +2,7 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import type { D1Role } from "@d1/shared";
 import { canAccessRoute, getRoleHome } from "@/lib/data/services";
+import { getSafePortalRedirect } from "@/lib/domain-config";
 
 const roles = new Set<D1Role>(["athlete", "coach", "recruiter", "admin"]);
 
@@ -18,6 +19,11 @@ function readRole(request: NextRequest): D1Role | null {
 export function proxy(request: NextRequest) {
   const role = readRole(request);
   const { pathname } = request.nextUrl;
+  const portalRedirect = getSafePortalRedirect(request.nextUrl.hostname);
+
+  if (portalRedirect && pathname === "/") {
+    return NextResponse.redirect(new URL(portalRedirect, request.url));
+  }
 
   if (!role) {
     return NextResponse.next();

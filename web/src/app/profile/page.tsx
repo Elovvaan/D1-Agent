@@ -14,6 +14,7 @@ import { Badge, Button, Card, ObjectList, PageHeader, ProgressBar, SectionTitle,
 import { ProfilePictureForm } from "@/components/profile-picture-form";
 import { PublicProfileShareControls } from "@/components/public-profile-share";
 import { getAthleteHeroMedia, getAthleteProfile, getBrandProfile, getPublicProfileIntake, getStats, toTitle } from "@/lib/data/services";
+import { brandConfig, publicProfileUrl as buildPublicProfileUrl } from "@/lib/domain-config";
 
 function readUserState<T>(fileName: string, fallback: T): T {
   try {
@@ -84,6 +85,7 @@ export default async function ProfilePage({ searchParams }: { searchParams?: Pro
   }>("profile.json", {});
   const athlete = { ...getAthleteProfile(), ...savedProfile };
   const publicProfileUrl = `/athletes/${athlete.id}`;
+  const publicProfileShareUrl = buildPublicProfileUrl(publicProfileUrl);
   const intake = getPublicProfileIntake();
   const heroMedia = getAthleteHeroMedia();
   const stats = getStats();
@@ -162,7 +164,7 @@ export default async function ProfilePage({ searchParams }: { searchParams?: Pro
             <div className="mb-5 flex flex-wrap gap-3">
               <Button href={publicProfileUrl} variant="primary">View Public Profile</Button>
               <Button href={`${publicProfileUrl}?preview=recruiter`} variant="secondary">Preview as Recruiter</Button>
-              <PublicProfileShareControls profileUrl={publicProfileUrl} title={`${athlete.fullName} public athlete profile`} />
+              <PublicProfileShareControls profileUrl={publicProfileShareUrl} title={`${athlete.fullName} public athlete profile on ${brandConfig.primaryBrand}`} />
             </div>
             <div className="grid gap-4 md:grid-cols-3">
               <StatCard label="Completion" value={`${athlete.completionPct}%`} detail="Transcript and second coach connection remain." icon={UserRound} />

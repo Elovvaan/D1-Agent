@@ -6,6 +6,10 @@ import { Check, Copy, Share2 } from "lucide-react";
 const buttonClasses =
   "inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-[#C7CDD6] bg-white px-4 py-2 text-sm font-black text-[#0A1A3F] transition hover:bg-[#F7F9FC]";
 
+function resolveShareUrl(profileUrl: string) {
+  return new URL(profileUrl, window.location.origin).toString();
+}
+
 export function PublicProfileShareControls({
   profileUrl,
   title
@@ -17,7 +21,7 @@ export function PublicProfileShareControls({
   const [message, setMessage] = useState("");
 
   async function copyLink() {
-    const absoluteUrl = new URL(profileUrl, window.location.origin).toString();
+    const absoluteUrl = resolveShareUrl(profileUrl);
     try {
       if (!navigator.clipboard?.writeText) {
         throw new Error("Clipboard API unavailable");
@@ -37,7 +41,7 @@ export function PublicProfileShareControls({
   }
 
   async function shareProfile() {
-    const absoluteUrl = new URL(profileUrl, window.location.origin).toString();
+    const absoluteUrl = resolveShareUrl(profileUrl);
     try {
       if (navigator.share) {
         await navigator.share({ title, url: absoluteUrl });

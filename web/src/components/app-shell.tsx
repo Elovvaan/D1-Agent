@@ -20,6 +20,7 @@ import {
   UserRound
 } from "lucide-react";
 import { Badge } from "./design-system";
+import { brandConfig } from "@/lib/domain-config";
 
 const navItems = [
   { href: "/", label: "Command Center", icon: Home },
@@ -75,8 +76,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <span className="text-lg font-black tracking-tight">D1</span>
           </span>
           <span>
-            <span className="block text-xl font-black tracking-tight">D1 AGENT</span>
-            <span className="block text-xs font-semibold text-[#B8C8EF]">AI Sports Agent Platform</span>
+            <span className="block text-xl font-black tracking-tight">{brandConfig.primaryBrand}</span>
+            <span className="block text-xs font-semibold text-[#B8C8EF]">{brandConfig.agentProductName} Platform</span>
           </span>
         </Link>
 

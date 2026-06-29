@@ -32,7 +32,7 @@ export const seedOrgs: Org[] = [
   { id: "org-brown", type: "college", name: "Brown College", division: "NCAA D1", city: "Providence", state: "RI", verified: true },
   { id: "org-northview", type: "college", name: "Northview University", division: "NCAA D2", city: "Boise", state: "ID", verified: true },
   { id: "org-lakeside", type: "college", name: "Lakeside College", division: "NCAA D2", city: "Madison", state: "WI", verified: true },
-  { id: "org-d1-agent", type: "platform", name: "D1 Agent", verified: true }
+  { id: "org-d1-agent", type: "platform", name: "MyD1", verified: true }
 ];
 
 export const seedMemberships: Membership[] = [

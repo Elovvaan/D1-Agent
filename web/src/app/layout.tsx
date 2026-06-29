@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { brandConfig, getAppBaseUrl, getMarketingBaseUrl } from "@/lib/domain-config";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -13,8 +14,24 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "D1 Agent",
-  description: "The AI Sports Agent that maximizes athlete opportunity."
+  metadataBase: new URL(getAppBaseUrl()),
+  title: {
+    default: brandConfig.primaryBrand,
+    template: `%s | ${brandConfig.primaryBrand}`
+  },
+  description: `${brandConfig.primaryBrand} is the athlete platform powered by ${brandConfig.agentProductName}.`,
+  openGraph: {
+    title: brandConfig.primaryBrand,
+    description: `${brandConfig.primaryBrand} is the athlete platform powered by ${brandConfig.agentProductName}.`,
+    siteName: brandConfig.primaryBrand,
+    url: getMarketingBaseUrl(),
+    type: "website"
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: brandConfig.primaryBrand,
+    description: `${brandConfig.primaryBrand} is the athlete platform powered by ${brandConfig.agentProductName}.`
+  }
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -24,4 +41,3 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     </html>
   );
 }
-

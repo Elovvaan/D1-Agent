@@ -1,8 +1,8 @@
-# D1 Agent MVP
+# MyD1 MVP
 
 Every athlete deserves an agent.
 
-This monorepo implements the D1 Agent MVP architecture from `D1_Agent_MVP_Spec (1).md`.
+This monorepo implements the MyD1 MVP architecture powered by the D1 Agent AI product from `D1_Agent_MVP_Spec (1).md`.
 It keeps the Agent, Trust Engine, Public Sports Data Engine, Streaming Engine,
 Highlight Engine, Match Engine, and Opportunity Engine as independently
 extensible services.
@@ -44,4 +44,3 @@ Database:
 ```bash
 psql "$DATABASE_URL" -f db/migrations/001_init.sql
 ```
-

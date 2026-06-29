@@ -5,6 +5,7 @@ import { AppShell } from "@/components/app-shell";
 import { Badge, Button, Card, ObjectList, SectionTitle, StatCard } from "@/components/design-system";
 import { PublicProfileShareControls } from "@/components/public-profile-share";
 import { defaultAthleteId, getPublicAthleteHomepage, getPublicProfileIntake, getSupportingDocuments, searchAthletePublicProfiles, toTitle } from "@/lib/data/services";
+import { brandConfig, getPublicProfileBaseUrl, publicProfileUrl } from "@/lib/domain-config";
 
 export function generateStaticParams() {
   return [{ athleteId: defaultAthleteId }];
@@ -21,25 +22,31 @@ export async function generateMetadata({ params }: { params: Promise<{ athleteId
   }
 
   const { athlete, heroMedia } = data;
-  const title = `${athlete.fullName} | ${athlete.sport} ${athlete.primaryPosition} | ${athlete.schoolName}`;
+  const title = `${athlete.fullName} | ${athlete.sport} ${athlete.primaryPosition} | ${brandConfig.primaryBrand}`;
   const description = `${athlete.fullName}, ${athlete.primaryPosition}${athlete.jerseyNumber ? ` #${athlete.jerseyNumber}` : ""}, Class of ${athlete.classYear} at ${athlete.schoolName}.`;
   const previewImage = heroMedia.posterUrl ?? heroMedia.thumbnailUrl;
+  const canonicalUrl = publicProfileUrl(`/athletes/${athlete.id}`);
+  const absolutePreviewImage = previewImage ? new URL(previewImage, `${getPublicProfileBaseUrl()}/`).toString() : undefined;
 
   return {
     title,
     description,
+    alternates: {
+      canonical: canonicalUrl
+    },
     openGraph: {
       title,
       description,
+      siteName: brandConfig.primaryBrand,
       type: "profile",
-      url: `/athletes/${athlete.id}`,
-      images: previewImage ? [{ url: previewImage, alt: `${athlete.fullName} highlight preview` }] : undefined
+      url: canonicalUrl,
+      images: absolutePreviewImage ? [{ url: absolutePreviewImage, alt: `${athlete.fullName} highlight preview` }] : undefined
     },
     twitter: {
-      card: previewImage ? "summary_large_image" : "summary",
+      card: absolutePreviewImage ? "summary_large_image" : "summary",
       title,
       description,
-      images: previewImage ? [previewImage] : undefined
+      images: absolutePreviewImage ? [absolutePreviewImage] : undefined
     }
   };
 }
@@ -104,6 +111,7 @@ export default async function PublicAthletePage({
   const topHighlights = highlights.slice(0, 4);
   const publicStats = stats.filter((stat) => stat.source === "public_record");
   const publicProfilePath = `/athletes/${athlete.id}`;
+  const publicProfileShareUrl = publicProfileUrl(publicProfilePath);
   const isPrivate = athlete.visibility === "private";
   const highlightHref = heroMedia.videoUrl ?? heroMedia.thumbnailUrl ?? `${publicProfilePath}?status=no-media`;
   const visibilityOptions = [
@@ -236,7 +244,7 @@ export default async function PublicAthletePage({
             <div className="grid h-full w-full place-items-center bg-[#0A1A3F]">
               <div className="absolute inset-0 bg-[#0A1A3F]" />
               <div className="absolute inset-x-0 bottom-0 h-32 bg-[#1B3FA0]/30" />
-              <div className="absolute right-8 top-8 rounded-2xl border border-white/10 bg-white/[0.07] px-4 py-2 text-sm font-black text-white">D1 AGENT</div>
+              <div className="absolute right-8 top-8 rounded-2xl border border-white/10 bg-white/[0.07] px-4 py-2 text-sm font-black text-white">{brandConfig.primaryBrand}</div>
             </div>
           )}
           <div className="absolute inset-0 bg-[#0A1A3F]/70" />
@@ -289,7 +297,7 @@ export default async function PublicAthletePage({
               </form>
             </div>
             <div className="mt-4">
-              <PublicProfileShareControls profileUrl={publicProfilePath} title={`${athlete.fullName} public athlete profile`} />
+              <PublicProfileShareControls profileUrl={publicProfileShareUrl} title={`${athlete.fullName} public athlete profile on ${brandConfig.primaryBrand}`} />
             </div>
           </div>
 
