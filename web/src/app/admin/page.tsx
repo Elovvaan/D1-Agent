@@ -1,4 +1,4 @@
-import { AlertTriangle, ClipboardList, Database, Radio, ShieldCheck, Users } from "lucide-react";
+import { AlertTriangle, ClipboardList, Database, Radio, Search, ShieldCheck, Users } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { Badge, Button, Card, ObjectList, PageHeader, SectionTitle, StatCard } from "@/components/design-system";
 import { getAdminDashboard } from "@/lib/data/services";
@@ -27,6 +27,8 @@ export default function AdminConsolePage() {
             items={
               [
                 { title: "Public Data Review", detail: "Review imported Air Force roster records.", badge: "Open", icon: ClipboardList, tone: "yellow" as const },
+                { title: "School Import Wizard", detail: "Discover public school athletics pages and import selected records.", badge: "New", icon: Search, tone: "blue" as const },
+                { title: "Operator Backend", detail: "Queue field media, notes, stats, and game updates for review.", badge: "Ops", icon: Radio, tone: "green" as const },
                 { title: "Import History", detail: "Audit URLs, counts, and timestamps.", badge: "History", icon: Database, tone: "blue" as const },
                 ...dashboard.queue.map((item, index) => ({
                 ...item,
@@ -37,6 +39,8 @@ export default function AdminConsolePage() {
           />
           <div className="mt-5 flex flex-wrap gap-2">
             <Button href="/admin/public-data" variant="primary">Review Public Data</Button>
+            <Button href="/admin/import-school" variant="secondary">School Import Wizard</Button>
+            <Button href="/admin/operator" variant="secondary">Operator Backend</Button>
             <Button href="/admin/import-history" variant="secondary">View Import History</Button>
           </div>
         </Card>
