@@ -1,0 +1,19 @@
+{
+  "name": "d1-agent",
+  "private": true,
+  "workspaces": [
+    "web",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w web",
+    "build": "npm run build -w web",
+    "typecheck": "npm run typecheck -w @d1/shared && npm run typecheck -w web",
+    "lint": "npm run lint -w web",
+    "import:public-url": "node scripts/import-public-url.mjs",
+    "migrate:check": "node scripts/migrate-check.mjs"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}
