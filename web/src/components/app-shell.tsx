@@ -23,7 +23,7 @@ import { Badge } from "./design-system";
 import { brandConfig } from "@/lib/domain-config";
 
 const navItems = [
-  { href: "/", label: "Command Center", icon: Home },
+  { href: "/command-center", label: "Command Center", icon: Home },
   { href: "/profile", label: "Profile", icon: UserRound },
   { href: "/film", label: "My Film", icon: Upload },
   { href: "/highlights", label: "Highlights", icon: Clapperboard },
@@ -71,7 +71,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-[#F5F7FB] text-[#0A1A3F]">
       <aside className="fixed inset-y-0 left-0 hidden w-[292px] overflow-y-auto bg-[#0A1A3F] px-4 py-7 text-white shadow-[16px_0_46px_rgba(10,26,63,0.2)] lg:block">
-        <Link href="/" className="flex items-center gap-3 px-2">
+        <Link href="/command-center" className="flex items-center gap-3 px-2">
           <span className="grid h-10 w-10 place-items-center rounded-2xl bg-white text-[#1B3FA0] shadow-[0_10px_30px_rgba(0,0,0,0.18)]">
             <span className="text-lg font-black tracking-tight">D1</span>
           </span>
@@ -87,7 +87,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               href={item.href}
               key={`${item.href}-${item.label}`}
               className={
-                item.href === "/" && item.label === "Command Center"
+                item.href === "/command-center" && item.label === "Command Center"
                   ? "flex items-center gap-3 rounded-2xl bg-[#1B3FA0] px-3.5 py-3 text-sm font-black text-white shadow-[0_14px_30px_rgba(27,63,160,0.34)]"
                   : "flex items-center gap-3 rounded-2xl px-3.5 py-3 text-sm font-bold text-[#DDE8FF] transition hover:bg-white/10"
               }

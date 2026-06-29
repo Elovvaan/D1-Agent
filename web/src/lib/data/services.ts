@@ -233,7 +233,7 @@ export function getCurrentRole(): D1Role {
 
 export function getRoleHome(role: D1Role) {
   const homes: Record<D1Role, string> = {
-    athlete: "/",
+    athlete: "/command-center",
     coach: "/coach",
     recruiter: "/recruiter",
     media_partner: "/media",

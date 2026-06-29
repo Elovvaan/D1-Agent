@@ -29,7 +29,7 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  if (pathname === "/command-center") {
+  if (pathname === "/") {
     return NextResponse.redirect(new URL(getRoleHome(role), request.url));
   }
 
