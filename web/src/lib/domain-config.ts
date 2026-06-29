@@ -62,7 +62,7 @@ export function getSafePortalRedirect(hostname: string) {
   const host = hostname.toLowerCase();
   if (host === portalDomains.coach) return "/coach";
   if (host === portalDomains.recruiter) return "/recruiter";
-  if (host === portalDomains.media) return "/film";
+  if (host === portalDomains.media) return "/media";
   if (host === portalDomains.admin) return "/admin";
   return null;
 }

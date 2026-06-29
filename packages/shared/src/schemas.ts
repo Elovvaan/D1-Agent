@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const roleSchema = z.enum(["athlete", "parent", "coach", "recruiter", "scout", "admin"]);
+export const roleSchema = z.enum(["athlete", "parent", "coach", "recruiter", "media_partner", "scout", "admin"]);
 export const visibilitySchema = z.enum(["public", "recruiters_only", "private"]);
 export const trustSourceSchema = z.enum(["self", "ai_extracted", "external", "public_record", "coach_verified", "multi_source"]);
 export const processingStateSchema = z.enum(["queued", "processing", "ready", "failed"]);
@@ -118,4 +118,3 @@ export const agentActionSchema = z.object({
   output: z.record(z.unknown()).default({}),
   requiresApproval: z.boolean()
 });
-

@@ -236,6 +236,7 @@ export function getRoleHome(role: D1Role) {
     athlete: "/",
     coach: "/coach",
     recruiter: "/recruiter",
+    media_partner: "/media",
     admin: "/admin"
   };
 
@@ -244,10 +245,13 @@ export function getRoleHome(role: D1Role) {
 
 export function canAccessRoute(role: D1Role, pathname: string) {
   if (role === "admin") return true;
+  const athleteOwnedPaths = ["/profile", "/film", "/highlights", "/recruiting", "/outreach", "/opportunities", "/calendar", "/trust", "/performance", "/settings"];
+  if (role === "media_partner" && athleteOwnedPaths.some((path) => pathname === path || pathname.startsWith(`${path}/`))) return false;
   if (pathname.startsWith("/admin")) return false;
   if (pathname.startsWith("/coach")) return role === "coach";
   if (pathname.startsWith("/recruiter")) return role === "recruiter";
-  return role === "athlete" || role === "coach" || role === "recruiter";
+  if (pathname.startsWith("/media")) return role === "media_partner";
+  return role === "athlete" || role === "coach" || role === "recruiter" || role === "media_partner";
 }
 
 export function getSessionContext(role: D1Role = getCurrentRole()) {

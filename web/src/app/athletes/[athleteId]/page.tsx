@@ -4,6 +4,7 @@ import { recordRecruiterInterest, recordVisibilityControl } from "@/app/actions/
 import { AppShell } from "@/components/app-shell";
 import { Badge, Button, Card, ObjectList, SectionTitle, StatCard } from "@/components/design-system";
 import { PublicProfileShareControls } from "@/components/public-profile-share";
+import { getApprovedMediaPartnerPublicMedia } from "@/lib/data/media-partner";
 import { defaultAthleteId, getPublicAthleteHomepage, getPublicProfileIntake, getSupportingDocuments, searchPublicDirectory, toTitle } from "@/lib/data/services";
 import { brandConfig, getPublicProfileBaseUrl, publicProfileUrl } from "@/lib/domain-config";
 
@@ -109,6 +110,7 @@ export default async function PublicAthletePage({
   const intake = getPublicProfileIntake();
   const documents = getSupportingDocuments();
   const topHighlights = highlights.slice(0, 4);
+  const approvedPartnerMedia = getApprovedMediaPartnerPublicMedia(athlete.id);
   const publicStats = stats.filter((stat) => stat.source === "public_record");
   const publicProfilePath = `/athletes/${athlete.id}`;
   const publicProfileShareUrl = publicProfileUrl(publicProfilePath);
@@ -369,6 +371,23 @@ export default async function PublicAthletePage({
                 tone: highlight.score >= 90 ? "yellow" : "blue"
               }))}
             />
+          </Card>
+
+          <Card>
+            <SectionTitle title="Approved Media Partner Contributions" caption="Only athlete/guardian-approved partner media can appear here." />
+            {approvedPartnerMedia.length ? (
+              <ObjectList
+                items={approvedPartnerMedia.map((item) => ({
+                  title: item.title,
+                  detail: `${item.sourceLabel} - ${item.uploaderOrganizationName} - ${item.licenseState.replaceAll("_", " ")}`,
+                  value: item.mediaType,
+                  icon: Film,
+                  tone: item.sourceLabel === "Guardian Approved" ? "green" : "blue"
+                }))}
+              />
+            ) : (
+              <p className="text-sm font-semibold leading-6 text-[#66718F]">No athlete-approved media partner contributions yet.</p>
+            )}
           </Card>
 
           <Card>

@@ -4,7 +4,7 @@ import type { D1Role } from "@d1/shared";
 import { canAccessRoute, getRoleHome } from "@/lib/data/services";
 import { getSafePortalRedirect } from "@/lib/domain-config";
 
-const roles = new Set<D1Role>(["athlete", "coach", "recruiter", "admin"]);
+const roles = new Set<D1Role>(["athlete", "coach", "recruiter", "media_partner", "admin"]);
 
 function readRole(request: NextRequest): D1Role | null {
   const cookieRole = request.cookies.get("d1_role")?.value;
@@ -43,5 +43,22 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/command-center", "/coach/:path*", "/recruiter/:path*", "/admin/:path*"]
+  matcher: [
+    "/",
+    "/command-center",
+    "/profile/:path*",
+    "/film/:path*",
+    "/highlights/:path*",
+    "/recruiting/:path*",
+    "/outreach/:path*",
+    "/opportunities/:path*",
+    "/calendar/:path*",
+    "/trust/:path*",
+    "/performance/:path*",
+    "/settings/:path*",
+    "/coach/:path*",
+    "/recruiter/:path*",
+    "/media/:path*",
+    "/admin/:path*"
+  ]
 };
