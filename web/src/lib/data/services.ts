@@ -1,4 +1,4 @@
-import type { AthleteHeroMedia, AthleteProfile, CommandCenterData, D1Role, MissionItem, ProgressionLevel, ProgressionMilestone, SocialPlatform, StatLine, TimelineState, TrustScore } from "@d1/shared";
+import type { AgentIntentContext, AthleteHeroMedia, AthleteProfile, CommandCenterData, D1Role, MatchStage, MissionItem, ProgressionLevel, ProgressionMilestone, SocialPlatform, StatLine, TimelineState, TrustScore } from "@d1/shared";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { agentService } from "@/lib/services/agent-service";
@@ -587,6 +587,30 @@ function getMissionStatus(athleteId: string) {
   ];
 }
 
+export function getAgentIntentContext(athleteId = defaultAthleteId, input: { currentPage?: string; userQuestion?: string } = {}): AgentIntentContext {
+  const athlete = getAthleteProfile(athleteId);
+  const matches = getCollegeMatches(athleteId);
+  const brand = getBrandProfile(athleteId);
+  const brandValues = Object.values(brand.handles);
+  const brandCompleteness = Math.round((brandValues.filter(Boolean).length / Math.max(1, brandValues.length)) * 100);
+  const timeline = getTimelineEvents(athleteId);
+  const furthestStage = matches.find((match) => match.stage !== "prospect")?.stage ?? "prospect";
+
+  return {
+    userQuestion: input.userQuestion,
+    currentPage: input.currentPage ?? "command_center",
+    progressionLevel: athlete.progressionLevel,
+    profileCompleteness: athlete.completionPct,
+    recentActivity: timeline.slice(0, 3).map((event) => event.detail || event.title),
+    uploadedMediaCount: getFilms(athleteId).filter((film) => film.videoUrl || film.thumbnailUrl).length + getHighlights(athleteId).filter((highlight) => highlight.videoUrl || highlight.thumbnailUrl).length,
+    recruitingStatus: furthestStage as MatchStage,
+    publicStatsCount: getPublicStats(athleteId).length,
+    opportunityCount: getOpportunities(athleteId).length,
+    trustScore: getTrustScore(athleteId).score,
+    brandCompleteness
+  };
+}
+
 export function getDailyBrief(athleteId = defaultAthleteId) {
   const matches = getCollegeMatches(athleteId);
   return agentService.dailyBrief({
@@ -598,7 +622,16 @@ export function getDailyBrief(athleteId = defaultAthleteId) {
       reasons: match.reasons
     })),
     opportunities: getOpportunities(athleteId),
-    nextGame: "Friday against Pine Creek"
+    nextGame: "Friday against Pine Creek",
+    intentContext: getAgentIntentContext(athleteId)
+  });
+}
+
+export function getAgentResponse(input: { question: string; currentPage?: string; athleteId?: string }) {
+  const athleteId = input.athleteId ?? defaultAthleteId;
+  return agentService.respond({
+    question: input.question,
+    context: getAgentIntentContext(athleteId, { currentPage: input.currentPage, userQuestion: input.question })
   });
 }
 

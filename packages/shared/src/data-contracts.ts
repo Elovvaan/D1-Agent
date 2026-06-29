@@ -10,6 +10,7 @@ export type MatchStage = "prospect" | "contacted" | "responded" | "evaluating" |
 export type TimelineState = "done" | "active" | "queued";
 export type SocialPlatform = "instagram" | "tiktok" | "youtube" | "hudl" | "x" | "website";
 export type ProgressionLevel = "A1" | "B1" | "C1" | "D1";
+export type AgentCapability = "scouting" | "recruiting" | "brand" | "marketing" | "career_development";
 
 export interface ProgressionMilestone {
   label: string;
@@ -261,6 +262,26 @@ export interface MissionItem {
   label: string;
   meta: string;
   state: TimelineState;
+}
+
+export interface AgentIntentSignal {
+  capability: AgentCapability;
+  confidence: number;
+  reasons: string[];
+}
+
+export interface AgentIntentContext {
+  userQuestion?: string;
+  currentPage?: string;
+  progressionLevel: ProgressionLevel;
+  profileCompleteness: number;
+  recentActivity: string[];
+  uploadedMediaCount: number;
+  recruitingStatus: MatchStage;
+  publicStatsCount: number;
+  opportunityCount: number;
+  trustScore: number;
+  brandCompleteness: number;
 }
 
 export interface CommandCenterData {
