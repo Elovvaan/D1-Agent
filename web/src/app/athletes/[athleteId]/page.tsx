@@ -4,7 +4,7 @@ import { recordRecruiterInterest, recordVisibilityControl } from "@/app/actions/
 import { AppShell } from "@/components/app-shell";
 import { Badge, Button, Card, ObjectList, SectionTitle, StatCard } from "@/components/design-system";
 import { PublicProfileShareControls } from "@/components/public-profile-share";
-import { defaultAthleteId, getPublicAthleteHomepage, getPublicProfileIntake, getSupportingDocuments, searchAthletePublicProfiles, toTitle } from "@/lib/data/services";
+import { defaultAthleteId, getPublicAthleteHomepage, getPublicProfileIntake, getSupportingDocuments, searchPublicDirectory, toTitle } from "@/lib/data/services";
 import { brandConfig, getPublicProfileBaseUrl, publicProfileUrl } from "@/lib/domain-config";
 
 export function generateStaticParams() {
@@ -105,7 +105,7 @@ export default async function PublicAthletePage({
   const query = (queryParams.q ?? "").trim();
   const status = queryParams.status ?? "";
   const isRecruiterPreview = queryParams.preview === "recruiter";
-  const searchResults = searchAthletePublicProfiles(query);
+  const searchGroups = searchPublicDirectory(query);
   const intake = getPublicProfileIntake();
   const documents = getSupportingDocuments();
   const topHighlights = highlights.slice(0, 4);
@@ -122,7 +122,7 @@ export default async function PublicAthletePage({
   const searchPanel = (
     <Card className="mb-6">
       <form action={publicProfilePath} className="grid gap-3 md:grid-cols-[1fr_auto]">
-        <label className="sr-only" htmlFor="athlete-public-search">Search athlete public profiles</label>
+        <label className="sr-only" htmlFor="athlete-public-search">Search the MyD1 sports directory</label>
         <div className="flex min-h-11 items-center gap-3 rounded-2xl border border-[#C7CDD6] bg-white px-4">
           <Search size={17} className="text-[#66718F]" />
           <input
@@ -130,7 +130,7 @@ export default async function PublicAthletePage({
             defaultValue={query}
             id="athlete-public-search"
             name="q"
-            placeholder="Search athlete public profiles"
+            placeholder="Search athletes, schools, teams, games, coaches, and stats"
             type="search"
           />
         </div>
@@ -138,24 +138,35 @@ export default async function PublicAthletePage({
       </form>
       {query ? (
         <div className="mt-4 rounded-2xl border border-[#E4E9F1] bg-[#FAFBFD] p-4">
-          {searchResults.length ? (
-            <div className="grid gap-3">
-              {searchResults.map((result) => (
-                <a
-                  className="flex flex-col justify-between gap-2 rounded-2xl border border-[#E4E9F1] bg-white p-4 transition hover:border-[#1B3FA0] sm:flex-row sm:items-center"
-                  href={`/athletes/${result.id}`}
-                  key={result.id}
-                >
-                  <span>
-                    <span className="block text-sm font-black text-[#0A1A3F]">{result.fullName}</span>
-                    <span className="mt-1 block text-xs font-semibold text-[#66718F]">{result.detail}</span>
-                  </span>
-                  <Badge tone={result.visibility === "public" ? "green" : "silver"}>{toTitle(result.visibility)}</Badge>
-                </a>
+          {searchGroups.length ? (
+            <div className="grid gap-5">
+              {searchGroups.map((group) => (
+                <div className="grid gap-3" key={group.group}>
+                  <div className="flex items-center justify-between gap-3">
+                    <h2 className="text-xs font-black uppercase tracking-[0.12em] text-[#0A1A3F]">{group.group}</h2>
+                    <Badge tone="silver">{group.results.length}</Badge>
+                  </div>
+                  {group.results.map((result) => (
+                    <a
+                      className="flex flex-col justify-between gap-3 rounded-2xl border border-[#E4E9F1] bg-white p-4 transition hover:border-[#1B3FA0] sm:flex-row sm:items-center"
+                      href={result.href}
+                      key={`${group.group}-${result.id}`}
+                    >
+                      <span>
+                        <span className="block text-sm font-black text-[#0A1A3F]">{result.title}</span>
+                        <span className="mt-1 block text-xs font-semibold leading-5 text-[#66718F]">{result.detail}</span>
+                      </span>
+                      <span className="flex shrink-0 flex-wrap gap-2">
+                        <Badge tone="blue">{result.typeLabel}</Badge>
+                        <Badge tone={result.sourceLabel === "Public Record" ? "green" : "yellow"}>{result.sourceLabel}</Badge>
+                      </span>
+                    </a>
+                  ))}
+                </div>
               ))}
             </div>
           ) : (
-            <p className="text-sm font-black text-[#66718F]">No athlete found.</p>
+            <p className="text-sm font-black text-[#66718F]">No results found.</p>
           )}
         </div>
       ) : null}

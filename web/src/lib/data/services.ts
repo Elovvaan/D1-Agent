@@ -111,10 +111,12 @@ type ImportedStatRun = {
   runId: string;
   sourceUrl: string;
   fetchedAt: string;
+  sourceTitle?: string;
   entities: Array<{
     id: string;
     type: string;
     sourceUrl: string;
+    sourceRef?: string;
     fields: Array<{
       name: string;
       value: string;
@@ -128,6 +130,19 @@ export type PublicStatRecord = StatLine & {
   fetchedAt: string;
   confidence: number;
   reviewState: "auto_matched" | "needs_review";
+};
+
+export type PublicDirectoryGroupName = "Athletes" | "Schools" | "Teams" | "Games" | "Events/Tournaments" | "Coaches" | "Stats";
+
+export type PublicDirectoryResult = {
+  id: string;
+  title: string;
+  detail: string;
+  href: string;
+  group: PublicDirectoryGroupName;
+  typeLabel: string;
+  sourceLabel: "Public Record" | "Public Profile";
+  sourceUrl?: string;
 };
 
 function readUserState<T>(fileName: string, fallback: T): T {
@@ -624,33 +639,138 @@ export function getPublicAthleteHomepage(athleteId = defaultAthleteId) {
   };
 }
 
-export function searchAthletePublicProfiles(query: string) {
+const publicDirectoryGroupOrder: PublicDirectoryGroupName[] = ["Athletes", "Schools", "Teams", "Games", "Events/Tournaments", "Coaches", "Stats"];
+
+function matchesPublicDirectoryQuery(result: PublicDirectoryResult, normalizedQuery: string) {
+  return [result.title, result.detail, result.typeLabel, result.sourceUrl ?? ""].join(" ").toLowerCase().includes(normalizedQuery);
+}
+
+function importedTitle(entity: ImportedStatRun["entities"][number]) {
+  const titleFieldNames = ["athleteName", "playerName", "schoolName", "teamName", "coachName", "eventName", "tournamentName", "gameName", "statMetric", "opponent", "profileUrl"];
+  return titleFieldNames.map((name) => importedField(entity, name)).find(Boolean) ?? toTitle(entity.type);
+}
+
+function importedDetail(entity: ImportedStatRun["entities"][number], run?: ImportedStatRun | null) {
+  const details = [
+    importedField(entity, "sport"),
+    importedField(entity, "position"),
+    importedField(entity, "jerseyNumber"),
+    importedField(entity, "classYear"),
+    importedField(entity, "season"),
+    importedField(entity, "gameDate"),
+    importedField(entity, "statValue")
+  ].filter(Boolean);
+
+  const source = run?.sourceTitle ?? entity.sourceUrl;
+  return [...details, source ? `Source: ${source}` : ""].filter(Boolean).join(" - ");
+}
+
+function importedDirectoryMapping(entity: ImportedStatRun["entities"][number]): { group: PublicDirectoryGroupName; typeLabel: string; pathType: string } | null {
+  if (entity.type === "player" || entity.type === "athlete" || entity.type === "roster") {
+    return { group: "Athletes", typeLabel: entity.type === "roster" ? "Roster" : "Roster Athlete", pathType: "athletes" };
+  }
+  if (entity.type === "school" || entity.type === "district" || entity.type === "conference" || entity.type === "league") {
+    return { group: "Schools", typeLabel: entity.type === "school" ? "School" : toTitle(entity.type), pathType: entity.type === "school" ? "schools" : `${entity.type}s` };
+  }
+  if (entity.type === "team") {
+    return { group: "Teams", typeLabel: "Team", pathType: "teams" };
+  }
+  if (entity.type === "game") {
+    return { group: "Games", typeLabel: "Game", pathType: "games" };
+  }
+  if (entity.type === "event" || entity.type === "tournament") {
+    return { group: "Events/Tournaments", typeLabel: toTitle(entity.type), pathType: "events" };
+  }
+  if (entity.type === "coach" || entity.type === "recruiter") {
+    return { group: "Coaches", typeLabel: toTitle(entity.type), pathType: "coaches" };
+  }
+  if (entity.type === "stat") {
+    return { group: "Stats", typeLabel: "Public Stat", pathType: "stats" };
+  }
+
+  return null;
+}
+
+export function searchPublicDirectory(query: string) {
   const normalizedQuery = query.trim().toLowerCase();
   if (!normalizedQuery) {
     return [];
   }
 
-  return seedAthletes
-    .map((athlete) => getAthleteProfile(athlete.id))
-    .filter((athlete) =>
-      [
-        athlete.fullName,
-        athlete.schoolName,
-        athlete.sport,
-        athlete.primaryPosition,
-        athlete.secondaryPosition ?? "",
-        String(athlete.classYear)
-      ]
-        .join(" ")
-        .toLowerCase()
-        .includes(normalizedQuery)
-    )
-    .map((athlete) => ({
+  const buckets = new Map<PublicDirectoryGroupName, PublicDirectoryResult[]>();
+  const addResult = (result: PublicDirectoryResult) => {
+    if (!matchesPublicDirectoryQuery(result, normalizedQuery)) return;
+    buckets.set(result.group, [...(buckets.get(result.group) ?? []), result]);
+  };
+
+  if (hasUserStateFile("profile.json")) {
+    const athlete = getAthleteProfile(defaultAthleteId);
+    addResult({
       id: athlete.id,
-      fullName: athlete.fullName,
+      title: athlete.fullName,
       detail: `${athlete.sport} - ${athlete.primaryPosition} - ${athlete.schoolName} - Class of ${athlete.classYear}`,
-      visibility: athlete.visibility
-    }));
+      href: `/athletes/${athlete.id}`,
+      group: "Athletes",
+      typeLabel: "Public Profile",
+      sourceLabel: "Public Profile"
+    });
+  }
+
+  const run = readLatestPublicImportRun();
+  for (const entity of run?.entities ?? []) {
+    const mapping = importedDirectoryMapping(entity);
+    if (!mapping) continue;
+
+    addResult({
+      id: entity.id,
+      title: importedTitle(entity),
+      detail: importedDetail(entity, run),
+      href: `/directory/${mapping.pathType}/${entity.id}`,
+      group: mapping.group,
+      typeLabel: mapping.typeLabel,
+      sourceLabel: "Public Record",
+      sourceUrl: entity.sourceUrl
+    });
+  }
+
+  return publicDirectoryGroupOrder
+    .map((group) => ({ group, results: buckets.get(group) ?? [] }))
+    .filter((group) => group.results.length > 0);
+}
+
+export function getPublicDirectoryRecord(entityId: string) {
+  const run = readLatestPublicImportRun();
+  const entity = run?.entities.find((item) => item.id === entityId) ?? null;
+  if (!entity) {
+    return null;
+  }
+
+  const mapping = importedDirectoryMapping(entity);
+  return {
+    run,
+    entity,
+    title: importedTitle(entity),
+    detail: importedDetail(entity, run),
+    typeLabel: mapping?.typeLabel ?? toTitle(entity.type),
+    group: mapping?.group ?? "Schools",
+    fields: entity.fields.map((field) => ({
+      name: field.name,
+      value: field.value,
+      sourceUrl: field.attribution?.sourceUrl ?? entity.sourceUrl,
+      fetchedAt: field.attribution?.fetchedAt ?? run?.fetchedAt,
+      parser: field.attribution?.parser ?? "public-url-importer"
+    }))
+  };
+}
+
+export function searchAthletePublicProfiles(query: string) {
+  const athleteGroup = searchPublicDirectory(query).find((group) => group.group === "Athletes");
+  return (athleteGroup?.results ?? []).map((result) => ({
+    id: result.id,
+    fullName: result.title,
+    detail: result.detail,
+    visibility: "public" as const
+  }));
 }
 
 export function toTitle(value: string) {
