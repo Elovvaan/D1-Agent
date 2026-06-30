@@ -13,6 +13,37 @@ export type MyD1SourceLabel =
 
 export type SchoolDiscoveryType = "school" | "team" | "roster" | "schedule" | "stats" | "coaches" | "events" | "camps" | "livestream" | "unknown";
 
+export type MyD1PortalRole = "athlete" | "coach" | "school_admin" | "media_partner" | "guardian" | "recruiter" | "platform_admin";
+
+export type MyD1Permission =
+  | "profile:own:update"
+  | "profile:athlete:verify"
+  | "profile:athlete:evaluate"
+  | "profile:athlete:read-gated"
+  | "media:school:upload"
+  | "media:game:upload"
+  | "media:athlete:tag"
+  | "media:athlete:submit"
+  | "schedule:school:update"
+  | "guardian:permissions:update"
+  | "trust:review"
+  | "public-records:school:review"
+  | "platform:moderate";
+
+export const rolePermissionMatrix: Record<MyD1PortalRole, MyD1Permission[]> = {
+  athlete: ["profile:own:update", "media:athlete:submit", "media:athlete:tag"],
+  coach: ["profile:athlete:verify", "profile:athlete:evaluate", "media:game:upload", "schedule:school:update"],
+  school_admin: ["media:school:upload", "media:game:upload", "schedule:school:update", "public-records:school:review"],
+  media_partner: ["media:athlete:submit", "media:athlete:tag", "media:game:upload"],
+  guardian: ["guardian:permissions:update", "profile:athlete:read-gated"],
+  recruiter: ["profile:athlete:read-gated"],
+  platform_admin: ["platform:moderate", "trust:review", "public-records:school:review"]
+};
+
+export function roleCan(role: MyD1PortalRole, permission: MyD1Permission) {
+  return rolePermissionMatrix[role]?.includes(permission) ?? false;
+}
+
 export interface DiscoveredSource {
   id: string;
   sourceUrl: string;
