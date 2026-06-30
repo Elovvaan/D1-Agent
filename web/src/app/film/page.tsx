@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 import { AppShell } from "@/components/app-shell";
 import { Badge, Button, Card, ObjectList, PageHeader, SectionTitle, StatCard } from "@/components/design-system";
 import { FilmUploadForm } from "@/components/film-upload-form";
+import { UploadedVideoPreview } from "@/components/uploaded-video-preview";
 import { getFilms, getGames, getHighlights, toTitle } from "@/lib/data/services";
 
 function readUploads() {
@@ -20,8 +21,8 @@ function readUploads() {
 }
 
 const statusCopy: Record<string, string> = {
-  "film-uploaded": "Film uploaded and added to your library.",
-  "film-upload-error": "Film could not be uploaded. Choose a valid video within the supported size limit."
+  "film-uploaded": "Film uploaded. Playback is preparing in the library.",
+  "film-upload-error": "Film could not be uploaded. Choose a supported video within the size limit."
 };
 
 export default async function FilmPage({ searchParams }: { searchParams?: Promise<{ status?: string }> }) {
@@ -43,7 +44,7 @@ export default async function FilmPage({ searchParams }: { searchParams?: Promis
       <PageHeader
         eyebrow="Film engine"
         title="My Film"
-        description="Upload, stream, process, and review every game as context-rich recruiting fuel."
+        description="Upload, preview, and organize real game or practice film for your recruiting profile."
         action={<Button href="#upload-film" variant="cta"><CloudUpload size={17} /> Upload Film</Button>}
       />
       {params.status && statusCopy[params.status] ? (
@@ -54,11 +55,11 @@ export default async function FilmPage({ searchParams }: { searchParams?: Promis
       <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
         <div className="grid gap-6">
           <Card id="upload-film">
-            <SectionTitle title="Upload Film" caption="Uploaded files are stored locally and immediately appear in the game library." />
+            <SectionTitle title="Upload Film" caption="The library shows the saved video as soon as upload finishes." />
             <FilmUploadForm />
           </Card>
           <Card>
-            <SectionTitle title="Game Library" action={<Badge tone={films.length ? "blue" : "silver"}>{films.length} active games</Badge>} />
+            <SectionTitle title="Game Library" action={<Badge tone={uploads.films.length || films.length ? "blue" : "silver"}>{uploads.films.length + films.length} active games</Badge>} />
             {uploads.films.length ? (
               <div className="mb-4 grid gap-3">
                 {uploads.films.map((film) => (
@@ -70,7 +71,7 @@ export default async function FilmPage({ searchParams }: { searchParams?: Promis
                       </div>
                       <a className="text-sm font-black text-[#1B3FA0]" href={film.url}>Open uploaded film</a>
                     </div>
-                    <video className="mt-3 aspect-video w-full rounded-xl bg-[#0A1A3F]" src={film.url} controls preload="metadata" />
+                    <UploadedVideoPreview src={film.url} title={film.title} />
                   </div>
                 ))}
               </div>
@@ -82,7 +83,7 @@ export default async function FilmPage({ searchParams }: { searchParams?: Promis
           </Card>
         </div>
         <div className="grid gap-4">
-          <StatCard label="Full Games" value={`${films.length}`} detail="Stored and indexed for recruiting workflows." icon={Video} />
+          <StatCard label="Full Games" value={`${uploads.films.length + films.length}`} detail="Stored and ready for review." icon={Video} />
           <StatCard label="AI Highlights" value={`${highlights.length}`} detail={highlights.length ? "Saved highlights are available." : "No highlights generated yet."} icon={Clapperboard} tone="yellow" />
           <StatCard label="Stream Status" value="Not connected" detail="Livestream ingestion is not connected yet." icon={Radio} tone="silver" />
         </div>
