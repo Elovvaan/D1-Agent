@@ -3,6 +3,7 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { agentService } from "@/lib/services/agent-service";
 import { opportunityEngine } from "@/lib/services/opportunity-engine";
+import { getDirectoryGraph, getDirectoryGraphNode, type DirectoryGraphNode } from "@/lib/data/directory-graph";
 import {
   seedAthletes,
   seedBrandProfiles,
@@ -950,6 +951,31 @@ function publisherOrganizationResult(run: ImportedStatRun): PublicDirectoryResul
   };
 }
 
+function graphNodeToDirectoryResult(node: DirectoryGraphNode): PublicDirectoryResult | null {
+  if (node.type === "import_session" || node.type === "review_queue_item") return null;
+  const groupByType: Record<string, PublicDirectoryGroupName> = {
+    school: "Schools",
+    team: "Teams",
+    ranking: "Rankings",
+    organization: "Organizations",
+    source: "Sources"
+  };
+  const group = groupByType[node.type];
+  if (!group) return null;
+  return {
+    id: node.id,
+    title: node.name,
+    detail: node.detail,
+    href: `/directory/${node.type}/${node.id}`,
+    group,
+    typeLabel: node.label,
+    sourceLabel: node.type === "source" ? "Source Registry" : "Public Record",
+    sourceUrl: node.sourceUrl,
+    importedAt: node.importedAt,
+    confidence: node.confidence
+  };
+}
+
 function buildPublicDirectoryIndex() {
   const results: PublicDirectoryResult[] = [];
   const seen = new Set<string>();
@@ -973,30 +999,9 @@ function buildPublicDirectoryIndex() {
     });
   }
 
-  const runs = readAllPublicImportRuns();
-  for (const source of readPublicSourceRegistry().filter((item) => item.enabled)) {
-    add(sourceRegistryResult(source));
-  }
-
-  for (const run of runs) {
-    const org = publisherOrganizationResult(run);
-    if (org) add(org);
-    for (const entity of run.entities ?? []) {
-      const mapping = importedDirectoryMapping(entity);
-      if (!mapping) continue;
-      add({
-        id: entity.id,
-        title: importedTitle(entity),
-        detail: importedDetail(entity, run),
-        href: `/directory/${mapping.pathType}/${entity.id}`,
-        group: mapping.group,
-        typeLabel: mapping.typeLabel,
-        sourceLabel: "Public Record",
-        sourceUrl: entity.sourceUrl,
-        importedAt: run.fetchedAt,
-        confidence: Number(importedField(entity, "confidenceScore") ?? entity.raw?.confidenceScore ?? 0)
-      });
-    }
+  for (const node of getDirectoryGraph().nodes) {
+    const result = graphNodeToDirectoryResult(node);
+    if (result) add(result);
   }
 
   return results;
@@ -1022,8 +1027,7 @@ export function searchPublicDirectory(query: string) {
 
 export function getPublicDirectoryDiscoverySections(): PublicDirectorySection[] {
   const allResults = buildPublicDirectoryIndex();
-  const runs = readAllPublicImportRuns();
-  const pendingReviewIds = new Set(runs.flatMap((run) => run.reviewQueue ?? []).map((item) => item.importedEntityId).filter(Boolean));
+  const pendingReviewIds = new Set(getDirectoryGraph().nodes.filter((node) => node.reviewStatus === "pending_review").map((node) => node.id));
   const recentlyImported = [...allResults]
     .filter((result) => result.sourceLabel === "Public Record")
     .sort((a, b) => Date.parse(b.importedAt ?? "") - Date.parse(a.importedAt ?? ""))
@@ -1057,6 +1061,26 @@ export function getPublicDirectoryCounters(): PublicDirectoryCounters {
 }
 
 export function getPublicDirectoryRecord(entityId: string) {
+  const graphNode = getDirectoryGraph().nodes.find((node) => node.id === entityId);
+  if (graphNode) {
+    return {
+      run: null,
+      entity: { id: graphNode.id, type: graphNode.type, sourceUrl: graphNode.sourceUrl ?? "", fields: [] },
+      title: graphNode.name,
+      detail: graphNode.detail,
+      typeLabel: graphNode.label,
+      group: graphNodeToDirectoryResult(graphNode)?.group ?? "Organizations",
+      fields: graphNode.fields.map((field) => ({
+        name: field.name,
+        value: field.value,
+        sourceUrl: field.sourceUrl ?? graphNode.sourceUrl ?? "",
+        fetchedAt: field.fetchedAt ?? graphNode.importedAt,
+        parser: field.parser ?? "directory-graph-resolver"
+      })),
+      graphNode
+    };
+  }
+
   const source = readPublicSourceRegistry().find((item) => sourceRegistryResult(item).id === entityId);
   if (source) {
     const result = sourceRegistryResult(source);
