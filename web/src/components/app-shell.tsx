@@ -37,19 +37,31 @@ const navItems = [
   { href: "/settings", label: "Settings", icon: Settings }
 ] as const;
 
-function getPersistedProfile() {
+function getPersistedProfile(): {
+  fullName?: string;
+  classYear?: number;
+  primaryPosition?: string;
+  jerseyNumber?: string;
+  avatarUrl?: string;
+  role?: string;
+} {
   try {
+    const sessionPath = resolve(process.cwd(), "..", "data", "session", "current-user.json");
+    const session = existsSync(sessionPath)
+      ? JSON.parse(readFileSync(sessionPath, "utf8")) as { fullName?: string; role?: string }
+      : {};
     const filePath = resolve(process.cwd(), "..", "data", "user-state", "profile.json");
     if (!existsSync(filePath)) {
-      return {};
+      return session;
     }
-    return JSON.parse(readFileSync(filePath, "utf8")) as {
+    const profile = JSON.parse(readFileSync(filePath, "utf8")) as {
       fullName?: string;
       classYear?: number;
       primaryPosition?: string;
       jerseyNumber?: string;
       avatarUrl?: string;
     };
+    return { ...profile, fullName: session.fullName ?? profile.fullName, role: session.role };
   } catch {
     return {};
   }
@@ -57,16 +69,17 @@ function getPersistedProfile() {
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const profile = getPersistedProfile();
-  const fullName = profile.fullName || "Jayden Lewis";
+  const fullName = profile.fullName || "New User";
   const initials = fullName
     .split(" ")
     .map((part) => part[0])
     .join("")
     .slice(0, 2)
     .toUpperCase();
-  const classYear = profile.classYear || 2026;
-  const position = profile.primaryPosition || "QB";
-  const jerseyNumber = profile.jerseyNumber || "7";
+  const classYear = profile.classYear ? `Class of ${profile.classYear}` : "Profile setup pending";
+  const position = profile.primaryPosition || "Position pending";
+  const jerseyNumber = profile.jerseyNumber || "-";
+  const roleLabel = profile.role ? profile.role.replaceAll("_", " ").replace(/\b\w/g, (char) => char.toUpperCase()) : "Athlete";
 
   return (
     <div className="min-h-screen bg-[#F5F7FB] text-[#0A1A3F]">
@@ -107,7 +120,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </div>
               <div>
                 <div className="text-sm font-black">{fullName}</div>
-                <div className="mt-0.5 text-xs text-[#C7D7FA]">Class of {classYear}</div>
+                <div className="mt-0.5 text-xs text-[#C7D7FA]">{classYear}</div>
                 <div className="text-xs text-[#C7D7FA]">{position} / #{jerseyNumber}</div>
               </div>
             </div>
@@ -144,7 +157,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 </span>
                 <span className="hidden text-left sm:block">
                   <span className="block text-sm font-black">{fullName}</span>
-                  <span className="block text-xs text-[#66718F]">Athlete</span>
+                  <span className="block text-xs text-[#66718F]">{roleLabel}</span>
                 </span>
                 <ChevronDown size={16} />
               </Link>

@@ -1,5 +1,5 @@
-import { Camera, GraduationCap, ShieldCheck, UserRound, Users } from "lucide-react";
-import { Button, Card, PageHeader } from "@/components/design-system";
+import { submitDevAuth } from "@/app/actions/auth-actions";
+import { Card, PageHeader } from "@/components/design-system";
 import { PublicSiteShell } from "@/components/public-site-shell";
 
 const roleLabels: Record<string, string> = {
@@ -10,44 +10,80 @@ const roleLabels: Record<string, string> = {
   admin: "Admin / School"
 };
 
-const signInRoles = [
-  { label: "Athlete", href: "/command-center?role=athlete", icon: UserRound },
-  { label: "Coach", href: "/coach?role=coach", icon: Users },
-  { label: "Recruiter", href: "/recruiter?role=recruiter", icon: GraduationCap },
-  { label: "Media Partner", href: "/media?role=media_partner", icon: Camera },
-  { label: "Admin / School", href: "/admin?role=admin", icon: ShieldCheck }
-] as const;
+const statusMessages: Record<string, string> = {
+  "invalid-role": "Choose a valid role.",
+  "missing-fields": "Email and password are required.",
+  "missing-name": "First and last name are required to create an account.",
+  "password-mismatch": "Passwords do not match.",
+  "account-exists": "An account already exists for that email and role. Use Log In.",
+  "login-not-found": "No local dev account was found for that email and role."
+};
+
+function inputClass() {
+  return "min-h-11 rounded-2xl border border-[#C7CDD6] bg-white px-4 text-sm font-semibold text-[#0A1A3F] outline-none placeholder:text-[#8A94AA]";
+}
 
 export default async function SignInPage({
   searchParams
 }: {
-  searchParams?: Promise<{ role?: string; next?: string }>;
+  searchParams?: Promise<{ role?: string; next?: string; status?: string }>;
 }) {
   const params = searchParams ? await searchParams : {};
-  const selectedRole = params.role && roleLabels[params.role] ? params.role : "";
-  const nextPath = params.next?.startsWith("/") ? params.next : selectedRole === "athlete" ? "/command-center" : "";
-  const continueHref = selectedRole ? `${nextPath || "/command-center"}?role=${selectedRole}` : "";
+  const selectedRole = params.role && roleLabels[params.role] ? params.role : "athlete";
+  const nextPath = params.next?.startsWith("/") ? params.next : selectedRole === "athlete" ? "/onboarding/athlete" : "";
 
   return (
     <PublicSiteShell>
       <section className="mx-auto max-w-[960px] px-4 py-12 sm:px-6 lg:px-8">
-        <PageHeader eyebrow="Sign In" title="Continue to your MyD1 workspace" description="Auth is still being connected. For local development, choose a role to enter the correct portal with role-aware routing." />
-        {continueHref ? (
-          <Card className="mb-6">
-            <h2 className="text-lg font-black text-[#0A1A3F]">{roleLabels[selectedRole]}</h2>
-            <p className="mt-2 text-sm font-semibold leading-6 text-[#66718F]">Continue to the requested MyD1 flow. This creates a local dev session for access testing.</p>
-            <Button href={continueHref} variant="cta" className="mt-4">Continue</Button>
-          </Card>
+        <PageHeader
+          eyebrow="Sign In"
+          title="Create or access your MyD1 account"
+          description="Choose your role, enter your account details, and continue into the correct setup flow. New accounts start blank."
+        />
+        {params.status ? (
+          <div className="mb-6 rounded-2xl border border-[#FFD0D0] bg-[#FFF0F0] px-4 py-3 text-sm font-black text-[#B42318]">
+            {statusMessages[params.status] ?? params.status}
+          </div>
         ) : null}
-        <div className="grid gap-4 sm:grid-cols-2">
-          {signInRoles.map((role) => (
-            <Card key={role.label}>
-              <role.icon className="text-[#1B3FA0]" size={26} />
-              <h2 className="mt-4 text-lg font-black">{role.label}</h2>
-              <Button href={role.href} variant="primary" className="mt-4 w-full">Continue</Button>
-            </Card>
-          ))}
-        </div>
+        <Card>
+          <form action={submitDevAuth} className="grid gap-4">
+            <input name="next" type="hidden" value={nextPath} />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <label className="grid gap-2">
+                <span className="text-xs font-black uppercase tracking-[0.12em] text-[#66718F]">First Name</span>
+                <input className={inputClass()} name="firstName" placeholder="First name" />
+              </label>
+              <label className="grid gap-2">
+                <span className="text-xs font-black uppercase tracking-[0.12em] text-[#66718F]">Last Name</span>
+                <input className={inputClass()} name="lastName" placeholder="Last name" />
+              </label>
+            </div>
+            <label className="grid gap-2">
+              <span className="text-xs font-black uppercase tracking-[0.12em] text-[#66718F]">Email</span>
+              <input className={inputClass()} name="email" placeholder="you@example.com" required type="email" />
+            </label>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <label className="grid gap-2">
+                <span className="text-xs font-black uppercase tracking-[0.12em] text-[#66718F]">Password</span>
+                <input className={inputClass()} name="password" required type="password" />
+              </label>
+              <label className="grid gap-2">
+                <span className="text-xs font-black uppercase tracking-[0.12em] text-[#66718F]">Confirm Password</span>
+                <input className={inputClass()} name="confirmPassword" type="password" />
+              </label>
+            </div>
+            <label className="grid gap-2">
+              <span className="text-xs font-black uppercase tracking-[0.12em] text-[#66718F]">Role</span>
+              <select className={inputClass()} defaultValue={selectedRole} name="role">
+                {Object.entries(roleLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+              </select>
+            </label>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <button className="inline-flex min-h-10 items-center justify-center rounded-xl bg-[#F2C200] px-4 py-2 text-sm font-black text-[#0A1A3F] shadow-[0_14px_28px_rgba(242,194,0,0.28)] transition hover:brightness-95 sm:min-w-44" name="intent" type="submit" value="create">Create Account</button>
+              <button className="inline-flex min-h-10 items-center justify-center rounded-xl border border-[#C7CDD6] bg-white px-4 py-2 text-sm font-black text-[#0A1A3F] transition hover:bg-[#F7F9FC] sm:min-w-44" name="intent" type="submit" value="login">Log In</button>
+            </div>
+          </form>
+        </Card>
       </section>
     </PublicSiteShell>
   );

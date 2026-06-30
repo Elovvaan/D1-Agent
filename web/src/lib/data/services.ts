@@ -188,6 +188,16 @@ function hasRealAthleteProfile() {
   return hasUserStateFile("profile.json");
 }
 
+function readCurrentDevSession() {
+  try {
+    const sessionPath = resolve(process.cwd(), "..", "data", "session", "current-user.json");
+    if (!existsSync(sessionPath)) return null;
+    return JSON.parse(readFileSync(sessionPath, "utf8")) as { fullName?: string; role?: D1Role };
+  } catch {
+    return null;
+  }
+}
+
 function emptyAthleteProfile(athleteId = defaultAthleteId): AthleteProfile {
   return {
     id: athleteId,
@@ -519,6 +529,7 @@ export function getSupportingDocuments() {
 }
 
 export function getMessages() {
+  if (!hasRealAthleteProfile()) return [];
   return seedMessages;
 }
 
@@ -584,6 +595,28 @@ export function getCoachConnection() {
 }
 
 export function getCoachDashboard() {
+  const session = readCurrentDevSession();
+  if (session?.role === "coach") {
+    return {
+      coach: {
+        id: "coach-profile-current",
+        userId: "current-user",
+        orgId: "",
+        title: "Coach",
+        verified: false,
+        verificationQueueCount: 0
+      },
+      priorities: [
+        { title: "Verify coaching affiliation", detail: "Find your school and submit affiliation before managing athlete verification.", tone: "yellow" as const },
+        { title: "Connect team roster", detail: "No team roster is connected yet.", tone: "silver" as const }
+      ],
+      missionCards: [
+        { title: "Verification Queue", detail: "No imported roster/player records pending yet.", badge: "0", tone: "silver" as const },
+        { title: "Team Trust Overview", detail: "Connect a team to view trust distribution.", badge: "Setup", tone: "yellow" as const }
+      ]
+    };
+  }
+
   const coach = requireSeed(seedCoachProfiles[0], "coach dashboard");
   return {
     coach,
@@ -603,6 +636,22 @@ export function getCoachDashboard() {
 }
 
 export function getRecruiterDashboard() {
+  const session = readCurrentDevSession();
+  if (session?.role === "recruiter") {
+    return {
+      recruiter: {
+        id: "recruiter-profile-current",
+        userId: "current-user",
+        orgId: "",
+        territory: [],
+        positionGroups: [],
+        verified: false
+      },
+      prospects: [],
+      filters: ["Position", "Grad Year", "GPA", "Trust Score", "Opportunity Score", "State", "School", "Sport", "Distance", "Height", "Weight"]
+    };
+  }
+
   return {
     recruiter: requireSeed(seedRecruiterProfiles[0], "recruiter dashboard"),
     prospects: [

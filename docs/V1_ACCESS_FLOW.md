@@ -51,9 +51,14 @@ The root route `/` never redirects automatically. If a valid local session exist
 8. Visit `/athletes/athlete-jayden-lewis` with no saved public profile; expected: redirect to sign-in.
 9. Save an athlete profile with `visibility: "public"`; revisit `/athletes/athlete-jayden-lewis`; expected: public profile page.
 10. From `/get-started`, choose Athlete; expected: `/sign-in?role=athlete&next=/onboarding/athlete`.
-11. Click Continue on sign-in; expected: protected onboarding opens with local dev role session.
+11. Complete the create-account form and click `Create Account`; expected: protected onboarding opens with local dev role session.
 12. Revisit `/` while signed in; expected: landing page remains visible with `Continue to Dashboard`, not an automatic dashboard redirect.
+13. Visit `/command-center?role=athlete` in a fresh incognito session; expected: redirect to sign-in because query-string roles no longer create sessions.
 
 ## Real User Data Rule
 
 Real User Mode does not automatically fall back to Jayden/Jaylen demo athlete data. If no saved athlete profile exists, authenticated athlete pages show starter/empty profile state until the user saves their own profile.
+
+## Dev Session Storage
+
+Local V1 sign-up writes dev users to `data/session/users.json` and the active user to `data/session/current-user.json`. The session cookie stores only the current role/user id needed for route protection.

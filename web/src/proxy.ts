@@ -30,9 +30,6 @@ function readRole(request: NextRequest): D1Role | null {
   const cookieRole = request.cookies.get("d1_role")?.value;
   if (cookieRole && roles.has(cookieRole as D1Role)) return cookieRole as D1Role;
 
-  const queryRole = request.nextUrl.searchParams.get("role");
-  if (queryRole && roles.has(queryRole as D1Role)) return queryRole as D1Role;
-
   return null;
 }
 
