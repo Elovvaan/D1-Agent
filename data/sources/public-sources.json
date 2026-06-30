@@ -1,0 +1,13 @@
+[
+  {
+    "source_name": "UHSAA",
+    "source_url": "https://uhsaa.org/uhsaa-rankings-home/",
+    "state": "Utah",
+    "country": "US",
+    "source_level": "state",
+    "source_type": "state_association",
+    "sports_supported": [],
+    "notes": "Seed public source hub for statewide public rankings and sports discovery. Additional state, district, conference, school, team, roster, schedule, stats, and media hubs can be added here without changing importer code.",
+    "enabled": true
+  }
+]

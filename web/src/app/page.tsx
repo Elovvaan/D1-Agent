@@ -36,15 +36,9 @@ export default async function LandingPage() {
     <PublicSiteShell>
       <section className="relative overflow-hidden bg-[#0A1A3F]">
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(242,194,0,0.22),transparent_28%),radial-gradient(circle_at_85%_10%,rgba(27,63,160,0.62),transparent_34%),linear-gradient(135deg,#0A1A3F,#102D70_54%,#071634)]" />
-          <div className="absolute inset-x-0 bottom-0 h-52 bg-[linear-gradient(180deg,transparent,rgba(5,12,31,0.82))]" />
-          <div className="absolute bottom-0 left-0 right-0 h-36 opacity-55 [background-image:linear-gradient(90deg,rgba(255,255,255,0.12)_1px,transparent_1px),linear-gradient(0deg,rgba(255,255,255,0.10)_1px,transparent_1px)] [background-size:72px_72px]" />
-          <div className="absolute right-[8%] top-24 hidden h-[430px] w-[310px] rounded-t-[180px] border border-white/10 bg-white/[0.06] shadow-[0_30px_90px_rgba(0,0,0,0.35)] lg:block">
-            <div className="absolute left-1/2 top-10 h-24 w-24 -translate-x-1/2 rounded-full bg-white/18" />
-            <div className="absolute bottom-0 left-1/2 h-72 w-40 -translate-x-1/2 rounded-t-[90px] bg-white/14" />
-            <div className="absolute bottom-28 left-10 h-28 w-14 -rotate-12 rounded-full bg-white/10" />
-            <div className="absolute bottom-28 right-10 h-28 w-14 rotate-12 rounded-full bg-white/10" />
-          </div>
+          <img src="/brand/MYD1 Cover photo.png" alt="" aria-hidden="true" className="h-full w-full object-cover object-center opacity-85" />
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(10,26,63,0.92),rgba(10,26,63,0.74)_44%,rgba(10,26,63,0.42)),linear-gradient(180deg,rgba(10,26,63,0.3),rgba(5,12,31,0.9))]" />
+          <div className="absolute inset-x-0 bottom-0 h-52 bg-[linear-gradient(180deg,transparent,rgba(5,12,31,0.86))]" />
         </div>
 
         <div className="relative mx-auto grid min-h-[680px] max-w-[1440px] content-center gap-10 px-4 py-20 sm:px-6 lg:grid-cols-[1fr_440px] lg:px-8">

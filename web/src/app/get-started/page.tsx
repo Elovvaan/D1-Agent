@@ -45,6 +45,7 @@ export default function GetStartedPage() {
   return (
     <PublicSiteShell>
       <section className="mx-auto max-w-[1440px] px-4 py-12 sm:px-6 lg:px-8">
+        <img src="/brand/MYD1 LOGO.png" alt="MyD1" className="mb-6 h-14 w-auto object-contain" />
         <PageHeader
           eyebrow="Get Started"
           title="Choose your role"

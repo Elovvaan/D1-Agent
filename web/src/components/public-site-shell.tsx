@@ -13,11 +13,17 @@ const navItems = [
 export function PublicSiteShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-[#F5F7FB] text-[#0A1A3F]">
+      <img
+        src="/brand/MYD1 LOGO.png"
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none fixed bottom-6 right-6 z-0 hidden w-44 opacity-[0.06] sm:block"
+      />
       <header className="sticky top-0 z-30 border-b border-[#DDE3EC] bg-white/92 backdrop-blur">
         <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
           <Link href="/" className="flex items-center gap-3">
-            <span className="grid h-10 w-10 place-items-center rounded-2xl bg-[#0A1A3F] text-white shadow-[0_10px_30px_rgba(10,26,63,0.18)]">
-              <span className="text-lg font-black tracking-tight">D1</span>
+            <span className="grid h-10 w-10 place-items-center overflow-hidden rounded-2xl bg-white shadow-[0_10px_30px_rgba(10,26,63,0.18)]">
+              <img src="/brand/MYD1 LOGO.png" alt="MyD1" className="h-full w-full object-contain p-1.5" />
             </span>
             <span>
               <span className="block text-xl font-black tracking-tight">{brandConfig.primaryBrand}</span>
@@ -49,7 +55,12 @@ export function PublicSiteShell({ children }: { children: React.ReactNode }) {
       <footer className="border-t border-[#DDE3EC] bg-white">
         <div className="mx-auto grid max-w-[1440px] gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[1fr_auto] lg:px-8">
           <div>
-            <div className="text-lg font-black">{brandConfig.primaryBrand}</div>
+            <div className="flex items-center gap-3">
+              <span className="grid h-9 w-9 place-items-center overflow-hidden rounded-xl border border-[#DDE3EC] bg-white">
+                <img src="/brand/MYD1 LOGO.png" alt="MyD1" className="h-full w-full object-contain p-1.5" />
+              </span>
+              <div className="text-lg font-black">{brandConfig.primaryBrand}</div>
+            </div>
             <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-[#66718F]">
               Verified athletic profiles, public sports search, recruiting workflows, and career tools from youth sports through the professional level.
             </p>

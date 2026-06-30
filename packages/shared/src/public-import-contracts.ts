@@ -19,7 +19,12 @@ export type PublicImportFieldName =
   | "streamUrl"
   | "statMetric"
   | "statValue"
-  | "statContext";
+  | "statContext"
+  | "sourceName"
+  | "sourceType"
+  | "confidenceScore"
+  | "reviewStatus"
+  | "importedAt";
 export type PublicImportDecision = "auto_merged" | "pending_review" | "rejected" | "manual_merged";
 export type PublicClaimStatus = "pending" | "approved" | "rejected";
 export type CoachImportedVerificationStatus = "pending" | "approved" | "corrected" | "rejected";

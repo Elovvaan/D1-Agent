@@ -25,12 +25,18 @@ export const metadata: Metadata = {
     description: `${brandConfig.primaryBrand} is the athlete platform powered by ${brandConfig.agentProductName}.`,
     siteName: brandConfig.primaryBrand,
     url: getMarketingBaseUrl(),
+    images: ["/brand/MYD1 Cover photo.png"],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
     title: brandConfig.primaryBrand,
-    description: `${brandConfig.primaryBrand} is the athlete platform powered by ${brandConfig.agentProductName}.`
+    description: `${brandConfig.primaryBrand} is the athlete platform powered by ${brandConfig.agentProductName}.`,
+    images: ["/brand/MYD1 Cover photo.png"]
+  },
+  icons: {
+    icon: "/brand/MYD1 LOGO.png",
+    apple: "/brand/MYD1 LOGO.png"
   }
 };
 

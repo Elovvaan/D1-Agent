@@ -1,8 +1,15 @@
-import { Database, ExternalLink, Globe2, ListChecks, Search, ShieldCheck } from "lucide-react";
+import { Database, ExternalLink, Filter, Globe2, ListChecks, Search, ShieldCheck } from "lucide-react";
 import { discoverSchoolImportSource, importSelectedSchoolLinks } from "@/app/actions/admin-operator-actions";
 import { AppShell } from "@/components/app-shell";
 import { Badge, Button, Card, ObjectList, PageHeader, SectionTitle, StatCard } from "@/components/design-system";
-import { discoveryTypeLabel, getLatestSchoolImportSession, getSchoolImportWizardState, schoolDiscoveryTypes } from "@/lib/data/school-import-wizard";
+import {
+  discoveryTypeLabel,
+  getLatestSchoolImportSession,
+  getPublicSourceRegistry,
+  getPublicSourceRegistryOptions,
+  getSchoolImportWizardState,
+  schoolDiscoveryTypes
+} from "@/lib/data/school-import-wizard";
 
 const statusMessages: Record<string, string> = {
   "invalid-url": "Enter a valid public URL.",
@@ -15,11 +22,17 @@ const statusMessages: Record<string, string> = {
 export default async function SchoolImportWizardPage({
   searchParams
 }: {
-  searchParams?: Promise<{ status?: string }>;
+  searchParams?: Promise<{ status?: string; state?: string; sport?: string; sourceType?: string }>;
 }) {
   const params = searchParams ? await searchParams : {};
   const state = getSchoolImportWizardState();
   const latestSession = getLatestSchoolImportSession();
+  const registryOptions = getPublicSourceRegistryOptions();
+  const registrySources = getPublicSourceRegistry({
+    state: params.state,
+    sport: params.sport,
+    sourceType: params.sourceType
+  });
   const linksByType = schoolDiscoveryTypes.map((type) => ({
     type,
     links: state.links.filter((link) => link.type === type)
@@ -59,6 +72,65 @@ export default async function SchoolImportWizardPage({
               </div>
               <Button variant="primary"><Search size={17} /> Discover</Button>
             </form>
+          </Card>
+
+          <Card>
+            <SectionTitle
+              title="Source Registry"
+              caption="Import from enabled national, state, district, conference, school, team, roster, stats, and media hubs. UHSAA is the first seed source, not a Utah-only limit."
+              action={<Badge tone="blue">{registrySources.length} sources</Badge>}
+            />
+            <form className="mb-4 grid gap-3 md:grid-cols-[1fr_1fr_1fr_auto]">
+              <label className="grid gap-2">
+                <span className="text-xs font-black uppercase tracking-[0.12em] text-[#66718F]">State</span>
+                <select className="min-h-11 rounded-2xl border border-[#C7CDD6] bg-white px-3 text-sm font-semibold text-[#0A1A3F]" defaultValue={params.state ?? ""} name="state">
+                  <option value="">All states</option>
+                  {registryOptions.states.map((item) => <option key={item} value={item}>{item}</option>)}
+                </select>
+              </label>
+              <label className="grid gap-2">
+                <span className="text-xs font-black uppercase tracking-[0.12em] text-[#66718F]">Sport</span>
+                <select className="min-h-11 rounded-2xl border border-[#C7CDD6] bg-white px-3 text-sm font-semibold text-[#0A1A3F]" defaultValue={params.sport ?? ""} name="sport">
+                  <option value="">All sports</option>
+                  {registryOptions.sports.map((item) => <option key={item} value={item}>{item}</option>)}
+                </select>
+              </label>
+              <label className="grid gap-2">
+                <span className="text-xs font-black uppercase tracking-[0.12em] text-[#66718F]">Source Type</span>
+                <select className="min-h-11 rounded-2xl border border-[#C7CDD6] bg-white px-3 text-sm font-semibold text-[#0A1A3F]" defaultValue={params.sourceType ?? ""} name="sourceType">
+                  <option value="">All source types</option>
+                  {registryOptions.sourceTypes.map((item) => <option key={item} value={item}>{item}</option>)}
+                </select>
+              </label>
+              <Button variant="secondary" className="self-end"><Filter size={17} /> Filter</Button>
+            </form>
+            {registrySources.length ? (
+              <div className="grid gap-3">
+                {registrySources.map((source) => (
+                  <div className="grid gap-3 rounded-2xl border border-[#E4E9F1] bg-[#FAFBFD] p-4 lg:grid-cols-[1fr_auto]" key={source.source_url}>
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h2 className="text-sm font-black text-[#0A1A3F]">{source.source_name}</h2>
+                        <Badge tone="blue">{source.source_level}</Badge>
+                        <Badge tone="silver">{source.source_type.replaceAll("_", " ")}</Badge>
+                      </div>
+                      <p className="mt-2 break-all text-xs font-semibold leading-5 text-[#66718F]">{source.source_url}</p>
+                      <p className="mt-2 text-xs font-semibold leading-5 text-[#66718F]">
+                        {source.state}, {source.country}
+                        {source.sports_supported.length ? ` · ${source.sports_supported.join(", ")}` : " · Sports discovered from public pages"}
+                      </p>
+                      {source.notes ? <p className="mt-2 text-xs font-semibold leading-5 text-[#66718F]">{source.notes}</p> : null}
+                    </div>
+                    <form action={discoverSchoolImportSource} className="flex items-start">
+                      <input name="sourceUrl" type="hidden" value={source.source_url} />
+                      <Button variant="primary"><Search size={17} /> Discover Source</Button>
+                    </form>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm font-semibold leading-6 text-[#66718F]">No enabled public sources matched those filters.</p>
+            )}
           </Card>
 
           <form action={importSelectedSchoolLinks}>

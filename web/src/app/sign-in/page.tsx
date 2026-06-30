@@ -35,6 +35,7 @@ export default async function SignInPage({
   return (
     <PublicSiteShell>
       <section className="mx-auto max-w-[960px] px-4 py-12 sm:px-6 lg:px-8">
+        <img src="/brand/MYD1 LOGO.png" alt="MyD1" className="mb-6 h-14 w-auto object-contain" />
         <PageHeader
           eyebrow="Sign In"
           title="Create or access your MyD1 account"

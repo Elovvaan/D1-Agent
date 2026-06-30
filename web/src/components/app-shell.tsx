@@ -85,8 +85,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-[#F5F7FB] text-[#0A1A3F]">
       <aside className="fixed inset-y-0 left-0 hidden w-[292px] overflow-y-auto bg-[#0A1A3F] px-4 py-7 text-white shadow-[16px_0_46px_rgba(10,26,63,0.2)] lg:block">
         <Link href="/command-center" className="flex items-center gap-3 px-2">
-          <span className="grid h-10 w-10 place-items-center rounded-2xl bg-white text-[#1B3FA0] shadow-[0_10px_30px_rgba(0,0,0,0.18)]">
-            <span className="text-lg font-black tracking-tight">D1</span>
+          <span className="grid h-10 w-10 place-items-center overflow-hidden rounded-2xl bg-white shadow-[0_10px_30px_rgba(0,0,0,0.18)]">
+            <img src="/brand/MYD1 LOGO.png" alt="MyD1" className="h-full w-full object-contain p-1.5" />
           </span>
           <span>
             <span className="block text-xl font-black tracking-tight">{brandConfig.primaryBrand}</span>
