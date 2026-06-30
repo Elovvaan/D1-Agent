@@ -106,6 +106,9 @@ export default async function HighlightsPage({ searchParams }: { searchParams?: 
               </div>
             </article>
           ))}
+          {!uploads.highlights.length && !clips.length ? (
+            <p className="rounded-2xl border border-[#E4E9F1] bg-[#FAFBFD] p-4 text-sm font-semibold text-[#66718F] md:col-span-2 xl:col-span-3">No highlights generated yet. Upload a real highlight or connect the media processing backend before reel tools can produce clips.</p>
+          ) : null}
         </div>
       </Card>
     </AppShell>

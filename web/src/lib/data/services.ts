@@ -1,4 +1,4 @@
-import type { AgentIntentContext, AthleteHeroMedia, AthleteProfile, CommandCenterData, D1Role, MatchStage, MissionItem, ProgressionLevel, ProgressionMilestone, SocialPlatform, StatLine, TimelineState, TrustScore } from "@d1/shared";
+import type { AgentIntentContext, AthleteBrandProfile, AthleteHeroMedia, AthleteProfile, CalendarEvent, CommandCenterData, D1Role, Film, Game, Highlight, MatchStage, MissionItem, ProgressionLevel, ProgressionMilestone, RecruitingOpportunity, SocialPlatform, StatLine, TimelineEvent, TimelineState, TrustScore } from "@d1/shared";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { agentService } from "@/lib/services/agent-service";
@@ -46,6 +46,11 @@ type UploadedHighlight = {
   title?: string;
   url?: string;
   uploadedAt?: string;
+};
+
+type UploadedMediaFile = UploadedHighlight & {
+  name?: string;
+  type?: string;
 };
 
 type ProgressionDefinition = {
@@ -246,6 +251,10 @@ function hasRealAthleteProfile() {
   return hasUserStateFile("profile.json");
 }
 
+function getUploadedMedia() {
+  return readUserState<{ films?: UploadedMediaFile[]; highlights?: UploadedMediaFile[] }>("uploads.json", { films: [], highlights: [] });
+}
+
 function readCurrentDevSession() {
   try {
     const sessionPath = resolve(process.cwd(), "..", "data", "session", "current-user.json");
@@ -372,20 +381,27 @@ export function getTrustScore(athleteId = defaultAthleteId) {
     return { athleteId, score: 0, tier: "low", factors: [] } satisfies TrustScore;
   }
 
-  const trust = requireSeed(seedTrustScores.find((item) => item.athleteId === athleteId), `trust score ${athleteId}`);
   const documents = getSupportingDocuments();
-  if (!documents.length) {
-    return trust;
-  }
+  const films = getFilms(athleteId);
+  const stats = getStats(athleteId);
+  const profile = getAthleteProfile(athleteId);
+  const brand = getBrandProfile(athleteId);
+  const hasBrandLinks = Object.values(brand.handles).some(Boolean);
+  const hasCoreProfile = Boolean(profile.fullName && profile.sport && profile.primaryPosition && profile.schoolName);
+  const score = [hasCoreProfile ? 20 : 0, documents.length ? 20 : 0, films.length ? 20 : 0, stats.length ? 20 : 0, hasBrandLinks ? 10 : 0].reduce((sum, value) => sum + value, 0);
+  const tier: TrustScore["tier"] = score >= 85 ? "excellent" : score >= 65 ? "good" : score >= 35 ? "fair" : "low";
 
   return {
-    ...trust,
-    score: Math.min(100, trust.score + 2),
-    factors: trust.factors.map((factor) =>
-      factor.factor === "film_uploaded"
-        ? { ...factor, label: "Documents Uploaded", detail: `${documents.length} supporting document${documents.length === 1 ? "" : "s"} uploaded and pending review.` }
-        : factor
-    )
+    athleteId,
+    score,
+    tier,
+    factors: [
+      { label: "Profile Data", factor: "profile_data", status: hasCoreProfile ? "met" : "unmet", weight: 0.2, displayWeight: "20%", detail: hasCoreProfile ? "Core athlete profile fields are saved." : "Complete sport, position, and school fields." },
+      { label: "Documents", factor: "documents", status: documents.length ? "partial" : "unmet", weight: 0.2, displayWeight: "20%", detail: documents.length ? `${documents.length} document${documents.length === 1 ? "" : "s"} uploaded and pending review.` : "Upload transcript, stat sheet, or supporting evidence." },
+      { label: "Film", factor: "film_uploaded", status: films.length ? "partial" : "unmet", weight: 0.2, displayWeight: "20%", detail: films.length ? `${films.length} real film upload${films.length === 1 ? "" : "s"} saved.` : "Upload real film before film signals can count." },
+      { label: "Stats", factor: "stats", status: stats.length ? "partial" : "unmet", weight: 0.2, displayWeight: "20%", detail: stats.length ? "Saved or public-record stats are attached." : "No saved or matched stats yet." },
+      { label: "Brand Links", factor: "brand_links", status: hasBrandLinks ? "met" : "unmet", weight: 0.1, displayWeight: "10%", detail: hasBrandLinks ? "Athlete-entered brand links are connected." : "Connect brand links from the Profile page." }
+    ]
   } satisfies TrustScore;
 }
 
@@ -396,46 +412,77 @@ export function getOpportunityScore(athleteId = defaultAthleteId) {
 
   const recentProfileViews = getBrandProfile(athleteId).metrics.profileClicks;
   const activeMatches = getCollegeMatches(athleteId).length;
-  const coachOpens = 2;
-  const recruiterReplies = seedMessages.filter((message) => message.participantRole === "recruiter").length;
-  const daysSinceFilm = 3;
+  const coachOpens = getCoachConnection().connected ? 1 : 0;
+  const recruiterReplies = getMessages().filter((message) => message.participantRole === "recruiter").length;
+  const uploadedFilms = getUploadedMedia().films ?? [];
+  const latestUpload = uploadedFilms
+    .map((item) => Date.parse(item.uploadedAt ?? ""))
+    .filter(Number.isFinite)
+    .sort((a, b) => b - a)[0];
+  const daysSinceFilm = latestUpload ? Math.max(0, Math.floor((Date.now() - latestUpload) / 86400000)) : 30;
 
   return opportunityEngine.computeScore({ recentProfileViews, activeMatches, coachOpens, recruiterReplies, daysSinceFilm });
 }
 
 export function getCollegeMatches(athleteId = defaultAthleteId) {
-  if (!hasRealAthleteProfile()) return [];
-  return seedMatches.filter((match) => match.athleteId === athleteId).sort((a, b) => b.matchPct - a.matchPct);
+  return readUserState<{ matches?: typeof seedMatches }>("recruiting.json", { matches: [] }).matches?.filter((match) => match.athleteId === athleteId).sort((a, b) => b.matchPct - a.matchPct) ?? [];
 }
 
-export function getOpportunities(athleteId = defaultAthleteId) {
-  if (!hasRealAthleteProfile()) return [];
-  return opportunityEngine.rankFeed(seedOpportunities.filter((item) => item.athleteId === athleteId));
+export function getOpportunities(athleteId = defaultAthleteId): RecruitingOpportunity[] {
+  const saved = readUserState<{ opportunities?: RecruitingOpportunity[] }>("opportunities.json", { opportunities: [] }).opportunities ?? [];
+  return opportunityEngine.rankFeed(saved.filter((item) => item.athleteId === athleteId));
 }
 
-export function getTimelineEvents(athleteId = defaultAthleteId) {
-  if (!hasRealAthleteProfile()) return [];
-  return seedTimelineEvents.filter((event) => event.athleteId === athleteId);
+export function getTimelineEvents(athleteId = defaultAthleteId): TimelineEvent[] {
+  return readUserState<{ events?: TimelineEvent[] }>("timeline.json", { events: [] }).events?.filter((event) => event.athleteId === athleteId) ?? [];
 }
 
-export function getCalendarEvents(athleteId = defaultAthleteId) {
-  if (!hasRealAthleteProfile()) return [];
-  return seedCalendarEvents.filter((event) => event.athleteId === athleteId);
+export function getCalendarEvents(athleteId = defaultAthleteId): CalendarEvent[] {
+  return readUserState<{ events?: CalendarEvent[] }>("calendar.json", { events: [] }).events?.filter((event) => event.athleteId === athleteId) ?? [];
 }
 
-export function getGames(athleteId = defaultAthleteId) {
-  if (!hasRealAthleteProfile()) return [];
-  return seedGames.filter((game) => game.athleteId === athleteId);
+export function getGames(athleteId = defaultAthleteId): Game[] {
+  const uploadedFilms = getUploadedMedia().films ?? [];
+  return uploadedFilms.map((film, index) => ({
+    id: `uploaded-game-${index}-${Date.parse(film.uploadedAt ?? "") || index}`,
+    athleteId,
+    opponent: film.title || film.name || "Uploaded film",
+    gameDate: film.uploadedAt ?? new Date().toISOString(),
+    location: "Athlete upload",
+    source: "upload",
+    status: "ready",
+    highlightCount: 0
+  })) satisfies Game[];
 }
 
-export function getFilms(athleteId = defaultAthleteId) {
-  if (!hasRealAthleteProfile()) return [];
-  return seedFilms.filter((film) => film.athleteId === athleteId);
+export function getFilms(athleteId = defaultAthleteId): Film[] {
+  const uploadedFilms = getUploadedMedia().films ?? [];
+  return uploadedFilms.map((film, index) => ({
+    id: `uploaded-film-${index}-${Date.parse(film.uploadedAt ?? "") || index}`,
+    athleteId,
+    gameId: `uploaded-game-${index}-${Date.parse(film.uploadedAt ?? "") || index}`,
+    title: film.title || film.name || "Uploaded film",
+    type: "full_game",
+    durationSeconds: 0,
+    processingState: "ready",
+    viewCount: 0,
+    videoUrl: film.url
+  })) satisfies Film[];
 }
 
-export function getHighlights(athleteId = defaultAthleteId) {
-  if (!hasRealAthleteProfile()) return [];
-  return seedHighlights.filter((highlight) => highlight.athleteId === athleteId).sort((a, b) => b.score - a.score);
+export function getHighlights(athleteId = defaultAthleteId): Highlight[] {
+  const uploadedHighlights = getUploadedMedia().highlights ?? [];
+  return uploadedHighlights.map((highlight, index) => ({
+    id: `uploaded-highlight-${index}-${Date.parse(highlight.uploadedAt ?? "") || index}`,
+    athleteId,
+    gameId: `uploaded-highlight-game-${index}`,
+    title: highlight.title || highlight.name || "Uploaded highlight",
+    playType: "Uploaded media",
+    score: 0,
+    verified: false,
+    published: true,
+    videoUrl: highlight.url
+  })) satisfies Highlight[];
 }
 
 export function getAthleteHeroMedia(athleteId = defaultAthleteId): AthleteHeroMedia {
@@ -587,31 +634,23 @@ export function getSupportingDocuments() {
 }
 
 export function getMessages() {
-  if (!hasRealAthleteProfile()) return [];
-  return seedMessages;
+  return readUserState<{ threads?: typeof seedMessages }>("messages.json", { threads: [] }).threads ?? [];
 }
 
 export function getBrandProfile(athleteId = defaultAthleteId) {
-  const seedBrand = requireSeed(seedBrandProfiles.find((brand) => brand.athleteId === athleteId), `brand profile ${athleteId}`);
+  const emptyBrandProfile: AthleteBrandProfile = {
+    athleteId,
+    handles: { ...emptyBrandHandles },
+    latestPosts: [],
+    metrics: { followers: 0, weeklyReach: 0, engagementRate: 0, profileClicks: 0 },
+    agentRecommendations: ["Connect your real athlete brand links after profile setup."]
+  };
+  const seedBrand: AthleteBrandProfile = seedBrandProfiles.find((brand) => brand.athleteId === athleteId) ?? emptyBrandProfile;
 
   try {
     const filePath = resolve(process.cwd(), "..", "data", "user-state", "brand-links.json");
     if (!existsSync(filePath)) {
-      if (!hasRealAthleteProfile()) {
-        return {
-          athleteId,
-          handles: { ...emptyBrandHandles },
-          latestPosts: [],
-          metrics: {
-            followers: 0,
-            weeklyReach: 0,
-            engagementRate: 0,
-            profileClicks: 0
-          },
-          agentRecommendations: ["Connect your real athlete brand links after profile setup."]
-        };
-      }
-      return seedBrand;
+      return emptyBrandProfile;
     }
     const saved = readUserState<Partial<Record<SocialPlatform, string>>>("brand-links.json", {});
     const savedHandles: Record<SocialPlatform, string> = { ...emptyBrandHandles };
@@ -628,7 +667,7 @@ export function getBrandProfile(athleteId = defaultAthleteId) {
         followers: 0,
         weeklyReach: 0,
         engagementRate: 0,
-        profileClicks: seedBrand.metrics.profileClicks
+        profileClicks: 0
       },
       agentRecommendations: [
         "Add your strongest verified film and recruiting profile link to each connected platform bio.",
@@ -636,20 +675,18 @@ export function getBrandProfile(athleteId = defaultAthleteId) {
       ]
     };
   } catch {
-    return seedBrand;
+    return emptyBrandProfile;
   }
 }
 
 export function getCoachConnection() {
-  if (!hasRealAthleteProfile()) {
-    return { name: "Coach not connected", title: "Coach", orgName: "No school connected", connected: false };
-  }
-
-  const coach = requireSeed(seedCoachProfiles[0], "coach profile");
-  const user = requireSeed(seedUsers.find((item) => item.id === coach.userId), "coach user");
-  const org = requireSeed(seedOrgs.find((item) => item.id === coach.orgId), "coach org");
-
-  return { name: user.fullName, title: coach.title, orgName: org.name, connected: coach.verified };
+  const saved = readUserState<{ coachName?: string; coachTitle?: string; organizationName?: string; verified?: boolean }>("coach-connection.json", {});
+  return {
+    name: saved.coachName || "Coach not connected",
+    title: saved.coachTitle || "Coach",
+    orgName: saved.organizationName || "No school connected",
+    connected: Boolean(saved.verified)
+  };
 }
 
 export function getCoachDashboard() {
@@ -675,20 +712,22 @@ export function getCoachDashboard() {
     };
   }
 
-  const coach = requireSeed(seedCoachProfiles[0], "coach dashboard");
   return {
-    coach,
+    coach: {
+      id: "coach-profile-current",
+      userId: "current-user",
+      orgId: "",
+      title: "Coach",
+      verified: false,
+      verificationQueueCount: 0
+    },
     priorities: [
-      { title: "3 athletes need stat verification", detail: "Start with Jayden because his outreach is ready.", tone: "yellow" as const },
-      { title: "4 highlight reels waiting for review", detail: "Two are ready for recruiter sharing.", tone: "blue" as const },
-      { title: "One athlete reached a 95 Trust Score", detail: "Agent recommends notifying the roster.", tone: "green" as const },
-      { title: "Two athletes have incomplete profiles", detail: "Academics and measurables are missing.", tone: "silver" as const }
+      { title: "Verify coaching affiliation", detail: "Find your school and submit affiliation before managing athlete verification.", tone: "yellow" as const },
+      { title: "Connect team roster", detail: "No team roster is connected yet.", tone: "silver" as const }
     ],
     missionCards: [
-      { title: "Verification Queue", detail: "Pending stats, roster, and game data.", badge: String(coach.verificationQueueCount), tone: "yellow" as const },
-      { title: "Team Trust Overview", detail: "Roster score distribution and movers.", badge: "Live", tone: "green" as const },
-      { title: "Recruiter Activity", detail: "Views and interest across your roster.", badge: "8", tone: "blue" as const },
-      { title: "Upcoming Games", detail: "Streams, schedule, and context status.", badge: "Ready", tone: "blue" as const }
+      { title: "Verification Queue", detail: "No imported roster/player records pending yet.", badge: "0", tone: "silver" as const },
+      { title: "Team Trust Overview", detail: "Connect a team to view trust distribution.", badge: "Setup", tone: "yellow" as const }
     ]
   };
 }
@@ -711,44 +750,42 @@ export function getRecruiterDashboard() {
   }
 
   return {
-    recruiter: requireSeed(seedRecruiterProfiles[0], "recruiter dashboard"),
-    prospects: [
-      { title: "Jayden Lewis", detail: "QB - Trust 82 - Opportunity 95", value: "95%" },
-      { title: "Malik Johnson", detail: "CB - Trust 88 - New reel posted", value: "89%" },
-      { title: "Aiden Torres", detail: "QB - Coach recommendation added", value: "84%" }
-    ],
+    recruiter: {
+      id: "recruiter-profile-current",
+      userId: "current-user",
+      orgId: "",
+      territory: [],
+      positionGroups: [],
+      verified: false
+    },
+    prospects: [],
     filters: ["Position", "Grad Year", "GPA", "Trust Score", "Opportunity Score", "State", "School", "Sport", "Distance", "Height", "Weight"]
   };
 }
 
 export function getAdminDashboard() {
+  const runs = readAllPublicImportRuns();
+  const pendingReview = runs.reduce((sum, run) => sum + (run.reviewQueue?.length ?? 0), 0);
   return {
-    queue: [
-      { title: "Public data conflict", detail: "Public roster conflicts with coach-verified jersey.", badge: "Review", tone: "yellow" as const },
-      { title: "Coach identity check", detail: "Manual school affiliation approval required.", badge: "Pending", tone: "blue" as const },
-      { title: "Stream health", detail: "Friday game input created and healthy.", badge: "Ready", tone: "green" as const }
-    ]
+    queue: pendingReview
+      ? [{ title: "Imported public records need review", detail: `${pendingReview} low-confidence record${pendingReview === 1 ? "" : "s"} across ${runs.length} import run${runs.length === 1 ? "" : "s"}.`, badge: "Review", tone: "yellow" as const }]
+      : []
   };
 }
 
 function getMissionItems(): MissionItem[] {
-  if (!hasRealAthleteProfile()) {
-    return [
-      { label: "Create Athlete Profile", meta: "Not started", state: "queued" },
-      { label: "Choose School / Team / Sport", meta: "Not started", state: "queued" },
-      { label: "Claim Public Roster Profile", meta: "Optional when available", state: "queued" },
-      { label: "Upload First Highlight", meta: "Not started", state: "queued" },
-      { label: "Invite Coach Verification", meta: "Not started", state: "queued" }
-    ];
-  }
-
+  const athlete = getAthleteProfile();
+  const stats = getStats();
+  const films = getFilms();
+  const documents = getSupportingDocuments();
+  const coachConnected = getCoachConnection().connected;
+  const hasCoreProfile = hasRealAthleteProfile() && Boolean(athlete.sport && athlete.primaryPosition && athlete.schoolName);
   return [
-    { label: "Create Athlete Profile", meta: "Completed", state: "done" },
-    { label: "Add Academic Information", meta: "Completed", state: "done" },
-    { label: "Upload Highlight Reel", meta: "Completed", state: "done" },
-    { label: "Coach Verification", meta: "2 actions pending", state: "active" },
-    { label: "Send Outreach", meta: "2 emails drafted", state: "active" },
-    { label: "Visit Colleges", meta: "3 visits planned", state: "queued" }
+    { label: "Create Athlete Profile", meta: hasCoreProfile ? "Completed" : "Not started", state: hasCoreProfile ? "done" : "queued" },
+    { label: "Add Academic Information", meta: stats.some((stat) => ["GPA", "SAT", "ACT"].includes(stat.metric)) ? "Saved" : "Not started", state: stats.some((stat) => ["GPA", "SAT", "ACT"].includes(stat.metric)) ? "done" : "queued" },
+    { label: "Upload Film", meta: films.length ? `${films.length} upload${films.length === 1 ? "" : "s"} saved` : "Not started", state: films.length ? "done" : "queued" },
+    { label: "Upload Supporting Documents", meta: documents.length ? `${documents.length} pending review` : "Not started", state: documents.length ? "active" : "queued" },
+    { label: "Invite Coach Verification", meta: coachConnected ? "Connected" : "Not started", state: coachConnected ? "done" : "queued" }
   ];
 }
 
@@ -768,10 +805,10 @@ function getMissionStatus(athleteId: string) {
   }
 
   return [
-    { label: "Profile Completion", value: `${athlete.completionPct}%`, detail: "Transcript and second coach link remain." },
-    { label: "Trust Score", value: `${trust.score}`, detail: "Good tier - verification is moving." },
-    { label: "Opportunity Score", value: `${score.score}`, detail: "Views, replies, and film freshness." },
-    { label: "Recruiting Progress", value: toTitle(furthestStage), detail: "Furthest stage across active matches." }
+    { label: "Profile Completion", value: `${athlete.completionPct}%`, detail: "Based on saved athlete profile fields." },
+    { label: "Trust Score", value: `${trust.score}`, detail: trust.score ? "Verification signals are building from saved data." : "No verified trust signals yet." },
+    { label: "Opportunity Score", value: `${score.score}`, detail: score.score ? "Based on real profile, media, and engagement signals." : "No opportunity signals found yet." },
+    { label: "Recruiting Progress", value: getCollegeMatches(athleteId).length ? toTitle(furthestStage) : "Not Started", detail: "No active recruiting pipeline yet." }
   ];
 }
 
@@ -810,7 +847,7 @@ export function getDailyBrief(athleteId = defaultAthleteId) {
       reasons: match.reasons
     })),
     opportunities: getOpportunities(athleteId),
-    nextGame: "Friday against Pine Creek",
+    nextGame: getCalendarEvents(athleteId)[0]?.title ?? "No upcoming game connected",
     intentContext: getAgentIntentContext(athleteId)
   });
 }
@@ -829,13 +866,15 @@ export function getCommandCenterData(athleteId = defaultAthleteId): CommandCente
     ...item,
     state: (index === 0 ? "active" : item.state) as TimelineState
   }));
+  const missionItems = getMissionItems();
+  const missionCompletion = missionItems.length ? Math.round((missionItems.filter((item) => item.state === "done").length / missionItems.length) * 100) : 0;
 
   return {
     athlete,
     trustScore: getTrustScore(athleteId),
     opportunityScore: getOpportunityScore(athleteId),
     missionStatus: getMissionStatus(athleteId),
-    todayMission: { completionPct: 73, items: getMissionItems() },
+    todayMission: { completionPct: missionCompletion, items: missionItems },
     dailyBrief: getDailyBrief(athleteId),
     opportunities: getOpportunities(athleteId),
     timeline,

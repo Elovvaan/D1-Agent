@@ -15,6 +15,7 @@ export type ProfilePictureActionState = {
 };
 
 const PROFILE_PICTURE_MAX_BYTES = 5 * 1024 * 1024;
+const FILM_UPLOAD_MAX_BYTES = 10 * 1024 * 1024;
 const HERO_VIDEO_MAX_BYTES = 50 * 1024 * 1024;
 
 function value(formData: FormData, key: string) {
@@ -524,17 +525,31 @@ export async function saveHeroBackgroundVideo(formData: FormData) {
 }
 
 export async function saveFilmUpload(formData: FormData) {
-  const file = formData.get("film");
-  const upload = await saveUploadedFile(file instanceof File ? file : new File([], ""), "film");
-  const dir = resolve(process.cwd(), "..", "data", "user-state");
-  const filePath = userStatePath("uploads.json");
-  await mkdir(dir, { recursive: true });
-  const existing = await readJsonFile<{ films?: Array<Record<string, string>> }>(filePath, { films: [] });
-  const films = Array.isArray(existing.films) ? existing.films : [];
+  let status = "film-uploaded";
+  try {
+    const file = formData.get("film");
+    if (!(file instanceof File) || file.size === 0) {
+      throw new Error("No film file selected.");
+    }
+    if (!file.type.startsWith("video/")) {
+      throw new Error("Choose a video file.");
+    }
+    if (file.size > FILM_UPLOAD_MAX_BYTES) {
+      throw new Error("Film upload exceeds the V1 local upload limit.");
+    }
+    const upload = await saveUploadedFile(file, "film", "video");
+    const dir = resolve(process.cwd(), "..", "data", "user-state");
+    const filePath = userStatePath("uploads.json");
+    await mkdir(dir, { recursive: true });
+    const existing = await readJsonFile<{ films?: Array<Record<string, string>> }>(filePath, { films: [] });
+    const films = Array.isArray(existing.films) ? existing.films : [];
 
-  await writeFile(filePath, `${JSON.stringify({ ...existing, films: [{ ...upload, title: value(formData, "title") || upload.name }, ...films] }, null, 2)}\n`, "utf8");
-  revalidatePath("/film");
-  redirect("/film?status=film-uploaded");
+    await writeFile(filePath, `${JSON.stringify({ ...existing, films: [{ ...upload, title: value(formData, "title") || upload.name }, ...films] }, null, 2)}\n`, "utf8");
+    revalidatePath("/film");
+  } catch {
+    status = "film-upload-error";
+  }
+  redirect(`/film?status=${status}`);
 }
 
 export async function saveHighlightUpload(formData: FormData) {

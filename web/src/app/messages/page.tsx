@@ -45,10 +45,13 @@ export default async function MessagesPage({ searchParams }: { searchParams?: Pr
               tone={message.participantRole === "coach" ? "green" : message.participantRole === "ops" ? "yellow" : "blue"}
             />
           ))}
+          {!messages.length ? (
+            <p className="rounded-2xl border border-[#E4E9F1] bg-[#FAFBFD] p-4 text-sm font-semibold text-[#66718F]">No messages yet.</p>
+          ) : null}
         </Card>
         <div className="grid gap-4">
-          <StatCard label="Unread" value={`${unread}`} detail="Coach, recruiter, and D1 Ops threads." icon={Inbox} />
-          <StatCard label="Response SLA" value="94%" detail="Agent triage keeps reply timing sharp." icon={MessageCircle} tone="green" />
+          <StatCard label="Unread" value={`${unread}`} detail="Unread messages from real D1 inbox threads." icon={Inbox} />
+          <StatCard label="Response SLA" value="N/A" detail="Response timing appears after real conversations exist." icon={MessageCircle} tone="silver" />
         </div>
       </div>
     </AppShell>

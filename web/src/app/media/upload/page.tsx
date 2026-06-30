@@ -58,7 +58,7 @@ export default async function MediaPartnerUploadPage({
           <Field name="teamName" label="Team" placeholder="Varsity Football" />
           <Field name="gameName" label="Game" placeholder="North Ridge vs Central" />
           <Field name="sport" label="Sport" placeholder="Football" />
-          <Field name="taggedAthletes" label="Tagged Athletes" placeholder="Jayden Lewis, #7, QB" />
+          <Field name="taggedAthletes" label="Tagged Athletes" placeholder="Athlete name, jersey number, position" />
           <label className="grid gap-2">
             <span className="text-xs font-black uppercase tracking-[0.12em] text-[#66718F]">Usage / Licensing</span>
             <select className="min-h-11 rounded-2xl border border-[#C7CDD6] bg-white px-4 text-sm font-semibold outline-none" name="licenseState">

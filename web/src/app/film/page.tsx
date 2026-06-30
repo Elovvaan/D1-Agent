@@ -1,9 +1,9 @@
 import { Clapperboard, CloudUpload, PlayCircle, Radio, Video } from "lucide-react";
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { saveFilmUpload } from "@/app/actions/public-profile-actions";
 import { AppShell } from "@/components/app-shell";
 import { Badge, Button, Card, ObjectList, PageHeader, SectionTitle, StatCard } from "@/components/design-system";
+import { FilmUploadForm } from "@/components/film-upload-form";
 import { getFilms, getGames, getHighlights, toTitle } from "@/lib/data/services";
 
 function readUploads() {
@@ -20,7 +20,8 @@ function readUploads() {
 }
 
 const statusCopy: Record<string, string> = {
-  "film-uploaded": "Film uploaded and added to your library."
+  "film-uploaded": "Film uploaded and added to your library.",
+  "film-upload-error": "Film could not be uploaded. Choose a valid video within the supported size limit."
 };
 
 export default async function FilmPage({ searchParams }: { searchParams?: Promise<{ status?: string }> }) {
@@ -34,7 +35,7 @@ export default async function FilmPage({ searchParams }: { searchParams?: Promis
     detail: `${toTitle(game.source)} full game - ${game.highlightCount} highlights ${game.status === "ready" ? "ready" : game.status}`,
     badge: toTitle(game.status),
     tone: game.status === "ready" ? ("green" as const) : game.status === "processing" ? ("yellow" as const) : ("blue" as const),
-    icon: game.source === "stream" ? Radio : game.source === "upload" ? PlayCircle : Video
+    icon: game.source === "upload" ? PlayCircle : Video
   }));
 
   return (
@@ -54,20 +55,10 @@ export default async function FilmPage({ searchParams }: { searchParams?: Promis
         <div className="grid gap-6">
           <Card id="upload-film">
             <SectionTitle title="Upload Film" caption="Uploaded files are stored locally and immediately appear in the game library." />
-            <form action={saveFilmUpload} className="grid gap-4 md:grid-cols-[1fr_1fr_auto] md:items-end">
-              <label className="grid gap-2 text-sm font-black text-[#0A1A3F]">
-                Film title
-                <input className="rounded-xl border border-[#C7CDD6] bg-white px-3 py-2 text-sm font-semibold" name="title" placeholder="Varsity Game vs Central" required />
-              </label>
-              <label className="grid gap-2 text-sm font-black text-[#0A1A3F]">
-                Video file
-                <input className="rounded-xl border border-[#C7CDD6] bg-white px-3 py-2 text-sm font-semibold text-[#66718F]" name="film" type="file" accept="video/*" required />
-              </label>
-              <Button variant="cta"><CloudUpload size={17} /> Upload</Button>
-            </form>
+            <FilmUploadForm />
           </Card>
           <Card>
-            <SectionTitle title="Game Library" action={<Badge tone="blue">{games.length + uploads.films.length} active games</Badge>} />
+            <SectionTitle title="Game Library" action={<Badge tone={films.length ? "blue" : "silver"}>{films.length} active games</Badge>} />
             {uploads.films.length ? (
               <div className="mb-4 grid gap-3">
                 {uploads.films.map((film) => (
@@ -85,12 +76,15 @@ export default async function FilmPage({ searchParams }: { searchParams?: Promis
               </div>
             ) : null}
             <ObjectList items={gameItems} />
+            {!uploads.films.length && !gameItems.length ? (
+              <p className="mt-4 rounded-2xl border border-[#E4E9F1] bg-[#FAFBFD] p-4 text-sm font-semibold text-[#66718F]">No film uploaded yet. Upload real game or practice film to build your library.</p>
+            ) : null}
           </Card>
         </div>
         <div className="grid gap-4">
-          <StatCard label="Full Games" value={`${films.length + uploads.films.length}`} detail="Stored and indexed for recruiting workflows." icon={Video} />
-          <StatCard label="AI Highlights" value={`${highlights.length}`} detail="Ranked by highlight-worthiness." icon={Clapperboard} tone="yellow" />
-          <StatCard label="Stream Status" value="Ready" detail="Managed live input provisioned." icon={Radio} tone="green" />
+          <StatCard label="Full Games" value={`${films.length}`} detail="Stored and indexed for recruiting workflows." icon={Video} />
+          <StatCard label="AI Highlights" value={`${highlights.length}`} detail={highlights.length ? "Saved highlights are available." : "No highlights generated yet."} icon={Clapperboard} tone="yellow" />
+          <StatCard label="Stream Status" value="Not connected" detail="Livestream ingestion is not connected yet." icon={Radio} tone="silver" />
         </div>
       </div>
     </AppShell>

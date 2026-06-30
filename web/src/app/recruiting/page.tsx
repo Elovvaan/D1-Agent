@@ -1,7 +1,7 @@
-import { Filter, GraduationCap, MapPin, Save, Target } from "lucide-react";
+import { Filter, GraduationCap, Save, Target } from "lucide-react";
 import { recordUnavailableAction } from "@/app/actions/public-profile-actions";
 import { AppShell } from "@/components/app-shell";
-import { Badge, Button, Card, ObjectList, PageHeader, SectionTitle, StatCard } from "@/components/design-system";
+import { Badge, Button, Card, PageHeader, SectionTitle, StatCard } from "@/components/design-system";
 import { getCollegeMatches } from "@/lib/data/services";
 
 const statusCopy: Record<string, string> = {
@@ -58,20 +58,17 @@ export default async function RecruitingPage({ searchParams }: { searchParams?: 
                 </div>
               </div>
             ))}
+            {!matches.length ? (
+              <p className="rounded-2xl border border-[#E4E9F1] bg-[#FAFBFD] p-4 text-sm font-semibold text-[#66718F]">No recruiting targets yet. Complete your profile, upload film, and import verified stats before the match engine ranks schools.</p>
+            ) : null}
           </div>
         </Card>
         <div className="grid gap-4">
           <StatCard label="Active Matches" value={`${matches.length}`} detail="Programs currently ranked by the Agent." icon={Target} />
-          <StatCard label="Academic Fit" value={`${Math.max(1, matches.length - 1)}/${matches.length}`} detail="Matches clearing GPA profile." icon={GraduationCap} tone="green" />
+          <StatCard label="Academic Fit" value={matches.length ? `${matches.filter((match) => match.reasons.some((reason) => reason.toLowerCase().includes("gpa") || reason.toLowerCase().includes("academic"))).length}/${matches.length}` : "0/0"} detail="Matches clearing saved academic profile." icon={GraduationCap} tone="green" />
           <Card>
             <SectionTitle title="Smart Filter Set" />
-            <ObjectList
-              items={[
-                { title: "Position", detail: "Quarterback", badge: "QB", icon: Target },
-                { title: "Region", detail: "Mountain West + Midwest", badge: "Active", icon: MapPin, tone: "green" },
-                { title: "Division", detail: "D1 and D2 realistic fits", badge: "Balanced", icon: GraduationCap, tone: "yellow" }
-              ]}
-            />
+            <p className="rounded-2xl border border-[#E4E9F1] bg-[#FAFBFD] p-4 text-sm font-semibold text-[#66718F]">No saved recruiting filters yet.</p>
           </Card>
         </div>
       </div>

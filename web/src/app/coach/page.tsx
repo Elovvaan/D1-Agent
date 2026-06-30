@@ -12,7 +12,7 @@ export default async function CoachCommandCenterPage() {
     <AppShell>
       <PageHeader
         eyebrow="Coach agent"
-        title="Good Morning, Coach Davis."
+        title="Coach Command Center"
         description="The Coach Agent ranks roster-wide priorities by recruiting impact so your verification work moves the right athletes first."
         action={<Button href="/coach/imported-verification" variant="primary"><ClipboardCheck size={17} /> Open Verification Queue</Button>}
       />
@@ -20,8 +20,8 @@ export default async function CoachCommandCenterPage() {
         <div className="grid gap-6">
           <div className="grid gap-4 md:grid-cols-3">
             <StatCard label="Verification Queue" value={`${importedQueue.length}`} detail="Imported roster/player records pending." icon={ClipboardCheck} />
-            <StatCard label="Team Trust" value="74" detail="Average score, two athletes rising." icon={ShieldCheck} tone="green" />
-            <StatCard label="Livestream" value="Ready" detail="Friday input is provisioned." icon={Radio} tone="yellow" />
+            <StatCard label="Team Trust" value="N/A" detail="Connect a team roster to view trust distribution." icon={ShieldCheck} tone="silver" />
+            <StatCard label="Livestream" value="Not connected" detail="No live stream input is provisioned." icon={Radio} tone="silver" />
           </div>
           <Card>
             <SectionTitle title="Today's Priorities" action={<Badge tone="yellow">Ranked by Agent</Badge>} />

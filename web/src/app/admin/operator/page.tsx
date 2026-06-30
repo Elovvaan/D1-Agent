@@ -140,8 +140,8 @@ export default async function OperatorBackendPage({
                   <input className="rounded-2xl border border-[#C7CDD6] bg-white px-4 py-3 text-sm font-semibold text-[#0A1A3F]" name="mediaFile" type="file" />
                 </label>
                 <SelectField name="attachedToType" label="Attach To" options={[{ label: "Athlete", value: "athlete" }, { label: "Team", value: "team" }, { label: "Game", value: "game" }, { label: "School", value: "school" }]} />
-                <Field name="attachedToName" label="Entity Name" placeholder="Jayden Lewis or Falcons varsity football" required />
-                <Field name="tags" label="Tagged Players" placeholder="Jayden Lewis, #7, QB" />
+                <Field name="attachedToName" label="Entity Name" placeholder="Athlete name or team name" required />
+                <Field name="tags" label="Tagged Players" placeholder="Athlete name, jersey number, position" />
                 <SelectField name="visibility" label="Visibility" options={[{ label: "Private", value: "private" }, { label: "Recruiters Only", value: "recruiters_only" }, { label: "Public", value: "public" }]} />
                 <Button variant="primary"><Camera size={17} /> Queue Media</Button>
               </form>
@@ -153,7 +153,7 @@ export default async function OperatorBackendPage({
               <SectionTitle title="Add Game Notes" caption="Notes can later create timeline events after approval." />
               <form action={submitOperatorFieldNote} className="grid gap-3">
                 <Field name="subject" label="Subject" placeholder="Sideline note" required />
-                <Field name="relatedEntity" label="Related Athlete / Team / Game" placeholder="Jayden Lewis" required />
+                <Field name="relatedEntity" label="Related Athlete / Team / Game" placeholder="Athlete, team, or game name" required />
                 <label className="grid gap-2">
                   <span className="text-xs font-black uppercase tracking-[0.12em] text-[#66718F]">Note</span>
                   <textarea className="min-h-28 rounded-2xl border border-[#C7CDD6] bg-white px-4 py-3 text-sm font-semibold text-[#0A1A3F] outline-none placeholder:text-[#8A94AA]" name="note" placeholder="Field coverage context, play detail, or publication note" required />
@@ -165,7 +165,7 @@ export default async function OperatorBackendPage({
             <Card>
               <SectionTitle title="Add Unofficial Stats" caption="Operator stats are never Coach Verified until a coach verifies them later." />
               <form action={submitOperatorStatReport} className="grid gap-3">
-                <Field name="playerName" label="Player" placeholder="Jayden Lewis" required />
+                <Field name="playerName" label="Player" placeholder="Athlete name" required />
                 <Field name="gameName" label="Game" placeholder="Falcons vs Tigers" required />
                 <Field name="metric" label="Metric" placeholder="Passing yards" required />
                 <Field name="statValue" label="Value" placeholder="248" required />

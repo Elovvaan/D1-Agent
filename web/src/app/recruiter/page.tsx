@@ -18,7 +18,7 @@ export default async function RecruiterCommandCenterPage({ searchParams }: { sea
         eyebrow="Recruiter agent"
         title="Recruiter Command Center"
         description="An AI recruiting assistant that maintains the board, applies smart filters, and surfaces verified rising prospects."
-        action={<Button href="/athletes/ath-jayden-lewis" variant="primary"><Search size={17} /> Discover Athletes</Button>}
+        action={<Button href="/search" variant="primary"><Search size={17} /> Discover Athletes</Button>}
       />
       {params.status && statusCopy[params.status] ? (
         <div className="mb-6 rounded-2xl border border-[#F7DC67] bg-[#FFF5C7] px-4 py-3 text-sm font-black text-[#745E00]" role="status">
@@ -28,21 +28,24 @@ export default async function RecruiterCommandCenterPage({ searchParams }: { sea
       <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
         <div className="grid gap-6">
           <div className="grid gap-4 md:grid-cols-3">
-            <StatCard label="Watchlist" value="12" detail="Verified athletes with fresh activity." icon={Star} />
-            <StatCard label="Rising Prospects" value="4" detail="Trust or Opportunity Score climbed." icon={Sparkles} tone="yellow" />
-            <StatCard label="Updated Reels" value="7" detail="New film since last brief." icon={Eye} tone="green" />
+            <StatCard label="Watchlist" value={`${dashboard.prospects.length}`} detail="Verified athletes saved by this recruiter." icon={Star} />
+            <StatCard label="Rising Prospects" value="0" detail="No verified prospect movement yet." icon={Sparkles} tone="yellow" />
+            <StatCard label="Updated Reels" value="0" detail="No athlete-approved reel updates yet." icon={Eye} tone="green" />
           </div>
           <Card>
             <SectionTitle title="Recruiter Daily Brief" action={<Badge tone="blue">Verified only</Badge>} />
             <ObjectList
               items={
-                dashboard.prospects.map((prospect, index) => ({
+                dashboard.prospects.map((prospect: { title: string; detail: string; value?: string }, index) => ({
                   ...prospect,
                   icon: index === 0 ? Target : index === 1 ? Star : GraduationCap,
                   tone: index === 0 ? ("green" as const) : index === 1 ? ("yellow" as const) : ("blue" as const)
                 }))
               }
             />
+            {!dashboard.prospects.length ? (
+              <p className="mt-4 rounded-2xl border border-[#E4E9F1] bg-[#FAFBFD] p-4 text-sm font-semibold text-[#66718F]">No recruiter prospects yet. Use public search to discover real imported or public athlete records.</p>
+            ) : null}
           </Card>
         </div>
         <Card>

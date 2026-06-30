@@ -47,7 +47,7 @@ export default async function CalendarPage({ searchParams }: { searchParams?: Pr
         <div className="grid gap-4">
           <StatCard label="Games" value={`${events.filter((event) => event.kind === "live_stream").length}`} detail="Tied to stream or upload workflows." icon={Radio} />
           <StatCard label="Showcases" value={`${events.filter((event) => event.kind === "camp" || event.kind === "event").length}`} detail="Agent ranked by recruiting impact." icon={Trophy} tone="yellow" />
-          <StatCard label="Visits" value={`${events.filter((event) => event.kind === "visit").length}`} detail="State University official visit." icon={MapPin} tone="green" />
+          <StatCard label="Visits" value={`${events.filter((event) => event.kind === "visit").length}`} detail="No visits appear until saved calendar events exist." icon={MapPin} tone="green" />
         </div>
       </div>
     </AppShell>

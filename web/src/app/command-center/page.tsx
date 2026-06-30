@@ -15,21 +15,20 @@ import { AppShell } from "@/components/app-shell";
 import { Badge, Button, Card } from "@/components/design-system";
 import { getAthleteHeroMedia, getCommandCenterData, toTitle } from "@/lib/data/services";
 
-const glanceCards = [
-  { title: "Upload Film", detail: "Add game or practice film", icon: CloudUpload, tone: "blue", href: "/film" },
-  { title: "Highlights", detail: "9 new clips ready to review", icon: Star, tone: "yellow", href: "/highlights" },
-  { title: "Recruiting", detail: "12 new college matches", icon: GraduationCap, tone: "blue", href: "/recruiting" },
-  { title: "Messages", detail: "5 new messages from coaches", icon: MessageSquare, tone: "yellow", href: "/messages" },
-  { title: "Trust Score", detail: "Score: 82 - keep building", icon: ShieldCheck, tone: "blue", href: "/trust" },
-  { title: "Public Profile", detail: "Open your external athlete profile", icon: UserCheck, tone: "yellow", href: "/athletes/athlete-jayden-lewis" },
-  { title: "Finish Onboarding", detail: "Set up profile, brand, consent, and coach verification", icon: Check, tone: "blue", href: "/onboarding/athlete" }
-] as const;
-
 export default function CommandCenterPage() {
   const data = getCommandCenterData();
   const heroMedia = getAthleteHeroMedia(data.athlete.id);
   const briefItems = [data.dailyBrief.yesterday[0], data.dailyBrief.today[0], data.dailyBrief.upcoming[0]];
   const hasHeroBackground = Boolean(heroMedia.videoUrl || heroMedia.thumbnailUrl);
+  const glanceCards = [
+    { title: "Upload Film", detail: data.athlete.completionPct ? "Add game or practice film" : "Upload your first real film", icon: CloudUpload, tone: "blue", href: "/film" },
+    { title: "Highlights", detail: `${data.timeline.filter((item) => item.eventType.includes("highlight")).length} highlight activities`, icon: Star, tone: "yellow", href: "/highlights" },
+    { title: "Recruiting", detail: `${data.matches.length} college matches`, icon: GraduationCap, tone: "blue", href: "/recruiting" },
+    { title: "Messages", detail: "Open your D1 inbox", icon: MessageSquare, tone: "yellow", href: "/messages" },
+    { title: "Trust Score", detail: `Score: ${data.trustScore.score}`, icon: ShieldCheck, tone: "blue", href: "/trust" },
+    { title: "Public Profile", detail: "Open your external athlete profile", icon: UserCheck, tone: "yellow", href: `/athletes/${data.athlete.id}` },
+    { title: "Finish Onboarding", detail: "Set up profile, brand, consent, and coach verification", icon: Check, tone: "blue", href: "/onboarding/athlete" }
+  ] as const;
 
   return (
     <AppShell>
@@ -68,7 +67,7 @@ export default function CommandCenterPage() {
                 <span className="mt-2 block text-[#F2C200]">I&apos;m your Agent.</span>
               </h1>
               <p className="mt-5 max-w-xl text-base font-medium leading-7 text-[#DDE8FF]">
-                I watched your latest game, refreshed your recruiting board, and prepared the actions that move your opportunity forward today.
+                I checked your saved profile, media, recruiting board, and verification signals. Your next actions are based only on real data in MyD1.
               </p>
               <p className="mt-3 max-w-xl text-sm font-black leading-6 text-white">
                 {data.missionStatus[0]?.label}: {data.missionStatus[0]?.value} - {data.missionStatus[1]?.label}: {data.missionStatus[1]?.value}
@@ -84,8 +83,8 @@ export default function CommandCenterPage() {
               ) : null}
               <div className="mt-6 flex flex-wrap gap-2">
                 <Badge tone="yellow">Agent active</Badge>
-                <Badge tone="green">Coach connected</Badge>
-                <Badge>Film fresh</Badge>
+                <Badge tone={data.coachConnection.connected ? "green" : "silver"}>{data.coachConnection.connected ? "Coach connected" : "Coach not connected"}</Badge>
+                <Badge tone={hasHeroBackground ? "blue" : "silver"}>{hasHeroBackground ? "Media connected" : "Media pending"}</Badge>
               </div>
             </div>
             <div className="absolute bottom-0 right-2 z-10 hidden h-[105%] w-[38%] lg:block">
@@ -167,12 +166,12 @@ export default function CommandCenterPage() {
 
           <section className="mt-6 grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
             <Card>
-              <div className="flex items-center justify-between">
-                <h2 className="text-sm font-black uppercase tracking-[0.08em]">Today&apos;s Mission</h2>
-                <span className="text-xs font-black text-[#1B3FA0]">73% complete</span>
+                <div className="flex items-center justify-between">
+                  <h2 className="text-sm font-black uppercase tracking-[0.08em]">Today&apos;s Mission</h2>
+                <span className="text-xs font-black text-[#1B3FA0]">{data.todayMission.completionPct}% complete</span>
               </div>
               <div className="mt-4 h-3 overflow-hidden rounded-full bg-[#DDE8FF]">
-                <div className="h-full w-[73%] rounded-full bg-[#1157E8]" />
+                <div className="h-full rounded-full bg-[#1157E8]" style={{ width: `${Math.min(100, Math.max(0, data.todayMission.completionPct))}%` }} />
               </div>
               <div className="mt-5 grid gap-1">
                 {data.todayMission.items.map((mission) => (
@@ -201,7 +200,7 @@ export default function CommandCenterPage() {
             <Card>
               <h2 className="text-sm font-black uppercase tracking-[0.08em]">Agent Daily Brief</h2>
               <div className="mt-4 grid gap-3">
-                {briefItems.map((item, index) => (
+                {briefItems.filter(Boolean).map((item, index) => (
                   <div className="rounded-lg bg-[#F7F9FC] p-4" key={item}>
                     <div className="text-xs font-black uppercase tracking-[0.08em] text-[#1B3FA0]">
                       {index === 0 ? "Yesterday" : index === 1 ? "Today" : "Upcoming"}
@@ -226,6 +225,9 @@ export default function CommandCenterPage() {
                     <p className="mt-3 text-sm font-medium leading-6 text-[#17223F]">{item.rationale}</p>
                   </article>
                 ))}
+                {!data.opportunities.length ? (
+                  <p className="rounded-lg border border-[#E4E9F1] bg-[#FAFBFD] p-4 text-sm font-semibold text-[#66718F]">No opportunities found yet. Complete your profile and upload film to unlock real recommendations.</p>
+                ) : null}
               </div>
             </Card>
 
@@ -244,6 +246,9 @@ export default function CommandCenterPage() {
                     <span className="text-xs font-bold text-[#66718F]">{event.meta}</span>
                   </div>
                 ))}
+                {!data.timeline.length ? (
+                  <p className="rounded-lg border border-[#E4E9F1] bg-[#FAFBFD] p-4 text-sm font-semibold text-[#66718F]">No activity yet. Saved profile edits, uploads, imports, and verification events will appear here.</p>
+                ) : null}
               </div>
             </Card>
           </section>
@@ -269,6 +274,9 @@ export default function CommandCenterPage() {
                   <Badge tone={event.kind === "live_stream" ? "blue" : "yellow"}>{toTitle(event.kind)}</Badge>
                 </div>
               ))}
+              {!data.events.length ? (
+                <p className="rounded-lg border border-[#E4E9F1] bg-[#FAFBFD] p-4 text-sm font-semibold text-[#66718F]">No calendar events yet.</p>
+              ) : null}
             </div>
           </Card>
 
@@ -293,6 +301,9 @@ export default function CommandCenterPage() {
                   </div>
                 </div>
               ))}
+              {!data.matches.length ? (
+                <p className="rounded-lg border border-[#E4E9F1] bg-[#FAFBFD] p-4 text-sm font-semibold text-[#66718F]">No recruiting targets yet.</p>
+              ) : null}
             </div>
           </Card>
 
@@ -309,8 +320,12 @@ export default function CommandCenterPage() {
               </div>
             </div>
             <div className="mt-5 flex items-center justify-between">
-              <Badge tone="green">{data.coachConnection.connected ? "Connected" : "Pending"}</Badge>
-              <a className="rounded-lg border border-[#C7CDD6] px-4 py-2 text-sm font-black" href="/messages">Message Coach</a>
+              <Badge tone={data.coachConnection.connected ? "green" : "silver"}>{data.coachConnection.connected ? "Connected" : "Not connected"}</Badge>
+              {data.coachConnection.connected ? (
+                <a className="rounded-lg border border-[#C7CDD6] px-4 py-2 text-sm font-black" href="/messages">Message Coach</a>
+              ) : (
+                <a className="rounded-lg border border-[#C7CDD6] px-4 py-2 text-sm font-black" href="/profile">Invite Coach</a>
+              )}
             </div>
           </Card>
 

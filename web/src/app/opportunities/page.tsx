@@ -64,13 +64,16 @@ export default async function OpportunityFeedPage({ searchParams }: { searchPara
                 </div>
               </article>
             ))}
+            {!opportunities.length ? (
+              <p className="rounded-2xl border border-[#E4E9F1] bg-[#FAFBFD] p-4 text-sm font-semibold text-[#66718F]">No opportunities found yet. Complete your profile, upload real film, and connect verified signals before opportunities appear.</p>
+            ) : null}
           </div>
         </Card>
         <div className="grid gap-4">
-          <StatCard label="Opportunity Score" value={`${opportunityScore.score}`} detail="Recruiting momentum is rising." icon={Target} />
-          <StatCard label="Profile Views" value={`${brand.metrics.profileClicks}`} detail="Recruiter attention in seven days." icon={Eye} tone="green" />
-          <StatCard label="Agent Actions" value={`${opportunities.length + 4}`} detail="Drafts, nudges, and reel updates prepared." icon={Megaphone} tone="yellow" />
-          <StatCard label="Hot Signal" value="State U" detail="Best next outreach target." icon={Star} />
+          <StatCard label="Opportunity Score" value={`${opportunityScore.score}`} detail={opportunityScore.score ? "Based on real profile and media signals." : "No opportunity signals found yet."} icon={Target} />
+          <StatCard label="Profile Views" value={`${brand.metrics.profileClicks}`} detail="Recruiter attention from saved public profile events." icon={Eye} tone="green" />
+          <StatCard label="Agent Actions" value={`${opportunities.length}`} detail="Real recommendations currently available." icon={Megaphone} tone="yellow" />
+          <StatCard label="Hot Signal" value="None" detail="No outreach target is active yet." icon={Star} />
         </div>
       </div>
     </AppShell>
