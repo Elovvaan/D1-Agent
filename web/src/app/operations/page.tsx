@@ -116,8 +116,8 @@ function matchText(query: string, values: Array<string | number | undefined>) {
   return haystack.includes(query.toLowerCase());
 }
 
-function ShellCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <section className={`rounded-[28px] border border-white/10 bg-white/[0.08] p-5 shadow-[0_24px_70px_rgba(0,0,0,0.22)] ${className}`}>{children}</section>;
+function ShellCard({ children, className = "", id }: { children: React.ReactNode; className?: string; id?: string }) {
+  return <section id={id} className={`rounded-[28px] border border-white/10 bg-white/[0.08] p-5 shadow-[0_24px_70px_rgba(0,0,0,0.22)] ${className}`}>{children}</section>;
 }
 
 function Metric({ label, value, detail, icon: Icon }: { label: string; value: string; detail: string; icon: typeof Activity }) {
