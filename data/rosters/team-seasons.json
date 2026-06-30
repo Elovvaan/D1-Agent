@@ -1,0 +1,35 @@
+[
+  {
+    "id": "TS_team-VA-chantilly-st-paul-vi-panthers-basketball_2025-26",
+    "team_id": "team-VA-chantilly-st-paul-vi-panthers-basketball",
+    "school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "season_id": "2025-26",
+    "sport": "basketball",
+    "gender": "boys",
+    "level": "hs",
+    "source_url": "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/25-26/roster/",
+    "confidence": 0.85
+  },
+  {
+    "id": "TS_team-VA-chantilly-st-paul-vi-panthers-basketball_2024-25",
+    "team_id": "team-VA-chantilly-st-paul-vi-panthers-basketball",
+    "school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "season_id": "2024-25",
+    "sport": "basketball",
+    "gender": "boys",
+    "level": "hs",
+    "source_url": "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/24-25/roster/",
+    "confidence": 0.85
+  },
+  {
+    "id": "TS_team-VA-chantilly-st-paul-vi-panthers-basketball_2023-24",
+    "team_id": "team-VA-chantilly-st-paul-vi-panthers-basketball",
+    "school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "season_id": "2023-24",
+    "sport": "basketball",
+    "gender": "boys",
+    "level": "hs",
+    "source_url": "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/23-24/roster/",
+    "confidence": 0.85
+  }
+]

@@ -9,6 +9,10 @@ export type PublicImportFieldName =
   | "jerseyNumber"
   | "position"
   | "classYear"
+  | "classYearNormalized"
+  | "graduationYear"
+  | "rosterStatus"
+  | "teamSeasonId"
   | "height"
   | "weight"
   | "hometown"
@@ -64,6 +68,8 @@ export interface PublicEntityMatch {
 
 export interface PublicReviewQueueItem {
   id: string;
+  ref_type?: "Player" | "RosterSnapshot" | "TeamSeason" | "PlayerTeamSeason";
+  ref_id?: string;
   importedEntityId: string;
   reason: string;
   priority: "low" | "medium" | "high";

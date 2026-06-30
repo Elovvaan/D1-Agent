@@ -1,0 +1,30 @@
+[
+  {
+    "id": "RV_a174d7f3-c73b-4c3f-9cf1-7baf98ea214c",
+    "import_session_id": "",
+    "ref_type": "Player",
+    "ref_id": "PL_troy_tomlin_school-VA-chantilly-st-paul-vi-panthers_2027",
+    "reason": "eligible_but_absent_current_season"
+  },
+  {
+    "id": "RV_8c8b5b57-0e59-45f8-ac04-b16164a26fb6",
+    "import_session_id": "",
+    "ref_type": "Player",
+    "ref_id": "PL_aaron_bryant_school-VA-chantilly-st-paul-vi-panthers_2028",
+    "reason": "eligible_but_absent_current_season"
+  },
+  {
+    "id": "RV_e2c35183-a80e-46ca-9adb-71f5f1e053cc",
+    "import_session_id": "",
+    "ref_type": "Player",
+    "ref_id": "PL_andrew_ross_school-VA-chantilly-st-paul-vi-panthers_2027",
+    "reason": "eligible_but_absent_current_season"
+  },
+  {
+    "id": "RV_9e918260-baac-47f7-9351-4f982ed63296",
+    "import_session_id": "",
+    "ref_type": "Player",
+    "ref_id": "PL_derek_daniels_school-VA-chantilly-st-paul-vi-panthers_2027",
+    "reason": "eligible_but_absent_current_season"
+  }
+]

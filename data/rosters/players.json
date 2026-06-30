@@ -1,0 +1,588 @@
+[
+  {
+    "id": "PL_travis_clegg_school-VA-chantilly-st-paul-vi-panthers_2029",
+    "name_canonical": "Travis Clegg",
+    "name_raw": "Travis Clegg",
+    "aliases": [],
+    "level": "hs",
+    "primary_school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "graduation_year": 2029,
+    "graduation_year_confidence": 0.95,
+    "first_seen": "2026-06-30T18:31:44.186Z",
+    "last_seen": "2026-06-30T18:31:44.186Z",
+    "roster_status": "active",
+    "confidence": 0.9,
+    "review_status": "auto",
+    "source_urls": [
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/25-26/roster/"
+    ]
+  },
+  {
+    "id": "PL_lawrence_brown_school-VA-chantilly-st-paul-vi-panthers_2026",
+    "name_canonical": "Lawrence Brown",
+    "name_raw": "Lawrence Brown",
+    "aliases": [],
+    "level": "hs",
+    "primary_school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "graduation_year": 2026,
+    "graduation_year_confidence": 0.95,
+    "first_seen": "2026-06-30T18:31:44.186Z",
+    "last_seen": "2026-06-30T18:31:44.482Z",
+    "roster_status": "active",
+    "confidence": 0.9,
+    "review_status": "auto",
+    "source_urls": [
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/25-26/roster/",
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/24-25/roster/"
+    ]
+  },
+  {
+    "id": "PL_dylan_harsanyi_school-VA-chantilly-st-paul-vi-panthers_2027",
+    "name_canonical": "Dylan Harsanyi",
+    "name_raw": "Dylan Harsanyi",
+    "aliases": [],
+    "level": "hs",
+    "primary_school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "graduation_year": 2027,
+    "graduation_year_confidence": 0.95,
+    "first_seen": "2026-06-30T18:31:44.186Z",
+    "last_seen": "2026-06-30T18:31:44.482Z",
+    "roster_status": "returning",
+    "confidence": 0.9,
+    "review_status": "auto",
+    "source_urls": [
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/25-26/roster/",
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/24-25/roster/"
+    ]
+  },
+  {
+    "id": "PL_braydon_young_school-VA-chantilly-st-paul-vi-panthers_2027",
+    "name_canonical": "Braydon Young",
+    "name_raw": "Braydon Young",
+    "aliases": [],
+    "level": "hs",
+    "primary_school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "graduation_year": 2027,
+    "graduation_year_confidence": 0.95,
+    "first_seen": "2026-06-30T18:31:44.186Z",
+    "last_seen": "2026-06-30T18:31:44.186Z",
+    "roster_status": "active",
+    "confidence": 0.9,
+    "review_status": "auto",
+    "source_urls": [
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/25-26/roster/"
+    ]
+  },
+  {
+    "id": "PL_kenny_boyd_school-VA-chantilly-st-paul-vi-panthers_2029",
+    "name_canonical": "Kenny Boyd",
+    "name_raw": "Kenny Boyd",
+    "aliases": [],
+    "level": "hs",
+    "primary_school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "graduation_year": 2029,
+    "graduation_year_confidence": 0.95,
+    "first_seen": "2026-06-30T18:31:44.186Z",
+    "last_seen": "2026-06-30T18:31:44.186Z",
+    "roster_status": "active",
+    "confidence": 0.9,
+    "review_status": "auto",
+    "source_urls": [
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/25-26/roster/"
+    ]
+  },
+  {
+    "id": "PL_jack_colligan_school-VA-chantilly-st-paul-vi-panthers_2028",
+    "name_canonical": "Jack Colligan",
+    "name_raw": "Jack Colligan",
+    "aliases": [],
+    "level": "hs",
+    "primary_school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "graduation_year": 2028,
+    "graduation_year_confidence": 0.95,
+    "first_seen": "2026-06-30T18:31:44.186Z",
+    "last_seen": "2026-06-30T18:31:44.186Z",
+    "roster_status": "active",
+    "confidence": 0.9,
+    "review_status": "auto",
+    "source_urls": [
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/25-26/roster/"
+    ]
+  },
+  {
+    "id": "PL_aiden_gallagher_school-VA-chantilly-st-paul-vi-panthers_2026",
+    "name_canonical": "Aiden Gallagher",
+    "name_raw": "Aiden Gallagher",
+    "aliases": [],
+    "level": "hs",
+    "primary_school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "graduation_year": 2026,
+    "graduation_year_confidence": 0.95,
+    "first_seen": "2026-06-30T18:31:44.186Z",
+    "last_seen": "2026-06-30T18:31:44.186Z",
+    "roster_status": "active",
+    "confidence": 0.9,
+    "review_status": "auto",
+    "source_urls": [
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/25-26/roster/"
+    ]
+  },
+  {
+    "id": "PL_ryan_bahr_school-VA-chantilly-st-paul-vi-panthers_2028",
+    "name_canonical": "Ryan Bahr",
+    "name_raw": "Ryan Bahr",
+    "aliases": [],
+    "level": "hs",
+    "primary_school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "graduation_year": 2028,
+    "graduation_year_confidence": 0.95,
+    "first_seen": "2026-06-30T18:31:44.186Z",
+    "last_seen": "2026-06-30T18:31:44.186Z",
+    "roster_status": "active",
+    "confidence": 0.9,
+    "review_status": "auto",
+    "source_urls": [
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/25-26/roster/"
+    ]
+  },
+  {
+    "id": "PL_farrell_djossinou_school-VA-chantilly-st-paul-vi-panthers_2027",
+    "name_canonical": "Farrell Djossinou",
+    "name_raw": "Farrell Djossinou",
+    "aliases": [],
+    "level": "hs",
+    "primary_school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "graduation_year": 2027,
+    "graduation_year_confidence": 0.95,
+    "first_seen": "2026-06-30T18:31:44.186Z",
+    "last_seen": "2026-06-30T18:31:44.186Z",
+    "roster_status": "active",
+    "confidence": 0.9,
+    "review_status": "auto",
+    "source_urls": [
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/25-26/roster/"
+    ]
+  },
+  {
+    "id": "PL_kj_rivers_school-VA-chantilly-st-paul-vi-panthers_2029",
+    "name_canonical": "KJ Rivers",
+    "name_raw": "KJ Rivers",
+    "aliases": [],
+    "level": "hs",
+    "primary_school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "graduation_year": 2029,
+    "graduation_year_confidence": 0.95,
+    "first_seen": "2026-06-30T18:31:44.186Z",
+    "last_seen": "2026-06-30T18:31:44.186Z",
+    "roster_status": "active",
+    "confidence": 0.9,
+    "review_status": "auto",
+    "source_urls": [
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/25-26/roster/"
+    ]
+  },
+  {
+    "id": "PL_brian_mitchell_school-VA-chantilly-st-paul-vi-panthers_2027",
+    "name_canonical": "Brian Mitchell Jr.",
+    "name_raw": "Brian Mitchell Jr.",
+    "aliases": [],
+    "level": "hs",
+    "primary_school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "graduation_year": 2027,
+    "graduation_year_confidence": 0.95,
+    "first_seen": "2026-06-30T18:31:44.186Z",
+    "last_seen": "2026-06-30T18:31:44.186Z",
+    "roster_status": "active",
+    "confidence": 0.9,
+    "review_status": "auto",
+    "source_urls": [
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/25-26/roster/"
+    ]
+  },
+  {
+    "id": "PL_jordan_smith_school-VA-chantilly-st-paul-vi-panthers_2026",
+    "name_canonical": "Jordan Smith",
+    "name_raw": "Jordan Smith",
+    "aliases": [],
+    "level": "hs",
+    "primary_school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "graduation_year": 2026,
+    "graduation_year_confidence": 0.95,
+    "first_seen": "2026-06-30T18:31:44.186Z",
+    "last_seen": "2026-06-30T18:31:44.763Z",
+    "roster_status": "active",
+    "confidence": 0.9,
+    "review_status": "auto",
+    "source_urls": [
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/25-26/roster/",
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/24-25/roster/",
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/23-24/roster/"
+    ]
+  },
+  {
+    "id": "PL_aiden_acquah_school-VA-chantilly-st-paul-vi-panthers_2028",
+    "name_canonical": "Aiden Acquah",
+    "name_raw": "Aiden Acquah",
+    "aliases": [],
+    "level": "hs",
+    "primary_school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "graduation_year": 2028,
+    "graduation_year_confidence": 0.95,
+    "first_seen": "2026-06-30T18:31:44.186Z",
+    "last_seen": "2026-06-30T18:31:44.482Z",
+    "roster_status": "returning",
+    "confidence": 0.9,
+    "review_status": "auto",
+    "source_urls": [
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/25-26/roster/",
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/24-25/roster/"
+    ]
+  },
+  {
+    "id": "PL_matthew_mena_school-VA-chantilly-st-paul-vi-panthers_2027",
+    "name_canonical": "Matthew Mena",
+    "name_raw": "Matthew Mena",
+    "aliases": [],
+    "level": "hs",
+    "primary_school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "graduation_year": 2027,
+    "graduation_year_confidence": 0.95,
+    "first_seen": "2026-06-30T18:31:44.186Z",
+    "last_seen": "2026-06-30T18:31:44.482Z",
+    "roster_status": "returning",
+    "confidence": 0.9,
+    "review_status": "auto",
+    "source_urls": [
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/25-26/roster/",
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/24-25/roster/"
+    ]
+  },
+  {
+    "id": "PL_jackson_sabrick_school-VA-chantilly-st-paul-vi-panthers_2028",
+    "name_canonical": "Jackson Sabrick",
+    "name_raw": "Jackson Sabrick",
+    "aliases": [],
+    "level": "hs",
+    "primary_school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "graduation_year": 2028,
+    "graduation_year_confidence": 0.95,
+    "first_seen": "2026-06-30T18:31:44.186Z",
+    "last_seen": "2026-06-30T18:31:44.186Z",
+    "roster_status": "active",
+    "confidence": 0.9,
+    "review_status": "auto",
+    "source_urls": [
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/25-26/roster/"
+    ]
+  },
+  {
+    "id": "PL_troy_tomlin_school-VA-chantilly-st-paul-vi-panthers_2027",
+    "name_canonical": "Troy Tomlin",
+    "name_raw": "Troy Tomlin",
+    "aliases": [],
+    "level": "hs",
+    "primary_school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "graduation_year": 2027,
+    "graduation_year_confidence": 0.95,
+    "first_seen": "2026-06-30T18:31:44.482Z",
+    "last_seen": "2026-06-30T18:31:44.763Z",
+    "roster_status": "expected",
+    "confidence": 0.9,
+    "review_status": "auto",
+    "source_urls": [
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/24-25/roster/",
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/23-24/roster/"
+    ]
+  },
+  {
+    "id": "PL_aaron_bryant_school-VA-chantilly-st-paul-vi-panthers_2028",
+    "name_canonical": "Aaron Bryant",
+    "name_raw": "Aaron Bryant",
+    "aliases": [],
+    "level": "hs",
+    "primary_school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "graduation_year": 2028,
+    "graduation_year_confidence": 0.95,
+    "first_seen": "2026-06-30T18:31:44.482Z",
+    "last_seen": "2026-06-30T18:31:44.482Z",
+    "roster_status": "expected",
+    "confidence": 0.9,
+    "review_status": "auto",
+    "source_urls": [
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/24-25/roster/"
+    ]
+  },
+  {
+    "id": "PL_adlan_elamin_school-VA-chantilly-st-paul-vi-panthers_2025",
+    "name_canonical": "Adlan Elamin",
+    "name_raw": "Adlan Elamin",
+    "aliases": [],
+    "level": "hs",
+    "primary_school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "graduation_year": 2025,
+    "graduation_year_confidence": 0.95,
+    "first_seen": "2026-06-30T18:31:44.482Z",
+    "last_seen": "2026-06-30T18:31:44.763Z",
+    "roster_status": "graduated",
+    "confidence": 0.9,
+    "review_status": "auto",
+    "source_urls": [
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/24-25/roster/",
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/23-24/roster/"
+    ]
+  },
+  {
+    "id": "PL_cooper_sundra_school-VA-chantilly-st-paul-vi-panthers_2026",
+    "name_canonical": "Cooper Sundra",
+    "name_raw": "Cooper Sundra",
+    "aliases": [],
+    "level": "hs",
+    "primary_school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "graduation_year": 2026,
+    "graduation_year_confidence": 0.95,
+    "first_seen": "2026-06-30T18:31:44.482Z",
+    "last_seen": "2026-06-30T18:31:44.482Z",
+    "roster_status": "graduated",
+    "confidence": 0.9,
+    "review_status": "auto",
+    "source_urls": [
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/24-25/roster/"
+    ]
+  },
+  {
+    "id": "PL_jaquan_womack_school-VA-chantilly-st-paul-vi-panthers_2025",
+    "name_canonical": "Jaquan Womack",
+    "name_raw": "Jaquan Womack",
+    "aliases": [],
+    "level": "hs",
+    "primary_school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "graduation_year": 2025,
+    "graduation_year_confidence": 0.95,
+    "first_seen": "2026-06-30T18:31:44.482Z",
+    "last_seen": "2026-06-30T18:31:44.763Z",
+    "roster_status": "graduated",
+    "confidence": 0.9,
+    "review_status": "auto",
+    "source_urls": [
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/24-25/roster/",
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/23-24/roster/"
+    ]
+  },
+  {
+    "id": "PL_jacob_moore_school-VA-chantilly-st-paul-vi-panthers_2025",
+    "name_canonical": "Jacob Moore",
+    "name_raw": "Jacob Moore",
+    "aliases": [],
+    "level": "hs",
+    "primary_school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "graduation_year": 2025,
+    "graduation_year_confidence": 0.95,
+    "first_seen": "2026-06-30T18:31:44.482Z",
+    "last_seen": "2026-06-30T18:31:44.763Z",
+    "roster_status": "graduated",
+    "confidence": 0.9,
+    "review_status": "auto",
+    "source_urls": [
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/24-25/roster/",
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/23-24/roster/"
+    ]
+  },
+  {
+    "id": "PL_cole_perez_school-VA-chantilly-st-paul-vi-panthers_2026",
+    "name_canonical": "Cole Perez",
+    "name_raw": "Cole Perez",
+    "aliases": [],
+    "level": "hs",
+    "primary_school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "graduation_year": 2026,
+    "graduation_year_confidence": 0.95,
+    "first_seen": "2026-06-30T18:31:44.482Z",
+    "last_seen": "2026-06-30T18:31:44.482Z",
+    "roster_status": "graduated",
+    "confidence": 0.9,
+    "review_status": "auto",
+    "source_urls": [
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/24-25/roster/"
+    ]
+  },
+  {
+    "id": "PL_andrew_ross_school-VA-chantilly-st-paul-vi-panthers_2027",
+    "name_canonical": "Andrew Ross",
+    "name_raw": "Andrew Ross",
+    "aliases": [],
+    "level": "hs",
+    "primary_school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "graduation_year": 2027,
+    "graduation_year_confidence": 0.95,
+    "first_seen": "2026-06-30T18:31:44.482Z",
+    "last_seen": "2026-06-30T18:31:44.482Z",
+    "roster_status": "expected",
+    "confidence": 0.9,
+    "review_status": "auto",
+    "source_urls": [
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/24-25/roster/"
+    ]
+  },
+  {
+    "id": "PL_derek_daniels_school-VA-chantilly-st-paul-vi-panthers_2027",
+    "name_canonical": "Derek Daniels",
+    "name_raw": "Derek Daniels",
+    "aliases": [],
+    "level": "hs",
+    "primary_school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "graduation_year": 2027,
+    "graduation_year_confidence": 0.95,
+    "first_seen": "2026-06-30T18:31:44.482Z",
+    "last_seen": "2026-06-30T18:31:44.482Z",
+    "roster_status": "expected",
+    "confidence": 0.9,
+    "review_status": "auto",
+    "source_urls": [
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/24-25/roster/"
+    ]
+  },
+  {
+    "id": "PL_patrick_ngongba_school-VA-chantilly-st-paul-vi-panthers_2024",
+    "name_canonical": "Patrick Ngongba",
+    "name_raw": "Patrick Ngongba",
+    "aliases": [],
+    "level": "hs",
+    "primary_school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "graduation_year": 2024,
+    "graduation_year_confidence": 0.95,
+    "first_seen": "2026-06-30T18:31:44.763Z",
+    "last_seen": "2026-06-30T18:31:44.763Z",
+    "roster_status": "graduated",
+    "confidence": 0.9,
+    "review_status": "auto",
+    "source_urls": [
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/23-24/roster/"
+    ]
+  },
+  {
+    "id": "PL_anthony_brown_school-VA-chantilly-st-paul-vi-panthers_2026",
+    "name_canonical": "Anthony Brown",
+    "name_raw": "Anthony Brown",
+    "aliases": [],
+    "level": "hs",
+    "primary_school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "graduation_year": 2026,
+    "graduation_year_confidence": 0.95,
+    "first_seen": "2026-06-30T18:31:44.763Z",
+    "last_seen": "2026-06-30T18:31:44.763Z",
+    "roster_status": "graduated",
+    "confidence": 0.9,
+    "review_status": "auto",
+    "source_urls": [
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/23-24/roster/"
+    ]
+  },
+  {
+    "id": "PL_ben_hammond_school-VA-chantilly-st-paul-vi-panthers_2024",
+    "name_canonical": "Ben Hammond",
+    "name_raw": "Ben Hammond",
+    "aliases": [],
+    "level": "hs",
+    "primary_school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "graduation_year": 2024,
+    "graduation_year_confidence": 0.95,
+    "first_seen": "2026-06-30T18:31:44.763Z",
+    "last_seen": "2026-06-30T18:31:44.763Z",
+    "roster_status": "graduated",
+    "confidence": 0.9,
+    "review_status": "auto",
+    "source_urls": [
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/23-24/roster/"
+    ]
+  },
+  {
+    "id": "PL_isaiah_abraham_school-VA-chantilly-st-paul-vi-panthers_2024",
+    "name_canonical": "Isaiah Abraham",
+    "name_raw": "Isaiah Abraham",
+    "aliases": [],
+    "level": "hs",
+    "primary_school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "graduation_year": 2024,
+    "graduation_year_confidence": 0.95,
+    "first_seen": "2026-06-30T18:31:44.763Z",
+    "last_seen": "2026-06-30T18:31:44.763Z",
+    "roster_status": "graduated",
+    "confidence": 0.9,
+    "review_status": "auto",
+    "source_urls": [
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/23-24/roster/"
+    ]
+  },
+  {
+    "id": "PL_jordan_hunter_school-VA-chantilly-st-paul-vi-panthers_2026",
+    "name_canonical": "Jordan Hunter",
+    "name_raw": "Jordan Hunter",
+    "aliases": [],
+    "level": "hs",
+    "primary_school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "graduation_year": 2026,
+    "graduation_year_confidence": 0.95,
+    "first_seen": "2026-06-30T18:31:44.763Z",
+    "last_seen": "2026-06-30T18:31:44.763Z",
+    "roster_status": "graduated",
+    "confidence": 0.9,
+    "review_status": "auto",
+    "source_urls": [
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/23-24/roster/"
+    ]
+  },
+  {
+    "id": "PL_garrett_sundra_school-VA-chantilly-st-paul-vi-panthers_2024",
+    "name_canonical": "Garrett Sundra",
+    "name_raw": "Garrett Sundra",
+    "aliases": [],
+    "level": "hs",
+    "primary_school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "graduation_year": 2024,
+    "graduation_year_confidence": 0.95,
+    "first_seen": "2026-06-30T18:31:44.763Z",
+    "last_seen": "2026-06-30T18:31:44.763Z",
+    "roster_status": "graduated",
+    "confidence": 0.9,
+    "review_status": "auto",
+    "source_urls": [
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/23-24/roster/"
+    ]
+  },
+  {
+    "id": "PL_colin_byrd_school-VA-chantilly-st-paul-vi-panthers_2026",
+    "name_canonical": "Colin Byrd",
+    "name_raw": "Colin Byrd",
+    "aliases": [],
+    "level": "hs",
+    "primary_school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "graduation_year": 2026,
+    "graduation_year_confidence": 0.95,
+    "first_seen": "2026-06-30T18:31:44.763Z",
+    "last_seen": "2026-06-30T18:31:44.763Z",
+    "roster_status": "graduated",
+    "confidence": 0.9,
+    "review_status": "auto",
+    "source_urls": [
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/23-24/roster/"
+    ]
+  },
+  {
+    "id": "PL_darren_harris_school-VA-chantilly-st-paul-vi-panthers_2024",
+    "name_canonical": "Darren Harris",
+    "name_raw": "Darren Harris",
+    "aliases": [],
+    "level": "hs",
+    "primary_school_id": "school-VA-chantilly-st-paul-vi-panthers",
+    "graduation_year": 2024,
+    "graduation_year_confidence": 0.95,
+    "first_seen": "2026-06-30T18:31:44.763Z",
+    "last_seen": "2026-06-30T18:31:44.763Z",
+    "roster_status": "graduated",
+    "confidence": 0.9,
+    "review_status": "auto",
+    "source_urls": [
+      "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/23-24/roster/"
+    ]
+  }
+]

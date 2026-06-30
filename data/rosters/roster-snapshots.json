@@ -1,0 +1,464 @@
+[
+  {
+    "id": "RS_b2cecb5c-ad73-41c1-9481-656ff21617aa",
+    "team_season_id": "TS_team-VA-chantilly-st-paul-vi-panthers-basketball_2025-26",
+    "import_session_id": "IS_e2a2bc3b-ae0a-4c50-9123-02c324d0a090",
+    "source_id": "SRC_maxpreps_com",
+    "source_url": "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/25-26/roster/",
+    "fetched_at": "2026-06-30T18:31:44.186Z",
+    "parser_version": "roster-0.1.0",
+    "row_count": 15,
+    "parsed_status": "parsed",
+    "rows_raw": [
+      {
+        "index": 0,
+        "jersey_raw": "0",
+        "name_raw": "Travis Clegg",
+        "position_raw": "SG",
+        "class_year_raw": "Fr.",
+        "height_raw": "6&#x27;3&quot;",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/travis-clegg/?careerid=ss1l5hmlgkik4"
+      },
+      {
+        "index": 1,
+        "jersey_raw": "1",
+        "name_raw": "Lawrence Brown",
+        "position_raw": "G",
+        "class_year_raw": "Sr.",
+        "height_raw": "5&#x27;11&quot;",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/lawrence-brown/?careerid=r2vclbb7a3lh1"
+      },
+      {
+        "index": 2,
+        "jersey_raw": "4",
+        "name_raw": "Dylan Harsanyi",
+        "position_raw": "G",
+        "class_year_raw": "Jr.",
+        "height_raw": "6&#x27;3&quot;",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/dylan-harsanyi/?careerid=36gqoj4jjvok4"
+      },
+      {
+        "index": 3,
+        "jersey_raw": "5",
+        "name_raw": "Braydon Young",
+        "position_raw": "F",
+        "class_year_raw": "Jr.",
+        "height_raw": "6&#x27;8&quot;",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/braydon-young/?careerid=ph9u0l0juc2bb"
+      },
+      {
+        "index": 4,
+        "jersey_raw": "10",
+        "name_raw": "Kenny Boyd",
+        "position_raw": "SF",
+        "class_year_raw": "Fr.",
+        "height_raw": "6&#x27;4&quot;",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/kenny-boyd/?careerid=ld3soisd97q55"
+      },
+      {
+        "index": 5,
+        "jersey_raw": "12",
+        "name_raw": "Jack Colligan",
+        "position_raw": "PG",
+        "class_year_raw": "So.",
+        "height_raw": "6&#x27;1&quot;",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/jack-colligan/?careerid=dl5nusp3vpqn7"
+      },
+      {
+        "index": 6,
+        "jersey_raw": "13",
+        "name_raw": "Aiden Gallagher",
+        "position_raw": "SF",
+        "class_year_raw": "Sr.",
+        "height_raw": "6&#x27;4&quot;",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/aiden-gallagher/?careerid=l5si8fl0nvmcc"
+      },
+      {
+        "index": 7,
+        "jersey_raw": "14",
+        "name_raw": "Ryan Bahr",
+        "position_raw": "SF",
+        "class_year_raw": "So.",
+        "height_raw": "6&#x27;5&quot;",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/ryan-bahr/?careerid=sga6o7kmaacee"
+      },
+      {
+        "index": 8,
+        "jersey_raw": "15",
+        "name_raw": "Farrell Djossinou",
+        "position_raw": "W",
+        "class_year_raw": "Jr.",
+        "height_raw": "6&#x27;6&quot;",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/farrell-djossinou/?careerid=3gpf9g89vgc44"
+      },
+      {
+        "index": 9,
+        "jersey_raw": "20",
+        "name_raw": "KJ Rivers",
+        "position_raw": "PG",
+        "class_year_raw": "Fr.",
+        "height_raw": "5&#x27;11&quot;",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/kj-rivers/?careerid=k83t6aakd32qa"
+      },
+      {
+        "index": 10,
+        "jersey_raw": "22",
+        "name_raw": "Brian Mitchell Jr.",
+        "position_raw": "G",
+        "class_year_raw": "Jr.",
+        "height_raw": "6&#x27;4&quot;",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/brian-mitchell-jr/?careerid=rqln47o6t06l5"
+      },
+      {
+        "index": 11,
+        "jersey_raw": "23",
+        "name_raw": "Jordan Smith",
+        "position_raw": "G",
+        "class_year_raw": "Sr.",
+        "height_raw": "6&#x27;3&quot;",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/jordan-smith/?careerid=ugvptc5947699"
+      },
+      {
+        "index": 12,
+        "jersey_raw": "24",
+        "name_raw": "Aiden Acquah",
+        "position_raw": "F",
+        "class_year_raw": "So.",
+        "height_raw": "6&#x27;4&quot;",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/aiden-acquah/?careerid=pqrnrk3aba4i2"
+      },
+      {
+        "index": 13,
+        "jersey_raw": "25",
+        "name_raw": "Matthew Mena",
+        "position_raw": "C",
+        "class_year_raw": "Jr.",
+        "height_raw": "6&#x27;8&quot;",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/matthew-mena/?careerid=flrre1gt5clg0"
+      },
+      {
+        "index": 14,
+        "jersey_raw": "42",
+        "name_raw": "Jackson Sabrick",
+        "position_raw": "SF",
+        "class_year_raw": "So.",
+        "height_raw": "6&#x27;3&quot;",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/jackson-sabrick/?careerid=4kval3ea287ee"
+      }
+    ],
+    "confidence": 0.9
+  },
+  {
+    "id": "RS_e9238c30-937a-4641-b591-2b819bd52ddc",
+    "team_season_id": "TS_team-VA-chantilly-st-paul-vi-panthers-basketball_2024-25",
+    "import_session_id": "IS_ac87fc00-37e3-42aa-b656-ea499e2fbe3a",
+    "source_id": "SRC_maxpreps_com",
+    "source_url": "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/24-25/roster/",
+    "fetched_at": "2026-06-30T18:31:44.482Z",
+    "parser_version": "roster-0.1.0",
+    "row_count": 14,
+    "parsed_status": "parsed",
+    "rows_raw": [
+      {
+        "index": 0,
+        "jersey_raw": "1",
+        "name_raw": "Lawrence Brown",
+        "position_raw": "G",
+        "class_year_raw": "Jr.",
+        "height_raw": "-",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/lawrence-brown/?careerid=r2vclbb7a3lh1"
+      },
+      {
+        "index": 1,
+        "jersey_raw": "2",
+        "name_raw": "Troy Tomlin",
+        "position_raw": "G",
+        "class_year_raw": "So.",
+        "height_raw": "-",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/troy-tomlin/?careerid=8h4lft9d687cc"
+      },
+      {
+        "index": 2,
+        "jersey_raw": "3",
+        "name_raw": "Aaron Bryant",
+        "position_raw": "G",
+        "class_year_raw": "Fr.",
+        "height_raw": "-",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/aaron-bryant/?careerid=p8uj47dpbnc00"
+      },
+      {
+        "index": 3,
+        "jersey_raw": "4",
+        "name_raw": "Dylan Harsanyi",
+        "position_raw": "G",
+        "class_year_raw": "So.",
+        "height_raw": "-",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/dylan-harsanyi/?careerid=36gqoj4jjvok4"
+      },
+      {
+        "index": 4,
+        "jersey_raw": "5",
+        "name_raw": "Adlan Elamin",
+        "position_raw": "F",
+        "class_year_raw": "Sr.",
+        "height_raw": "-",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/adlan-elamin/?careerid=uit6tgh7m9hg0"
+      },
+      {
+        "index": 5,
+        "jersey_raw": "12",
+        "name_raw": "Cooper Sundra",
+        "position_raw": "F",
+        "class_year_raw": "Jr.",
+        "height_raw": "-",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/cooper-sundra/?careerid=qlqggilks1m66"
+      },
+      {
+        "index": 6,
+        "jersey_raw": "13",
+        "name_raw": "Jaquan Womack",
+        "position_raw": "F",
+        "class_year_raw": "Sr.",
+        "height_raw": "-",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/jaquan-womack/?careerid=v4nlm616niv77"
+      },
+      {
+        "index": 7,
+        "jersey_raw": "14",
+        "name_raw": "Jacob Moore",
+        "position_raw": "F",
+        "class_year_raw": "Sr.",
+        "height_raw": "-",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/jacob-moore/?careerid=m2uth17pi38qa"
+      },
+      {
+        "index": 8,
+        "jersey_raw": "15",
+        "name_raw": "Cole Perez",
+        "position_raw": "G",
+        "class_year_raw": "Jr.",
+        "height_raw": "-",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/cole-perez/?careerid=lai232gsbe1qa"
+      },
+      {
+        "index": 9,
+        "jersey_raw": "21",
+        "name_raw": "Andrew Ross",
+        "position_raw": "G",
+        "class_year_raw": "So.",
+        "height_raw": "-",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/andrew-ross/?careerid=8nbe0bsfq5m00"
+      },
+      {
+        "index": 10,
+        "jersey_raw": "23",
+        "name_raw": "Jordan Smith",
+        "position_raw": "G",
+        "class_year_raw": "Jr.",
+        "height_raw": "-",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/jordan-smith/?careerid=ugvptc5947699"
+      },
+      {
+        "index": 11,
+        "jersey_raw": "24",
+        "name_raw": "Aiden Acquah",
+        "position_raw": "F",
+        "class_year_raw": "Fr.",
+        "height_raw": "-",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/aiden-acquah/?careerid=pqrnrk3aba4i2"
+      },
+      {
+        "index": 12,
+        "jersey_raw": "25",
+        "name_raw": "Matthew Mena",
+        "position_raw": "F",
+        "class_year_raw": "So.",
+        "height_raw": "-",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/matthew-mena/?careerid=flrre1gt5clg0"
+      },
+      {
+        "index": 13,
+        "jersey_raw": "42",
+        "name_raw": "Derek Daniels",
+        "position_raw": "F",
+        "class_year_raw": "So.",
+        "height_raw": "-",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/derek-daniels/?careerid=13u8379deokj3"
+      }
+    ],
+    "confidence": 0.9
+  },
+  {
+    "id": "RS_2665b6cc-3751-487d-9744-5fd30ab024da",
+    "team_season_id": "TS_team-VA-chantilly-st-paul-vi-panthers-basketball_2023-24",
+    "import_session_id": "IS_be34b4f3-e423-4a12-9b10-8c2810ad587c",
+    "source_id": "SRC_maxpreps_com",
+    "source_url": "https://www.maxpreps.com/va/chantilly/st-paul-vi-panthers/basketball/23-24/roster/",
+    "fetched_at": "2026-06-30T18:31:44.763Z",
+    "parser_version": "roster-0.1.0",
+    "row_count": 13,
+    "parsed_status": "parsed",
+    "rows_raw": [
+      {
+        "index": 0,
+        "jersey_raw": "0",
+        "name_raw": "Patrick Ngongba",
+        "position_raw": "C",
+        "class_year_raw": "Sr.",
+        "height_raw": "6&#x27;11&quot;",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/patrick-ngongba/?careerid=m80ljmt680eff"
+      },
+      {
+        "index": 1,
+        "jersey_raw": "1",
+        "name_raw": "Anthony Brown",
+        "position_raw": "G",
+        "class_year_raw": "So.",
+        "height_raw": "6&#x27;2&quot;",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/anthony-brown/?careerid=3srr89ncm0d55"
+      },
+      {
+        "index": 2,
+        "jersey_raw": "2",
+        "name_raw": "Troy Tomlin",
+        "position_raw": "G",
+        "class_year_raw": "Fr.",
+        "height_raw": "6&#x27;3&quot;",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/troy-tomlin/?careerid=8h4lft9d687cc"
+      },
+      {
+        "index": 3,
+        "jersey_raw": "3",
+        "name_raw": "Ben Hammond",
+        "position_raw": "G",
+        "class_year_raw": "Sr.",
+        "height_raw": "5&#x27;11&quot;",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/ben-hammond/?careerid=jikp91vfamusc"
+      },
+      {
+        "index": 4,
+        "jersey_raw": "4",
+        "name_raw": "Isaiah Abraham",
+        "position_raw": "F",
+        "class_year_raw": "Sr.",
+        "height_raw": "6&#x27;7&quot;",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/isaiah-abraham/?careerid=k5s5fn7lthf66"
+      },
+      {
+        "index": 5,
+        "jersey_raw": "5",
+        "name_raw": "Adlan Elamin",
+        "position_raw": "F",
+        "class_year_raw": "Jr.",
+        "height_raw": "6&#x27;8&quot;",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/adlan-elamin/?careerid=uit6tgh7m9hg0"
+      },
+      {
+        "index": 6,
+        "jersey_raw": "11",
+        "name_raw": "Jordan Hunter",
+        "position_raw": "G",
+        "class_year_raw": "So.",
+        "height_raw": "6&#x27;2&quot;",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/jordan-hunter/?careerid=qfggqme8b8jn7"
+      },
+      {
+        "index": 7,
+        "jersey_raw": "12",
+        "name_raw": "Garrett Sundra",
+        "position_raw": "F",
+        "class_year_raw": "Sr.",
+        "height_raw": "6&#x27;10&quot;",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/garrett-sundra/?careerid=70sbqol64djm6"
+      },
+      {
+        "index": 8,
+        "jersey_raw": "13",
+        "name_raw": "Jaquan Womack",
+        "position_raw": "F",
+        "class_year_raw": "Jr.",
+        "height_raw": "6&#x27;7&quot;",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/jaquan-womack/?careerid=v4nlm616niv77"
+      },
+      {
+        "index": 9,
+        "jersey_raw": "15",
+        "name_raw": "Jacob Moore",
+        "position_raw": "F",
+        "class_year_raw": "Jr.",
+        "height_raw": "6&#x27;6&quot;",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/jacob-moore/?careerid=m2uth17pi38qa"
+      },
+      {
+        "index": 10,
+        "jersey_raw": "21",
+        "name_raw": "Colin Byrd",
+        "position_raw": "G",
+        "class_year_raw": "So.",
+        "height_raw": "6&#x27;3&quot;",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/colin-byrd/?careerid=1r574ueb90b44"
+      },
+      {
+        "index": 11,
+        "jersey_raw": "23",
+        "name_raw": "Jordan Smith",
+        "position_raw": "G",
+        "class_year_raw": "So.",
+        "height_raw": "6&#x27;3&quot;",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/jordan-smith/?careerid=ugvptc5947699"
+      },
+      {
+        "index": 12,
+        "jersey_raw": "24",
+        "name_raw": "Darren Harris",
+        "position_raw": "G",
+        "class_year_raw": "Sr.",
+        "height_raw": "6&#x27;6&quot;",
+        "weight_raw": "-",
+        "player_url": "/va/chantilly/st-paul-vi-panthers/athletes/darren-harris/?careerid=mq4drstmem988"
+      }
+    ],
+    "confidence": 0.9
+  }
+]

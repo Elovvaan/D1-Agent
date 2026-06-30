@@ -6,6 +6,11 @@ import { selectAdapter } from "./ingestion/adapters/source-adapter.mjs";
 import { adapterMaxPreps } from "./ingestion/adapters/maxpreps.mjs";
 import { publisherOrgFromSource } from "./ingestion/org-resolution/organization-model.mjs";
 import { sourceSchedulerNote, refreshTierForSource } from "./ingestion/scheduler/source-scheduler.mjs";
+import { currentAcademicSeason } from "./ingestion/types.mjs";
+import { RosterBackfillEngine } from "./ingestion/roster/backfill.mjs";
+import { maxprepsRosterAdapter } from "./ingestion/roster/maxpreps_roster.mjs";
+import { publicFetchPort } from "./ingestion/roster/fetch_port.mjs";
+import { FileRosterStore, getRosterBackfillState } from "./ingestion/roster/store.mjs";
 
 export const repoRoot = resolve(new URL("..", import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1"));
 export const importsDir = resolve(repoRoot, "data", "imports");
@@ -45,6 +50,7 @@ const sourceTypeRules = [
 ];
 
 const adapters = [adapterMaxPreps];
+const rosterAdapters = [maxprepsRosterAdapter];
 
 export function parseArgs(argv) {
   const args = {};
@@ -210,6 +216,103 @@ function rankingRecordFields(record, fetchedAt, parser) {
   return fields;
 }
 
+function parseMaxPrepsRosterIdentity(url) {
+  try {
+    const parts = new URL(url).pathname.split("/").filter(Boolean);
+    if (parts.length < 4 || !/^[a-z]{2}$/i.test(parts[0])) return null;
+    const state = parts[0].toUpperCase();
+    const city = parts[1];
+    const school = parts[2];
+    const sport = parts[3];
+    return {
+      schoolId: `school-${state}-${city}-${school}`.replace(/[^A-Za-z0-9_-]/g, "_"),
+      teamId: `team-${state}-${city}-${school}-${sport}`.replace(/[^A-Za-z0-9_-]/g, "_"),
+      sport,
+      gender: /\/girls\//i.test(url) ? "girls" : "boys"
+    };
+  } catch {
+    return null;
+  }
+}
+
+function rosterPlayerFields({ player, edge, fetchedAt, sourceUrl, sourceName }) {
+  const attribution = { sourceUrl, fetchedAt, parser: "roster-backfill-v1", rawSnippet: player.name_raw };
+  return [
+    { name: "name", value: player.name_canonical, attribution },
+    { name: "athleteName", value: player.name_canonical, attribution },
+    { name: "profileUrl", value: sourceUrl, attribution },
+    { name: "jerseyNumber", value: edge.jersey ?? "", attribution },
+    { name: "position", value: edge.position ?? "", attribution },
+    { name: "classYear", value: edge.class_year_raw ?? "", attribution },
+    { name: "classYearNormalized", value: edge.class_year_normalized, attribution },
+    { name: "graduationYear", value: player.graduation_year ? String(player.graduation_year) : "", attribution },
+    { name: "height", value: edge.height_in ? String(edge.height_in) : "", attribution },
+    { name: "weight", value: edge.weight_lb ? String(edge.weight_lb) : "", attribution },
+    { name: "hometown", value: edge.hometown ?? "", attribution },
+    { name: "rosterStatus", value: player.roster_status, attribution },
+    { name: "teamSeasonId", value: edge.team_season_id, attribution },
+    { name: "sourceName", value: sourceName, attribution },
+    { name: "sourceType", value: "roster_backfill", attribution },
+    { name: "confidenceScore", value: String(edge.confidence), attribution },
+    { name: "reviewStatus", value: player.review_status === "auto" ? "auto_commit_ready" : "pending_review", attribution },
+    { name: "importedAt", value: fetchedAt, attribution }
+  ].filter((field) => field.value !== "");
+}
+
+async function runRosterBackfillIfRosterUrl({ sourceUrl, source, sourceName, fetchedAt }) {
+  const host = new URL(sourceUrl).host;
+  const rosterAdapter = rosterAdapters.find((adapter) => adapter.matches(sourceUrl, host));
+  if (!rosterAdapter) return { entities: [], reviewQueue: [], result: null };
+  const identity = parseMaxPrepsRosterIdentity(sourceUrl);
+  if (!identity) return { entities: [], reviewQueue: [], result: null };
+  const template = rosterAdapter.seasonTemplate(sourceUrl) ?? sourceUrl;
+  const store = new FileRosterStore();
+  const engine = new RosterBackfillEngine(publicFetchPort, store, rosterAdapter);
+  const rosterSource = {
+    id: `SRC_${sourceName.replace(/[^A-Za-z0-9]+/g, "_")}`,
+    name: sourceName,
+    source_url: sourceUrl
+  };
+  const backfillResult = await engine.run({
+    team_id: identity.teamId,
+    school_id: identity.schoolId,
+    sport: identity.sport,
+    gender: identity.gender,
+    rosterUrlTemplate: template,
+    source: rosterSource,
+    currentSeason: currentAcademicSeason(),
+    depth: 3
+  });
+  const state = await getRosterBackfillState();
+  const playersById = new Map(state.players.map((player) => [player.id, player]));
+  const entities = state.edges
+    .filter((edge) => edge.source_url === sourceUrl || edge.source_url.includes(new URL(sourceUrl).pathname.split("/").slice(0, 5).join("/")))
+    .map((edge) => {
+      const player = playersById.get(edge.player_id);
+      if (!player) return null;
+      return {
+        id: `roster-player-${edge.id}`.replace(/[^A-Za-z0-9_-]/g, "_"),
+        type: "player",
+        sourceUrl: edge.source_url,
+        sourceRef: "roster_backfill",
+        fields: rosterPlayerFields({ player, edge, fetchedAt, sourceUrl: edge.source_url, sourceName }),
+        raw: { sourceLabel: "Public Record", sourceName, rosterBackfill: backfillResult, player, edge, reviewStatus: player.review_status === "auto" ? "auto_commit_ready" : "pending_review", confidenceScore: edge.confidence }
+      };
+    })
+    .filter(Boolean);
+  const reviewQueue = state.reviews.map((review) => ({
+    id: `review-${review.id}`,
+    importedEntityId: review.ref_id,
+    ref_type: review.ref_type,
+    ref_id: review.ref_id,
+    reason: review.reason,
+    priority: review.reason?.includes("conflict") ? "high" : "medium",
+    decision: "pending_review",
+    evidence: { sourceUrl, rosterBackfill: true, candidates: review.candidates }
+  }));
+  return { entities, reviewQueue, result: backfillResult };
+}
+
 function linkClassToEntityType(linkClass) {
   if (linkClass === "LIVE_STREAMS") return "stream";
   if (linkClass === "PLAYER_DIRECTORY") return "player";
@@ -275,6 +378,16 @@ export async function runDeepDiscovery(source, options = {}) {
   const context = { url: sourceUrl, html: hubHtml, fetchedAt };
   const selectedAdapter = selectAdapter(adapters, context);
   const publisherOrg = publisherOrgFromSource(typeof source === "string" ? null : source, sourceUrl);
+  const rosterBackfill = await runRosterBackfillIfRosterUrl({ sourceUrl, source, sourceName, fetchedAt });
+
+  if (rosterBackfill.result) {
+    result.parser = "roster-backfill-v1";
+    result.rosterBackfill = rosterBackfill.result;
+    result.entities = rosterBackfill.entities;
+    result.reviewQueue = rosterBackfill.reviewQueue;
+    result.publisherOrganization = publisherOrg;
+    return result;
+  }
 
   if (selectedAdapter) {
     const adapterResult = selectedAdapter.adapter.parseRankingPage(context);
