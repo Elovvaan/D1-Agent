@@ -18,7 +18,7 @@ export default async function PublicDirectoryRecordPage({
           eyebrow="MyD1 Public Directory"
           title={`${toTitle(entityType)} record setup needed`}
           description="This public directory detail page is not connected to a matching imported record yet. Search results stay on a working setup state instead of sending visitors to a missing page."
-          action={<Button href="/athletes/athlete-jayden-lewis" variant="secondary"><ArrowLeft size={16} /> Back to Public Search</Button>}
+          action={<Button href="/search" variant="secondary"><ArrowLeft size={16} /> Back to Public Search</Button>}
         />
         <Card>
           <SectionTitle title="No Imported Record Found" caption="The record may have been removed, merged, or may still be waiting for a full public detail page." />
@@ -34,7 +34,7 @@ export default async function PublicDirectoryRecordPage({
         eyebrow="MyD1 Public Directory"
         title={record.title}
         description={record.detail || "Imported public record awaiting a full MyD1 detail page."}
-        action={<Button href="/athletes/athlete-jayden-lewis" variant="secondary"><ArrowLeft size={16} /> Back to Public Search</Button>}
+        action={<Button href="/search" variant="secondary"><ArrowLeft size={16} /> Back to Public Search</Button>}
       />
 
       <div className="grid gap-6 xl:grid-cols-[1fr_360px]">

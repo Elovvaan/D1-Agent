@@ -112,6 +112,15 @@ type ImportedStatRun = {
   sourceUrl: string;
   fetchedAt: string;
   sourceTitle?: string;
+  sourceRegistry?: PublicSourceRegistryEntry | null;
+  publisherOrganization?: {
+    org_type?: string;
+    name?: string;
+    short_name?: string;
+    state?: string | null;
+    source_url?: string;
+    review_status?: string;
+  };
   entities: Array<{
     id: string;
     type: string;
@@ -122,7 +131,10 @@ type ImportedStatRun = {
       value: string;
       attribution?: { sourceUrl: string; fetchedAt: string; parser: string; selector?: string };
     }>;
+    raw?: Record<string, unknown>;
   }>;
+  reviewQueue?: Array<{ id: string; importedEntityId?: string }>;
+  discoveredLinks?: Array<{ url?: string; href?: string; title?: string; anchor_text?: string; sourceType?: string; link_class?: string; confidence?: number }>;
 };
 
 export type PublicStatRecord = StatLine & {
@@ -132,7 +144,19 @@ export type PublicStatRecord = StatLine & {
   reviewState: "auto_matched" | "needs_review";
 };
 
-export type PublicDirectoryGroupName = "Athletes" | "Schools" | "Teams" | "Games" | "Events/Tournaments" | "Coaches" | "Stats";
+type PublicSourceRegistryEntry = {
+  source_name: string;
+  source_url: string;
+  state: string;
+  country: string;
+  source_level: string;
+  source_type: string;
+  sports_supported: string[];
+  notes?: string;
+  enabled: boolean;
+};
+
+export type PublicDirectoryGroupName = "Schools" | "Teams" | "Athletes" | "Rankings" | "Games" | "Organizations" | "Sources" | "Coaches";
 
 export type PublicDirectoryResult = {
   id: string;
@@ -141,8 +165,27 @@ export type PublicDirectoryResult = {
   href: string;
   group: PublicDirectoryGroupName;
   typeLabel: string;
-  sourceLabel: "Public Record" | "Public Profile";
+  sourceLabel: "Public Record" | "Public Profile" | "Source Registry";
   sourceUrl?: string;
+  importedAt?: string;
+  confidence?: number;
+};
+
+export type PublicDirectorySection = {
+  title: string;
+  caption: string;
+  results: PublicDirectoryResult[];
+};
+
+export type PublicDirectoryCounters = {
+  schools: number;
+  teams: number;
+  athletes: number;
+  coaches: number;
+  games: number;
+  sources: number;
+  recordsImported: number;
+  pendingReview: number;
 };
 
 function readUserState<T>(fileName: string, fallback: T): T {
@@ -163,16 +206,30 @@ function hasUserStateFile(fileName: string) {
 }
 
 function readLatestPublicImportRun(): ImportedStatRun | null {
+  return readAllPublicImportRuns()[0] ?? null;
+}
+
+function readAllPublicImportRuns(): ImportedStatRun[] {
   try {
     const dir = resolve(process.cwd(), "..", "data", "imports");
-    if (!existsSync(dir)) return null;
+    if (!existsSync(dir)) return [];
     const files = readdirSync(dir).filter((file) => file.endsWith(".json")).sort();
     const runs = files
       .map((file) => JSON.parse(readFileSync(join(dir, file), "utf8")) as ImportedStatRun)
       .sort((a, b) => Date.parse(b.fetchedAt) - Date.parse(a.fetchedAt));
-    return runs[0] ?? null;
+    return runs;
   } catch {
-    return null;
+    return [];
+  }
+}
+
+function readPublicSourceRegistry(): PublicSourceRegistryEntry[] {
+  try {
+    const filePath = resolve(process.cwd(), "..", "data", "sources", "public-sources.json");
+    if (!existsSync(filePath)) return [];
+    return JSON.parse(readFileSync(filePath, "utf8")) as PublicSourceRegistryEntry[];
+  } catch {
+    return [];
   }
 }
 
@@ -802,14 +859,14 @@ export function getPublicAthleteHomepage(athleteId = defaultAthleteId) {
   };
 }
 
-const publicDirectoryGroupOrder: PublicDirectoryGroupName[] = ["Athletes", "Schools", "Teams", "Games", "Events/Tournaments", "Coaches", "Stats"];
+const publicDirectoryGroupOrder: PublicDirectoryGroupName[] = ["Schools", "Teams", "Athletes", "Rankings", "Games", "Organizations", "Sources", "Coaches"];
 
 function matchesPublicDirectoryQuery(result: PublicDirectoryResult, normalizedQuery: string) {
-  return [result.title, result.detail, result.typeLabel, result.sourceUrl ?? ""].join(" ").toLowerCase().includes(normalizedQuery);
+  return [result.title, result.detail, result.group, result.typeLabel, result.sourceLabel, result.sourceUrl ?? ""].join(" ").toLowerCase().includes(normalizedQuery);
 }
 
 function importedTitle(entity: ImportedStatRun["entities"][number]) {
-  const titleFieldNames = ["athleteName", "playerName", "schoolName", "teamName", "coachName", "eventName", "tournamentName", "gameName", "statMetric", "opponent", "profileUrl"];
+  const titleFieldNames = ["name", "athleteName", "playerName", "schoolName", "teamName", "coachName", "eventName", "tournamentName", "gameName", "statMetric", "opponent", "profileUrl"];
   return titleFieldNames.map((name) => importedField(entity, name)).find(Boolean) ?? toTitle(entity.type);
 }
 
@@ -821,10 +878,12 @@ function importedDetail(entity: ImportedStatRun["entities"][number], run?: Impor
     importedField(entity, "classYear"),
     importedField(entity, "season"),
     importedField(entity, "gameDate"),
-    importedField(entity, "statValue")
+    importedField(entity, "statValue"),
+    importedField(entity, "sourceType"),
+    importedField(entity, "confidenceScore") ? `Confidence ${Math.round(Number(importedField(entity, "confidenceScore")) * 100)}%` : ""
   ].filter(Boolean);
 
-  const source = run?.sourceTitle ?? entity.sourceUrl;
+  const source = run?.sourceTitle ?? importedField(entity, "sourceName") ?? entity.sourceUrl;
   return [...details, source ? `Source: ${source}` : ""].filter(Boolean).join(" - ");
 }
 
@@ -832,8 +891,11 @@ function importedDirectoryMapping(entity: ImportedStatRun["entities"][number]): 
   if (entity.type === "player" || entity.type === "athlete" || entity.type === "roster") {
     return { group: "Athletes", typeLabel: entity.type === "roster" ? "Roster" : "Roster Athlete", pathType: "athletes" };
   }
-  if (entity.type === "school" || entity.type === "district" || entity.type === "conference" || entity.type === "league") {
-    return { group: "Schools", typeLabel: entity.type === "school" ? "School" : toTitle(entity.type), pathType: entity.type === "school" ? "schools" : `${entity.type}s` };
+  if (entity.type === "school") {
+    return { group: "Schools", typeLabel: "School", pathType: "schools" };
+  }
+  if (entity.type === "district" || entity.type === "conference" || entity.type === "league" || entity.type === "organization") {
+    return { group: "Organizations", typeLabel: toTitle(entity.type), pathType: "organizations" };
   }
   if (entity.type === "team") {
     return { group: "Teams", typeLabel: "Team", pathType: "teams" };
@@ -842,33 +904,65 @@ function importedDirectoryMapping(entity: ImportedStatRun["entities"][number]): 
     return { group: "Games", typeLabel: "Game", pathType: "games" };
   }
   if (entity.type === "event" || entity.type === "tournament") {
-    return { group: "Events/Tournaments", typeLabel: toTitle(entity.type), pathType: "events" };
+    return { group: "Games", typeLabel: toTitle(entity.type), pathType: "events" };
   }
   if (entity.type === "coach" || entity.type === "recruiter") {
     return { group: "Coaches", typeLabel: toTitle(entity.type), pathType: "coaches" };
   }
   if (entity.type === "stat") {
-    return { group: "Stats", typeLabel: "Public Stat", pathType: "stats" };
+    const sourceRef = String(entity.sourceRef ?? entity.raw?.sourceType ?? "");
+    const isRanking = /ranking/i.test(sourceRef) || importedField(entity, "statMetric") === "national_rank";
+    return { group: "Rankings", typeLabel: isRanking ? "Ranking" : "Public Stat", pathType: "rankings" };
   }
 
   return null;
 }
 
-export function searchPublicDirectory(query: string) {
-  const normalizedQuery = query.trim().toLowerCase();
-  if (!normalizedQuery) {
-    return [];
-  }
+function sourceRegistryResult(source: PublicSourceRegistryEntry): PublicDirectoryResult {
+  const id = `source-${source.source_name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "public-source"}`;
+  const sports = source.sports_supported.length ? source.sports_supported.join(", ") : "sports discovered from public pages";
+  return {
+    id,
+    title: source.source_name,
+    detail: `${source.source_level} - ${source.source_type.replaceAll("_", " ")} - ${source.state}, ${source.country} - ${sports}`,
+    href: `/directory/sources/${id}`,
+    group: "Sources",
+    typeLabel: "Source",
+    sourceLabel: "Source Registry",
+    sourceUrl: source.source_url
+  };
+}
 
-  const buckets = new Map<PublicDirectoryGroupName, PublicDirectoryResult[]>();
-  const addResult = (result: PublicDirectoryResult) => {
-    if (!matchesPublicDirectoryQuery(result, normalizedQuery)) return;
-    buckets.set(result.group, [...(buckets.get(result.group) ?? []), result]);
+function publisherOrganizationResult(run: ImportedStatRun): PublicDirectoryResult | null {
+  const org = run.publisherOrganization;
+  if (!org?.name) return null;
+  const id = `org-${org.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || run.runId}`;
+  return {
+    id,
+    title: org.name,
+    detail: `${toTitle(org.org_type ?? "publisher")} - ${org.state ?? "National"} - Source: ${run.sourceTitle ?? run.sourceUrl}`,
+    href: `/directory/organizations/${id}`,
+    group: "Organizations",
+    typeLabel: toTitle(org.org_type ?? "Publisher"),
+    sourceLabel: "Public Record",
+    sourceUrl: org.source_url ?? run.sourceUrl,
+    importedAt: run.fetchedAt
+  };
+}
+
+function buildPublicDirectoryIndex() {
+  const results: PublicDirectoryResult[] = [];
+  const seen = new Set<string>();
+  const add = (result: PublicDirectoryResult) => {
+    const key = `${result.group}:${result.id}:${result.sourceUrl ?? ""}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    results.push(result);
   };
 
   if (hasUserStateFile("profile.json")) {
     const athlete = getAthleteProfile(defaultAthleteId);
-    addResult({
+    add({
       id: athlete.id,
       title: athlete.fullName,
       detail: `${athlete.sport} - ${athlete.primaryPosition} - ${athlete.schoolName} - Class of ${athlete.classYear}`,
@@ -879,30 +973,112 @@ export function searchPublicDirectory(query: string) {
     });
   }
 
-  const run = readLatestPublicImportRun();
-  for (const entity of run?.entities ?? []) {
-    const mapping = importedDirectoryMapping(entity);
-    if (!mapping) continue;
-
-    addResult({
-      id: entity.id,
-      title: importedTitle(entity),
-      detail: importedDetail(entity, run),
-      href: `/directory/${mapping.pathType}/${entity.id}`,
-      group: mapping.group,
-      typeLabel: mapping.typeLabel,
-      sourceLabel: "Public Record",
-      sourceUrl: entity.sourceUrl
-    });
+  const runs = readAllPublicImportRuns();
+  for (const source of readPublicSourceRegistry().filter((item) => item.enabled)) {
+    add(sourceRegistryResult(source));
   }
 
+  for (const run of runs) {
+    const org = publisherOrganizationResult(run);
+    if (org) add(org);
+    for (const entity of run.entities ?? []) {
+      const mapping = importedDirectoryMapping(entity);
+      if (!mapping) continue;
+      add({
+        id: entity.id,
+        title: importedTitle(entity),
+        detail: importedDetail(entity, run),
+        href: `/directory/${mapping.pathType}/${entity.id}`,
+        group: mapping.group,
+        typeLabel: mapping.typeLabel,
+        sourceLabel: "Public Record",
+        sourceUrl: entity.sourceUrl,
+        importedAt: run.fetchedAt,
+        confidence: Number(importedField(entity, "confidenceScore") ?? entity.raw?.confidenceScore ?? 0)
+      });
+    }
+  }
+
+  return results;
+}
+
+function groupDirectoryResults(results: PublicDirectoryResult[]) {
+  const buckets = new Map<PublicDirectoryGroupName, PublicDirectoryResult[]>();
+  for (const result of results) {
+    buckets.set(result.group, [...(buckets.get(result.group) ?? []), result]);
+  }
   return publicDirectoryGroupOrder
     .map((group) => ({ group, results: buckets.get(group) ?? [] }))
     .filter((group) => group.results.length > 0);
 }
 
+export function searchPublicDirectory(query: string) {
+  const normalizedQuery = query.trim().toLowerCase();
+  if (!normalizedQuery) {
+    return [];
+  }
+  return groupDirectoryResults(buildPublicDirectoryIndex().filter((result) => matchesPublicDirectoryQuery(result, normalizedQuery)));
+}
+
+export function getPublicDirectoryDiscoverySections(): PublicDirectorySection[] {
+  const allResults = buildPublicDirectoryIndex();
+  const runs = readAllPublicImportRuns();
+  const pendingReviewIds = new Set(runs.flatMap((run) => run.reviewQueue ?? []).map((item) => item.importedEntityId).filter(Boolean));
+  const recentlyImported = [...allResults]
+    .filter((result) => result.sourceLabel === "Public Record")
+    .sort((a, b) => Date.parse(b.importedAt ?? "") - Date.parse(a.importedAt ?? ""))
+    .slice(0, 8);
+  const pendingReview = allResults.filter((result) => pendingReviewIds.has(result.id)).slice(0, 8);
+  const byGroup = (group: PublicDirectoryGroupName) => allResults.filter((result) => result.group === group).slice(0, 8);
+  return [
+    { title: "Recently imported", caption: "Newest source-attributed records from public imports.", results: recentlyImported },
+    { title: "National rankings", caption: "Ranking records parsed from public national sources.", results: byGroup("Rankings") },
+    { title: "Schools discovered", caption: "School records found in public data imports.", results: byGroup("Schools") },
+    { title: "Teams discovered", caption: "Team records found in public data imports.", results: byGroup("Teams") },
+    { title: "Sources active", caption: "Enabled public source registry entries.", results: byGroup("Sources") },
+    { title: "Records needing review", caption: "Imported records waiting for review before verification or merge.", results: pendingReview }
+  ];
+}
+
+export function getPublicDirectoryCounters(): PublicDirectoryCounters {
+  const results = buildPublicDirectoryIndex();
+  const runs = readAllPublicImportRuns();
+  const countGroup = (group: PublicDirectoryGroupName) => results.filter((result) => result.group === group).length;
+  return {
+    schools: countGroup("Schools"),
+    teams: countGroup("Teams"),
+    athletes: countGroup("Athletes"),
+    coaches: countGroup("Coaches"),
+    games: countGroup("Games"),
+    sources: readPublicSourceRegistry().filter((source) => source.enabled).length,
+    recordsImported: runs.reduce((total, run) => total + (run.entities?.length ?? 0), 0),
+    pendingReview: runs.reduce((total, run) => total + (run.reviewQueue?.length ?? 0), 0)
+  };
+}
+
 export function getPublicDirectoryRecord(entityId: string) {
-  const run = readLatestPublicImportRun();
+  const source = readPublicSourceRegistry().find((item) => sourceRegistryResult(item).id === entityId);
+  if (source) {
+    const result = sourceRegistryResult(source);
+    return {
+      run: null,
+      entity: { id: result.id, type: "source", sourceUrl: source.source_url, fields: [] },
+      title: result.title,
+      detail: result.detail,
+      typeLabel: "Source",
+      group: "Sources" as PublicDirectoryGroupName,
+      fields: [
+        { name: "source_name", value: source.source_name, sourceUrl: source.source_url, fetchedAt: "", parser: "source-registry" },
+        { name: "source_url", value: source.source_url, sourceUrl: source.source_url, fetchedAt: "", parser: "source-registry" },
+        { name: "source_level", value: source.source_level, sourceUrl: source.source_url, fetchedAt: "", parser: "source-registry" },
+        { name: "source_type", value: source.source_type, sourceUrl: source.source_url, fetchedAt: "", parser: "source-registry" },
+        { name: "state", value: source.state, sourceUrl: source.source_url, fetchedAt: "", parser: "source-registry" }
+      ]
+    };
+  }
+
+  const runs = readAllPublicImportRuns();
+  const run = runs.find((item) => item.entities?.some((entity) => entity.id === entityId));
   const entity = run?.entities.find((item) => item.id === entityId) ?? null;
   if (!entity) {
     return null;

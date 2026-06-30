@@ -5,15 +5,19 @@ import {
   Building2,
   Camera,
   Clapperboard,
+  Database,
   GraduationCap,
+  ListChecks,
   Search,
   ShieldCheck,
+  Swords,
   Trophy,
-  UserRound
+  UserRound,
+  Users
 } from "lucide-react";
 import { Badge, Button, Card, StatCard } from "@/components/design-system";
 import { PublicSiteShell } from "@/components/public-site-shell";
-import { getRoleHome } from "@/lib/data/services";
+import { getPublicDirectoryCounters, getRoleHome } from "@/lib/data/services";
 
 const roles = new Set<D1Role>(["athlete", "coach", "recruiter", "media_partner", "admin"]);
 
@@ -31,6 +35,17 @@ const features = [
 export default async function LandingPage() {
   const role = (await cookies()).get("d1_role")?.value;
   const dashboardHref = role && roles.has(role as D1Role) ? getRoleHome(role as D1Role) : "";
+  const counters = getPublicDirectoryCounters();
+  const liveCounters = [
+    { label: "Schools", value: counters.schools, detail: "Public school records indexed.", icon: Building2, tone: "blue" },
+    { label: "Teams", value: counters.teams, detail: "Team records discovered from imports.", icon: Users, tone: "green" },
+    { label: "Athletes", value: counters.athletes, detail: "Public athlete records available.", icon: UserRound, tone: "yellow" },
+    { label: "Coaches", value: counters.coaches, detail: "Coach records found where available.", icon: ShieldCheck, tone: "blue" },
+    { label: "Games", value: counters.games, detail: "Games, events, and tournament records.", icon: Swords, tone: "green" },
+    { label: "Sources", value: counters.sources, detail: "Enabled registry sources.", icon: Search, tone: "yellow" },
+    { label: "Records Imported", value: counters.recordsImported, detail: "Total records from real import artifacts.", icon: Database, tone: "blue" },
+    { label: "Pending Review", value: counters.pendingReview, detail: "Records waiting for review before verification.", icon: ListChecks, tone: "yellow" }
+  ] as const;
 
   return (
     <PublicSiteShell>
@@ -78,6 +93,28 @@ export default async function LandingPage() {
               ))}
             </div>
           </Card>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-[1440px] px-4 py-12 sm:px-6 lg:px-8">
+        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.14em] text-[#1B3FA0]">Live Directory</p>
+            <h2 className="mt-2 text-3xl font-black tracking-tight text-[#0A1A3F]">Real public sports data, indexed as it imports.</h2>
+          </div>
+          <Button href="/search" variant="secondary">Explore Directory</Button>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {liveCounters.map((counter) => (
+            <StatCard
+              key={counter.label}
+              label={counter.label}
+              value={String(counter.value)}
+              detail={counter.detail}
+              icon={counter.icon}
+              tone={counter.tone}
+            />
+          ))}
         </div>
       </section>
 
