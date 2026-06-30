@@ -10,6 +10,7 @@ const OPERATOR_COOKIE = "myd1_operator_access";
 const OPERATOR_COOKIE_VALUE = "granted";
 const OPERATOR_AUDIT_FILE = "operator-audit.json";
 const OPERATOR_ISSUES_FILE = "operator-issues.json";
+const OPERATOR_INBOX_FILE = "operator-inbox.json";
 
 function value(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
@@ -97,6 +98,27 @@ export async function recordSupportIssue(formData: FormData) {
   });
   await audit("support-issue-recorded", { subject, affectedArea, accountType, severity });
   redirect("/operations?status=issue-recorded#support");
+}
+
+export async function recordInboundMessage(formData: FormData) {
+  const senderName = value(formData, "senderName");
+  const senderContact = value(formData, "senderContact");
+  const source = value(formData, "source") || "email";
+  const subject = value(formData, "subject");
+  const body = value(formData, "body");
+
+  await appendUserState(OPERATOR_INBOX_FILE, {
+    id: `inbound-${randomUUID()}`,
+    senderName,
+    senderContact,
+    source,
+    subject,
+    body,
+    status: "open",
+    receivedAt: new Date().toISOString()
+  });
+  await audit("inbound-message-captured", { source, subject, senderName });
+  redirect("/operations?status=inbound-message-recorded#communications");
 }
 
 export async function recordViewAsUser(formData: FormData) {
