@@ -1,0 +1,2896 @@
+{
+  "runId": "deep-import-40446f15-0eae-4436-9371-8fdca19f8d84",
+  "sourceUrl": "https://uhsaa.org/uhsaa-rankings-home/",
+  "fetchedAt": "2026-06-30T03:56:09.399Z",
+  "sourceTitle": "uhsaa.org",
+  "sourceRegistry": null,
+  "entities": [
+    {
+      "id": "source-93fb9b107df5",
+      "type": "stat",
+      "sourceUrl": "https://uhsaa.org/uhsaa-rankings-home/",
+      "sourceRef": "rankings",
+      "fields": [
+        {
+          "name": "name",
+          "value": "UHSAA Rankings Home",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/uhsaa-rankings-home/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Rankings Home"
+          }
+        },
+        {
+          "name": "profileUrl",
+          "value": "https://uhsaa.org/uhsaa-rankings-home/",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/uhsaa-rankings-home/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Rankings Home"
+          }
+        },
+        {
+          "name": "sourceName",
+          "value": "uhsaa.org",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/uhsaa-rankings-home/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Rankings Home"
+          }
+        },
+        {
+          "name": "sourceType",
+          "value": "rankings",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/uhsaa-rankings-home/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Rankings Home"
+          }
+        },
+        {
+          "name": "confidenceScore",
+          "value": "0.66",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/uhsaa-rankings-home/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Rankings Home"
+          }
+        },
+        {
+          "name": "reviewStatus",
+          "value": "pending_review",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/uhsaa-rankings-home/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Rankings Home"
+          }
+        },
+        {
+          "name": "importedAt",
+          "value": "2026-06-30T03:56:09.399Z",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/uhsaa-rankings-home/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Rankings Home"
+          }
+        }
+      ],
+      "raw": {
+        "sourceLevel": "unknown",
+        "sourceType": "rankings",
+        "confidence": 0.66,
+        "reviewStatus": "pending_review",
+        "sourceLabel": "Public Record",
+        "sourceName": "uhsaa.org",
+        "publisherOrganization": {
+          "org_type": "PUBLISHER",
+          "name": "uhsaa.org",
+          "state": null,
+          "source_url": "https://uhsaa.org/uhsaa-rankings-home/",
+          "review_status": "pending"
+        },
+        "refreshTier": "SEASONAL",
+        "schedulerNote": "Daily in-season; paused or reduced off-season.",
+        "sourceUrl": "https://uhsaa.org/uhsaa-rankings-home/",
+        "importedAt": "2026-06-30T03:56:09.399Z"
+      }
+    },
+    {
+      "id": "public-f3cdc22dc940",
+      "type": "stat",
+      "sourceUrl": "https://uhsaa.org/stat-leaders/",
+      "sourceRef": "stats",
+      "fields": [
+        {
+          "name": "name",
+          "value": "UHSAA Stat Leaders from MaxPreps",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/stat-leaders/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Stat Leaders from MaxPreps"
+          }
+        },
+        {
+          "name": "profileUrl",
+          "value": "https://uhsaa.org/stat-leaders/",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/stat-leaders/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Stat Leaders from MaxPreps"
+          }
+        },
+        {
+          "name": "sourceName",
+          "value": "uhsaa.org",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/stat-leaders/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Stat Leaders from MaxPreps"
+          }
+        },
+        {
+          "name": "sourceType",
+          "value": "stats",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/stat-leaders/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Stat Leaders from MaxPreps"
+          }
+        },
+        {
+          "name": "confidenceScore",
+          "value": "0.9",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/stat-leaders/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Stat Leaders from MaxPreps"
+          }
+        },
+        {
+          "name": "reviewStatus",
+          "value": "pending_review",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/stat-leaders/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Stat Leaders from MaxPreps"
+          }
+        },
+        {
+          "name": "importedAt",
+          "value": "2026-06-30T03:56:09.399Z",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/stat-leaders/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Stat Leaders from MaxPreps"
+          }
+        }
+      ],
+      "raw": {
+        "sourceLabel": "Public Record",
+        "sourceName": "uhsaa.org",
+        "publisherOrganization": {
+          "org_type": "PUBLISHER",
+          "name": "uhsaa.org",
+          "state": null,
+          "source_url": "https://uhsaa.org/uhsaa-rankings-home/",
+          "review_status": "pending"
+        },
+        "sourceUrl": "https://uhsaa.org/stat-leaders/",
+        "importedAt": "2026-06-30T03:56:09.399Z",
+        "confidenceScore": 0.9,
+        "reviewStatus": "pending_review",
+        "sourceType": "stats",
+        "fetchedPage": true,
+        "evidence": [
+          "Matched \"leaders\"."
+        ]
+      }
+    },
+    {
+      "id": "public-920047b43473",
+      "type": "game",
+      "sourceUrl": "https://uhsaa.org/scores/",
+      "sourceRef": "schedule",
+      "fields": [
+        {
+          "name": "name",
+          "value": "Scores",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/scores/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Scores"
+          }
+        },
+        {
+          "name": "profileUrl",
+          "value": "https://uhsaa.org/scores/",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/scores/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Scores"
+          }
+        },
+        {
+          "name": "sourceName",
+          "value": "uhsaa.org",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/scores/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Scores"
+          }
+        },
+        {
+          "name": "sourceType",
+          "value": "schedule",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/scores/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Scores"
+          }
+        },
+        {
+          "name": "confidenceScore",
+          "value": "0.88",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/scores/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Scores"
+          }
+        },
+        {
+          "name": "reviewStatus",
+          "value": "pending_review",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/scores/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Scores"
+          }
+        },
+        {
+          "name": "importedAt",
+          "value": "2026-06-30T03:56:09.399Z",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/scores/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Scores"
+          }
+        }
+      ],
+      "raw": {
+        "sourceLabel": "Public Record",
+        "sourceName": "uhsaa.org",
+        "publisherOrganization": {
+          "org_type": "PUBLISHER",
+          "name": "uhsaa.org",
+          "state": null,
+          "source_url": "https://uhsaa.org/uhsaa-rankings-home/",
+          "review_status": "pending"
+        },
+        "sourceUrl": "https://uhsaa.org/scores/",
+        "importedAt": "2026-06-30T03:56:09.399Z",
+        "confidenceScore": 0.88,
+        "reviewStatus": "pending_review",
+        "sourceType": "schedule",
+        "fetchedPage": true,
+        "evidence": [
+          "Matched \"scores\"."
+        ]
+      }
+    },
+    {
+      "id": "public-2ff3a024abb7",
+      "type": "game",
+      "sourceUrl": "https://uhsaa.org/v2/how-to-use-maxpreps/",
+      "sourceRef": "schedule",
+      "fields": [
+        {
+          "name": "name",
+          "value": "How to use MaxPreps",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/v2/how-to-use-maxpreps/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "How to use MaxPreps"
+          }
+        },
+        {
+          "name": "profileUrl",
+          "value": "https://uhsaa.org/v2/how-to-use-maxpreps/",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/v2/how-to-use-maxpreps/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "How to use MaxPreps"
+          }
+        },
+        {
+          "name": "sourceName",
+          "value": "uhsaa.org",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/v2/how-to-use-maxpreps/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "How to use MaxPreps"
+          }
+        },
+        {
+          "name": "sourceType",
+          "value": "schedule",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/v2/how-to-use-maxpreps/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "How to use MaxPreps"
+          }
+        },
+        {
+          "name": "confidenceScore",
+          "value": "0.88",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/v2/how-to-use-maxpreps/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "How to use MaxPreps"
+          }
+        },
+        {
+          "name": "reviewStatus",
+          "value": "pending_review",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/v2/how-to-use-maxpreps/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "How to use MaxPreps"
+          }
+        },
+        {
+          "name": "importedAt",
+          "value": "2026-06-30T03:56:09.399Z",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/v2/how-to-use-maxpreps/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "How to use MaxPreps"
+          }
+        }
+      ],
+      "raw": {
+        "sourceLabel": "Public Record",
+        "sourceName": "uhsaa.org",
+        "publisherOrganization": {
+          "org_type": "PUBLISHER",
+          "name": "uhsaa.org",
+          "state": null,
+          "source_url": "https://uhsaa.org/uhsaa-rankings-home/",
+          "review_status": "pending"
+        },
+        "sourceUrl": "https://uhsaa.org/v2/how-to-use-maxpreps/",
+        "importedAt": "2026-06-30T03:56:09.399Z",
+        "confidenceScore": 0.88,
+        "reviewStatus": "pending_review",
+        "sourceType": "schedule",
+        "fetchedPage": true,
+        "evidence": [
+          "Matched \"scores\"."
+        ]
+      }
+    },
+    {
+      "id": "public-851c92ea9cc2",
+      "type": "game",
+      "sourceUrl": "https://uhsaa.org/how-to-use-maxpreps/",
+      "sourceRef": "schedule",
+      "fields": [
+        {
+          "name": "name",
+          "value": "How to use MaxPreps",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/how-to-use-maxpreps/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "How to use MaxPreps"
+          }
+        },
+        {
+          "name": "profileUrl",
+          "value": "https://uhsaa.org/how-to-use-maxpreps/",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/how-to-use-maxpreps/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "How to use MaxPreps"
+          }
+        },
+        {
+          "name": "sourceName",
+          "value": "uhsaa.org",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/how-to-use-maxpreps/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "How to use MaxPreps"
+          }
+        },
+        {
+          "name": "sourceType",
+          "value": "schedule",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/how-to-use-maxpreps/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "How to use MaxPreps"
+          }
+        },
+        {
+          "name": "confidenceScore",
+          "value": "0.88",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/how-to-use-maxpreps/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "How to use MaxPreps"
+          }
+        },
+        {
+          "name": "reviewStatus",
+          "value": "pending_review",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/how-to-use-maxpreps/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "How to use MaxPreps"
+          }
+        },
+        {
+          "name": "importedAt",
+          "value": "2026-06-30T03:56:09.399Z",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/how-to-use-maxpreps/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "How to use MaxPreps"
+          }
+        }
+      ],
+      "raw": {
+        "sourceLabel": "Public Record",
+        "sourceName": "uhsaa.org",
+        "publisherOrganization": {
+          "org_type": "PUBLISHER",
+          "name": "uhsaa.org",
+          "state": null,
+          "source_url": "https://uhsaa.org/uhsaa-rankings-home/",
+          "review_status": "pending"
+        },
+        "sourceUrl": "https://uhsaa.org/how-to-use-maxpreps/",
+        "importedAt": "2026-06-30T03:56:09.399Z",
+        "confidenceScore": 0.88,
+        "reviewStatus": "pending_review",
+        "sourceType": "schedule",
+        "fetchedPage": true,
+        "evidence": [
+          "Matched \"scores\"."
+        ]
+      }
+    },
+    {
+      "id": "public-f0e1d1ce7167",
+      "type": "game",
+      "sourceUrl": "https://uhsaa.org/v2/scores/",
+      "sourceRef": "schedule",
+      "fields": [
+        {
+          "name": "name",
+          "value": "Scores",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/v2/scores/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Scores"
+          }
+        },
+        {
+          "name": "profileUrl",
+          "value": "https://uhsaa.org/v2/scores/",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/v2/scores/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Scores"
+          }
+        },
+        {
+          "name": "sourceName",
+          "value": "uhsaa.org",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/v2/scores/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Scores"
+          }
+        },
+        {
+          "name": "sourceType",
+          "value": "schedule",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/v2/scores/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Scores"
+          }
+        },
+        {
+          "name": "confidenceScore",
+          "value": "0.88",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/v2/scores/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Scores"
+          }
+        },
+        {
+          "name": "reviewStatus",
+          "value": "pending_review",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/v2/scores/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Scores"
+          }
+        },
+        {
+          "name": "importedAt",
+          "value": "2026-06-30T03:56:09.399Z",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/v2/scores/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Scores"
+          }
+        }
+      ],
+      "raw": {
+        "sourceLabel": "Public Record",
+        "sourceName": "uhsaa.org",
+        "publisherOrganization": {
+          "org_type": "PUBLISHER",
+          "name": "uhsaa.org",
+          "state": null,
+          "source_url": "https://uhsaa.org/uhsaa-rankings-home/",
+          "review_status": "pending"
+        },
+        "sourceUrl": "https://uhsaa.org/v2/scores/",
+        "importedAt": "2026-06-30T03:56:09.399Z",
+        "confidenceScore": 0.88,
+        "reviewStatus": "pending_review",
+        "sourceType": "schedule",
+        "fetchedPage": true,
+        "evidence": [
+          "Matched \"scores\"."
+        ]
+      }
+    },
+    {
+      "id": "public-6ef609eda6c8",
+      "type": "game",
+      "sourceUrl": "https://uhsaa.org/uhsaa-bracket-reveal-shows/",
+      "sourceRef": "bracket/tournament",
+      "fields": [
+        {
+          "name": "name",
+          "value": "UHSAA Bracket Reveal Shows - UHSAA",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/uhsaa-bracket-reveal-shows/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Bracket Reveal Shows - UHSAA"
+          }
+        },
+        {
+          "name": "profileUrl",
+          "value": "https://uhsaa.org/uhsaa-bracket-reveal-shows/",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/uhsaa-bracket-reveal-shows/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Bracket Reveal Shows - UHSAA"
+          }
+        },
+        {
+          "name": "sourceName",
+          "value": "uhsaa.org",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/uhsaa-bracket-reveal-shows/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Bracket Reveal Shows - UHSAA"
+          }
+        },
+        {
+          "name": "sourceType",
+          "value": "bracket/tournament",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/uhsaa-bracket-reveal-shows/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Bracket Reveal Shows - UHSAA"
+          }
+        },
+        {
+          "name": "confidenceScore",
+          "value": "0.87",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/uhsaa-bracket-reveal-shows/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Bracket Reveal Shows - UHSAA"
+          }
+        },
+        {
+          "name": "reviewStatus",
+          "value": "pending_review",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/uhsaa-bracket-reveal-shows/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Bracket Reveal Shows - UHSAA"
+          }
+        },
+        {
+          "name": "importedAt",
+          "value": "2026-06-30T03:56:09.399Z",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/uhsaa-bracket-reveal-shows/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Bracket Reveal Shows - UHSAA"
+          }
+        }
+      ],
+      "raw": {
+        "sourceLabel": "Public Record",
+        "sourceName": "uhsaa.org",
+        "publisherOrganization": {
+          "org_type": "PUBLISHER",
+          "name": "uhsaa.org",
+          "state": null,
+          "source_url": "https://uhsaa.org/uhsaa-rankings-home/",
+          "review_status": "pending"
+        },
+        "sourceUrl": "https://uhsaa.org/uhsaa-bracket-reveal-shows/",
+        "importedAt": "2026-06-30T03:56:09.399Z",
+        "confidenceScore": 0.87,
+        "reviewStatus": "pending_review",
+        "sourceType": "bracket/tournament",
+        "fetchedPage": true,
+        "evidence": [
+          "Matched \"bracket\"."
+        ]
+      }
+    },
+    {
+      "id": "public-96355dc11098",
+      "type": "stream",
+      "sourceUrl": "https://uhsaa.org/uhsaa-media-information/",
+      "sourceRef": "livestream/media",
+      "fields": [
+        {
+          "name": "name",
+          "value": "UHSAA Media Information",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/uhsaa-media-information/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Media Information"
+          }
+        },
+        {
+          "name": "profileUrl",
+          "value": "https://uhsaa.org/uhsaa-media-information/",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/uhsaa-media-information/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Media Information"
+          }
+        },
+        {
+          "name": "sourceName",
+          "value": "uhsaa.org",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/uhsaa-media-information/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Media Information"
+          }
+        },
+        {
+          "name": "sourceType",
+          "value": "livestream/media",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/uhsaa-media-information/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Media Information"
+          }
+        },
+        {
+          "name": "confidenceScore",
+          "value": "0.84",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/uhsaa-media-information/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Media Information"
+          }
+        },
+        {
+          "name": "reviewStatus",
+          "value": "pending_review",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/uhsaa-media-information/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Media Information"
+          }
+        },
+        {
+          "name": "importedAt",
+          "value": "2026-06-30T03:56:09.399Z",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/uhsaa-media-information/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Media Information"
+          }
+        }
+      ],
+      "raw": {
+        "sourceLabel": "Public Record",
+        "sourceName": "uhsaa.org",
+        "publisherOrganization": {
+          "org_type": "PUBLISHER",
+          "name": "uhsaa.org",
+          "state": null,
+          "source_url": "https://uhsaa.org/uhsaa-rankings-home/",
+          "review_status": "pending"
+        },
+        "sourceUrl": "https://uhsaa.org/uhsaa-media-information/",
+        "importedAt": "2026-06-30T03:56:09.399Z",
+        "confidenceScore": 0.84,
+        "reviewStatus": "pending_review",
+        "sourceType": "livestream/media",
+        "fetchedPage": true,
+        "evidence": [
+          "Matched \"media\"."
+        ]
+      }
+    },
+    {
+      "id": "public-c0d84c6708b7",
+      "type": "stream",
+      "sourceUrl": "https://uhsaa.org/v2/uhsaa-media-information/",
+      "sourceRef": "livestream/media",
+      "fields": [
+        {
+          "name": "name",
+          "value": "UHSAA Media Information",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/v2/uhsaa-media-information/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Media Information"
+          }
+        },
+        {
+          "name": "profileUrl",
+          "value": "https://uhsaa.org/v2/uhsaa-media-information/",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/v2/uhsaa-media-information/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Media Information"
+          }
+        },
+        {
+          "name": "sourceName",
+          "value": "uhsaa.org",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/v2/uhsaa-media-information/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Media Information"
+          }
+        },
+        {
+          "name": "sourceType",
+          "value": "livestream/media",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/v2/uhsaa-media-information/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Media Information"
+          }
+        },
+        {
+          "name": "confidenceScore",
+          "value": "0.84",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/v2/uhsaa-media-information/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Media Information"
+          }
+        },
+        {
+          "name": "reviewStatus",
+          "value": "pending_review",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/v2/uhsaa-media-information/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Media Information"
+          }
+        },
+        {
+          "name": "importedAt",
+          "value": "2026-06-30T03:56:09.399Z",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/v2/uhsaa-media-information/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Media Information"
+          }
+        }
+      ],
+      "raw": {
+        "sourceLabel": "Public Record",
+        "sourceName": "uhsaa.org",
+        "publisherOrganization": {
+          "org_type": "PUBLISHER",
+          "name": "uhsaa.org",
+          "state": null,
+          "source_url": "https://uhsaa.org/uhsaa-rankings-home/",
+          "review_status": "pending"
+        },
+        "sourceUrl": "https://uhsaa.org/v2/uhsaa-media-information/",
+        "importedAt": "2026-06-30T03:56:09.399Z",
+        "confidenceScore": 0.84,
+        "reviewStatus": "pending_review",
+        "sourceType": "livestream/media",
+        "fetchedPage": true,
+        "evidence": [
+          "Matched \"media\"."
+        ]
+      }
+    },
+    {
+      "id": "public-bfdf41f319e1",
+      "type": "coach",
+      "sourceUrl": "https://uhsaa.org/uhsaa-staff/",
+      "sourceRef": "coach/staff",
+      "fields": [
+        {
+          "name": "name",
+          "value": "Staff - UHSAA",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/uhsaa-staff/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Staff - UHSAA"
+          }
+        },
+        {
+          "name": "profileUrl",
+          "value": "https://uhsaa.org/uhsaa-staff/",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/uhsaa-staff/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Staff - UHSAA"
+          }
+        },
+        {
+          "name": "sourceName",
+          "value": "uhsaa.org",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/uhsaa-staff/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Staff - UHSAA"
+          }
+        },
+        {
+          "name": "sourceType",
+          "value": "coach/staff",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/uhsaa-staff/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Staff - UHSAA"
+          }
+        },
+        {
+          "name": "confidenceScore",
+          "value": "0.82",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/uhsaa-staff/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Staff - UHSAA"
+          }
+        },
+        {
+          "name": "reviewStatus",
+          "value": "pending_review",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/uhsaa-staff/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Staff - UHSAA"
+          }
+        },
+        {
+          "name": "importedAt",
+          "value": "2026-06-30T03:56:09.399Z",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/uhsaa-staff/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Staff - UHSAA"
+          }
+        }
+      ],
+      "raw": {
+        "sourceLabel": "Public Record",
+        "sourceName": "uhsaa.org",
+        "publisherOrganization": {
+          "org_type": "PUBLISHER",
+          "name": "uhsaa.org",
+          "state": null,
+          "source_url": "https://uhsaa.org/uhsaa-rankings-home/",
+          "review_status": "pending"
+        },
+        "sourceUrl": "https://uhsaa.org/uhsaa-staff/",
+        "importedAt": "2026-06-30T03:56:09.399Z",
+        "confidenceScore": 0.82,
+        "reviewStatus": "pending_review",
+        "sourceType": "coach/staff",
+        "fetchedPage": true,
+        "evidence": [
+          "Matched \"staff\"."
+        ]
+      }
+    },
+    {
+      "id": "public-4727b4690b73",
+      "type": "coach",
+      "sourceUrl": "https://uhsaa.org/coach-of-the-month/",
+      "sourceRef": "coach/staff",
+      "fields": [
+        {
+          "name": "name",
+          "value": "Coach of the Month - UHSAA",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/coach-of-the-month/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Coach of the Month - UHSAA"
+          }
+        },
+        {
+          "name": "profileUrl",
+          "value": "https://uhsaa.org/coach-of-the-month/",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/coach-of-the-month/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Coach of the Month - UHSAA"
+          }
+        },
+        {
+          "name": "sourceName",
+          "value": "uhsaa.org",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/coach-of-the-month/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Coach of the Month - UHSAA"
+          }
+        },
+        {
+          "name": "sourceType",
+          "value": "coach/staff",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/coach-of-the-month/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Coach of the Month - UHSAA"
+          }
+        },
+        {
+          "name": "confidenceScore",
+          "value": "0.82",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/coach-of-the-month/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Coach of the Month - UHSAA"
+          }
+        },
+        {
+          "name": "reviewStatus",
+          "value": "pending_review",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/coach-of-the-month/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Coach of the Month - UHSAA"
+          }
+        },
+        {
+          "name": "importedAt",
+          "value": "2026-06-30T03:56:09.399Z",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/coach-of-the-month/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Coach of the Month - UHSAA"
+          }
+        }
+      ],
+      "raw": {
+        "sourceLabel": "Public Record",
+        "sourceName": "uhsaa.org",
+        "publisherOrganization": {
+          "org_type": "PUBLISHER",
+          "name": "uhsaa.org",
+          "state": null,
+          "source_url": "https://uhsaa.org/uhsaa-rankings-home/",
+          "review_status": "pending"
+        },
+        "sourceUrl": "https://uhsaa.org/coach-of-the-month/",
+        "importedAt": "2026-06-30T03:56:09.399Z",
+        "confidenceScore": 0.82,
+        "reviewStatus": "pending_review",
+        "sourceType": "coach/staff",
+        "fetchedPage": true,
+        "evidence": [
+          "Matched \"coach\"."
+        ]
+      }
+    },
+    {
+      "id": "public-4896d58b9253",
+      "type": "game",
+      "sourceUrl": "https://uhsaa.org/2026/03/27/uhsaa-names-j-ryan-bishop-as-seventh-executive-director/",
+      "sourceRef": "camp/event",
+      "fields": [
+        {
+          "name": "name",
+          "value": "UHSAA Names J. Ryan Bishop as Seventh Executive Director",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/2026/03/27/uhsaa-names-j-ryan-bishop-as-seventh-executive-director/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Names J. Ryan Bishop as Seventh Executive Director"
+          }
+        },
+        {
+          "name": "profileUrl",
+          "value": "https://uhsaa.org/2026/03/27/uhsaa-names-j-ryan-bishop-as-seventh-executive-director/",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/2026/03/27/uhsaa-names-j-ryan-bishop-as-seventh-executive-director/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Names J. Ryan Bishop as Seventh Executive Director"
+          }
+        },
+        {
+          "name": "sourceName",
+          "value": "uhsaa.org",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/2026/03/27/uhsaa-names-j-ryan-bishop-as-seventh-executive-director/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Names J. Ryan Bishop as Seventh Executive Director"
+          }
+        },
+        {
+          "name": "sourceType",
+          "value": "camp/event",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/2026/03/27/uhsaa-names-j-ryan-bishop-as-seventh-executive-director/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Names J. Ryan Bishop as Seventh Executive Director"
+          }
+        },
+        {
+          "name": "confidenceScore",
+          "value": "0.78",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/2026/03/27/uhsaa-names-j-ryan-bishop-as-seventh-executive-director/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Names J. Ryan Bishop as Seventh Executive Director"
+          }
+        },
+        {
+          "name": "reviewStatus",
+          "value": "pending_review",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/2026/03/27/uhsaa-names-j-ryan-bishop-as-seventh-executive-director/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Names J. Ryan Bishop as Seventh Executive Director"
+          }
+        },
+        {
+          "name": "importedAt",
+          "value": "2026-06-30T03:56:09.399Z",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/2026/03/27/uhsaa-names-j-ryan-bishop-as-seventh-executive-director/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "UHSAA Names J. Ryan Bishop as Seventh Executive Director"
+          }
+        }
+      ],
+      "raw": {
+        "sourceLabel": "Public Record",
+        "sourceName": "uhsaa.org",
+        "publisherOrganization": {
+          "org_type": "PUBLISHER",
+          "name": "uhsaa.org",
+          "state": null,
+          "source_url": "https://uhsaa.org/uhsaa-rankings-home/",
+          "review_status": "pending"
+        },
+        "sourceUrl": "https://uhsaa.org/2026/03/27/uhsaa-names-j-ryan-bishop-as-seventh-executive-director/",
+        "importedAt": "2026-06-30T03:56:09.399Z",
+        "confidenceScore": 0.78,
+        "reviewStatus": "pending_review",
+        "sourceType": "camp/event",
+        "fetchedPage": true,
+        "evidence": [
+          "Matched \"event\"."
+        ]
+      }
+    },
+    {
+      "id": "public-af1adc99faf9",
+      "type": "game",
+      "sourceUrl": "https://uhsaa.org/rules-clinics/",
+      "sourceRef": "camp/event",
+      "fields": [
+        {
+          "name": "name",
+          "value": "Rules Clinics",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/rules-clinics/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Rules Clinics"
+          }
+        },
+        {
+          "name": "profileUrl",
+          "value": "https://uhsaa.org/rules-clinics/",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/rules-clinics/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Rules Clinics"
+          }
+        },
+        {
+          "name": "sourceName",
+          "value": "uhsaa.org",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/rules-clinics/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Rules Clinics"
+          }
+        },
+        {
+          "name": "sourceType",
+          "value": "camp/event",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/rules-clinics/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Rules Clinics"
+          }
+        },
+        {
+          "name": "confidenceScore",
+          "value": "0.78",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/rules-clinics/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Rules Clinics"
+          }
+        },
+        {
+          "name": "reviewStatus",
+          "value": "pending_review",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/rules-clinics/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Rules Clinics"
+          }
+        },
+        {
+          "name": "importedAt",
+          "value": "2026-06-30T03:56:09.399Z",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/rules-clinics/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Rules Clinics"
+          }
+        }
+      ],
+      "raw": {
+        "sourceLabel": "Public Record",
+        "sourceName": "uhsaa.org",
+        "publisherOrganization": {
+          "org_type": "PUBLISHER",
+          "name": "uhsaa.org",
+          "state": null,
+          "source_url": "https://uhsaa.org/uhsaa-rankings-home/",
+          "review_status": "pending"
+        },
+        "sourceUrl": "https://uhsaa.org/rules-clinics/",
+        "importedAt": "2026-06-30T03:56:09.399Z",
+        "confidenceScore": 0.78,
+        "reviewStatus": "pending_review",
+        "sourceType": "camp/event",
+        "fetchedPage": true,
+        "evidence": [
+          "Matched \"clinic\"."
+        ]
+      }
+    },
+    {
+      "id": "public-7d97bb0a6cea",
+      "type": "game",
+      "sourceUrl": "https://uhsaa.org/v2/complete-clinics/",
+      "sourceRef": "camp/event",
+      "fields": [
+        {
+          "name": "name",
+          "value": "Complete Clinics - UHSAA",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/v2/complete-clinics/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Complete Clinics - UHSAA"
+          }
+        },
+        {
+          "name": "profileUrl",
+          "value": "https://uhsaa.org/v2/complete-clinics/",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/v2/complete-clinics/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Complete Clinics - UHSAA"
+          }
+        },
+        {
+          "name": "sourceName",
+          "value": "uhsaa.org",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/v2/complete-clinics/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Complete Clinics - UHSAA"
+          }
+        },
+        {
+          "name": "sourceType",
+          "value": "camp/event",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/v2/complete-clinics/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Complete Clinics - UHSAA"
+          }
+        },
+        {
+          "name": "confidenceScore",
+          "value": "0.78",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/v2/complete-clinics/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Complete Clinics - UHSAA"
+          }
+        },
+        {
+          "name": "reviewStatus",
+          "value": "pending_review",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/v2/complete-clinics/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Complete Clinics - UHSAA"
+          }
+        },
+        {
+          "name": "importedAt",
+          "value": "2026-06-30T03:56:09.399Z",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/v2/complete-clinics/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Complete Clinics - UHSAA"
+          }
+        }
+      ],
+      "raw": {
+        "sourceLabel": "Public Record",
+        "sourceName": "uhsaa.org",
+        "publisherOrganization": {
+          "org_type": "PUBLISHER",
+          "name": "uhsaa.org",
+          "state": null,
+          "source_url": "https://uhsaa.org/uhsaa-rankings-home/",
+          "review_status": "pending"
+        },
+        "sourceUrl": "https://uhsaa.org/v2/complete-clinics/",
+        "importedAt": "2026-06-30T03:56:09.399Z",
+        "confidenceScore": 0.78,
+        "reviewStatus": "pending_review",
+        "sourceType": "camp/event",
+        "fetchedPage": true,
+        "evidence": [
+          "Matched \"clinic\"."
+        ]
+      }
+    },
+    {
+      "id": "public-e7d2394f12e7",
+      "type": "game",
+      "sourceUrl": "https://uhsaa.org/sanctioned-events/",
+      "sourceRef": "camp/event",
+      "fields": [
+        {
+          "name": "name",
+          "value": "Sanctioned Events",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/sanctioned-events/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Sanctioned Events"
+          }
+        },
+        {
+          "name": "profileUrl",
+          "value": "https://uhsaa.org/sanctioned-events/",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/sanctioned-events/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Sanctioned Events"
+          }
+        },
+        {
+          "name": "sourceName",
+          "value": "uhsaa.org",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/sanctioned-events/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Sanctioned Events"
+          }
+        },
+        {
+          "name": "sourceType",
+          "value": "camp/event",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/sanctioned-events/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Sanctioned Events"
+          }
+        },
+        {
+          "name": "confidenceScore",
+          "value": "0.78",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/sanctioned-events/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Sanctioned Events"
+          }
+        },
+        {
+          "name": "reviewStatus",
+          "value": "pending_review",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/sanctioned-events/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Sanctioned Events"
+          }
+        },
+        {
+          "name": "importedAt",
+          "value": "2026-06-30T03:56:09.399Z",
+          "attribution": {
+            "sourceUrl": "https://uhsaa.org/sanctioned-events/",
+            "fetchedAt": "2026-06-30T03:56:09.399Z",
+            "parser": "national-public-deep-v1",
+            "rawSnippet": "Sanctioned Events"
+          }
+        }
+      ],
+      "raw": {
+        "sourceLabel": "Public Record",
+        "sourceName": "uhsaa.org",
+        "publisherOrganization": {
+          "org_type": "PUBLISHER",
+          "name": "uhsaa.org",
+          "state": null,
+          "source_url": "https://uhsaa.org/uhsaa-rankings-home/",
+          "review_status": "pending"
+        },
+        "sourceUrl": "https://uhsaa.org/sanctioned-events/",
+        "importedAt": "2026-06-30T03:56:09.399Z",
+        "confidenceScore": 0.78,
+        "reviewStatus": "pending_review",
+        "sourceType": "camp/event",
+        "fetchedPage": true,
+        "evidence": [
+          "Matched \"event\"."
+        ]
+      }
+    }
+  ],
+  "matches": [],
+  "reviewQueue": [
+    {
+      "id": "review-source-93fb9b107df5",
+      "importedEntityId": "source-93fb9b107df5",
+      "reason": "Public source discovery requires admin review before merge or verification.",
+      "priority": "high",
+      "decision": "pending_review",
+      "evidence": {
+        "sourceLabel": "Public Record",
+        "sourceName": "uhsaa.org",
+        "sourceUrl": "https://uhsaa.org/uhsaa-rankings-home/",
+        "confidenceScore": 0.66,
+        "reviewStatus": "pending_review"
+      }
+    },
+    {
+      "id": "review-public-f3cdc22dc940",
+      "importedEntityId": "public-f3cdc22dc940",
+      "reason": "Public source discovery requires admin review before merge or verification.",
+      "priority": "medium",
+      "decision": "pending_review",
+      "evidence": {
+        "sourceLabel": "Public Record",
+        "sourceName": "uhsaa.org",
+        "sourceUrl": "https://uhsaa.org/stat-leaders/",
+        "confidenceScore": 0.9,
+        "reviewStatus": "pending_review"
+      }
+    },
+    {
+      "id": "review-public-920047b43473",
+      "importedEntityId": "public-920047b43473",
+      "reason": "Public source discovery requires admin review before merge or verification.",
+      "priority": "medium",
+      "decision": "pending_review",
+      "evidence": {
+        "sourceLabel": "Public Record",
+        "sourceName": "uhsaa.org",
+        "sourceUrl": "https://uhsaa.org/scores/",
+        "confidenceScore": 0.88,
+        "reviewStatus": "pending_review"
+      }
+    },
+    {
+      "id": "review-public-2ff3a024abb7",
+      "importedEntityId": "public-2ff3a024abb7",
+      "reason": "Public source discovery requires admin review before merge or verification.",
+      "priority": "medium",
+      "decision": "pending_review",
+      "evidence": {
+        "sourceLabel": "Public Record",
+        "sourceName": "uhsaa.org",
+        "sourceUrl": "https://uhsaa.org/v2/how-to-use-maxpreps/",
+        "confidenceScore": 0.88,
+        "reviewStatus": "pending_review"
+      }
+    },
+    {
+      "id": "review-public-851c92ea9cc2",
+      "importedEntityId": "public-851c92ea9cc2",
+      "reason": "Public source discovery requires admin review before merge or verification.",
+      "priority": "medium",
+      "decision": "pending_review",
+      "evidence": {
+        "sourceLabel": "Public Record",
+        "sourceName": "uhsaa.org",
+        "sourceUrl": "https://uhsaa.org/how-to-use-maxpreps/",
+        "confidenceScore": 0.88,
+        "reviewStatus": "pending_review"
+      }
+    },
+    {
+      "id": "review-public-f0e1d1ce7167",
+      "importedEntityId": "public-f0e1d1ce7167",
+      "reason": "Public source discovery requires admin review before merge or verification.",
+      "priority": "medium",
+      "decision": "pending_review",
+      "evidence": {
+        "sourceLabel": "Public Record",
+        "sourceName": "uhsaa.org",
+        "sourceUrl": "https://uhsaa.org/v2/scores/",
+        "confidenceScore": 0.88,
+        "reviewStatus": "pending_review"
+      }
+    },
+    {
+      "id": "review-public-6ef609eda6c8",
+      "importedEntityId": "public-6ef609eda6c8",
+      "reason": "Public source discovery requires admin review before merge or verification.",
+      "priority": "medium",
+      "decision": "pending_review",
+      "evidence": {
+        "sourceLabel": "Public Record",
+        "sourceName": "uhsaa.org",
+        "sourceUrl": "https://uhsaa.org/uhsaa-bracket-reveal-shows/",
+        "confidenceScore": 0.87,
+        "reviewStatus": "pending_review"
+      }
+    },
+    {
+      "id": "review-public-96355dc11098",
+      "importedEntityId": "public-96355dc11098",
+      "reason": "Public source discovery requires admin review before merge or verification.",
+      "priority": "medium",
+      "decision": "pending_review",
+      "evidence": {
+        "sourceLabel": "Public Record",
+        "sourceName": "uhsaa.org",
+        "sourceUrl": "https://uhsaa.org/uhsaa-media-information/",
+        "confidenceScore": 0.84,
+        "reviewStatus": "pending_review"
+      }
+    },
+    {
+      "id": "review-public-c0d84c6708b7",
+      "importedEntityId": "public-c0d84c6708b7",
+      "reason": "Public source discovery requires admin review before merge or verification.",
+      "priority": "medium",
+      "decision": "pending_review",
+      "evidence": {
+        "sourceLabel": "Public Record",
+        "sourceName": "uhsaa.org",
+        "sourceUrl": "https://uhsaa.org/v2/uhsaa-media-information/",
+        "confidenceScore": 0.84,
+        "reviewStatus": "pending_review"
+      }
+    },
+    {
+      "id": "review-public-bfdf41f319e1",
+      "importedEntityId": "public-bfdf41f319e1",
+      "reason": "Public source discovery requires admin review before merge or verification.",
+      "priority": "medium",
+      "decision": "pending_review",
+      "evidence": {
+        "sourceLabel": "Public Record",
+        "sourceName": "uhsaa.org",
+        "sourceUrl": "https://uhsaa.org/uhsaa-staff/",
+        "confidenceScore": 0.82,
+        "reviewStatus": "pending_review"
+      }
+    },
+    {
+      "id": "review-public-4727b4690b73",
+      "importedEntityId": "public-4727b4690b73",
+      "reason": "Public source discovery requires admin review before merge or verification.",
+      "priority": "medium",
+      "decision": "pending_review",
+      "evidence": {
+        "sourceLabel": "Public Record",
+        "sourceName": "uhsaa.org",
+        "sourceUrl": "https://uhsaa.org/coach-of-the-month/",
+        "confidenceScore": 0.82,
+        "reviewStatus": "pending_review"
+      }
+    },
+    {
+      "id": "review-public-4896d58b9253",
+      "importedEntityId": "public-4896d58b9253",
+      "reason": "Public source discovery requires admin review before merge or verification.",
+      "priority": "medium",
+      "decision": "pending_review",
+      "evidence": {
+        "sourceLabel": "Public Record",
+        "sourceName": "uhsaa.org",
+        "sourceUrl": "https://uhsaa.org/2026/03/27/uhsaa-names-j-ryan-bishop-as-seventh-executive-director/",
+        "confidenceScore": 0.78,
+        "reviewStatus": "pending_review"
+      }
+    },
+    {
+      "id": "review-public-af1adc99faf9",
+      "importedEntityId": "public-af1adc99faf9",
+      "reason": "Public source discovery requires admin review before merge or verification.",
+      "priority": "medium",
+      "decision": "pending_review",
+      "evidence": {
+        "sourceLabel": "Public Record",
+        "sourceName": "uhsaa.org",
+        "sourceUrl": "https://uhsaa.org/rules-clinics/",
+        "confidenceScore": 0.78,
+        "reviewStatus": "pending_review"
+      }
+    },
+    {
+      "id": "review-public-7d97bb0a6cea",
+      "importedEntityId": "public-7d97bb0a6cea",
+      "reason": "Public source discovery requires admin review before merge or verification.",
+      "priority": "medium",
+      "decision": "pending_review",
+      "evidence": {
+        "sourceLabel": "Public Record",
+        "sourceName": "uhsaa.org",
+        "sourceUrl": "https://uhsaa.org/v2/complete-clinics/",
+        "confidenceScore": 0.78,
+        "reviewStatus": "pending_review"
+      }
+    },
+    {
+      "id": "review-public-e7d2394f12e7",
+      "importedEntityId": "public-e7d2394f12e7",
+      "reason": "Public source discovery requires admin review before merge or verification.",
+      "priority": "medium",
+      "decision": "pending_review",
+      "evidence": {
+        "sourceLabel": "Public Record",
+        "sourceName": "uhsaa.org",
+        "sourceUrl": "https://uhsaa.org/sanctioned-events/",
+        "confidenceScore": 0.78,
+        "reviewStatus": "pending_review"
+      }
+    }
+  ],
+  "claimRequests": [],
+  "coachVerificationRequests": [],
+  "discoveredLinks": [
+    {
+      "url": "https://uhsaa.org/stat-leaders/",
+      "title": "Stat Leaders",
+      "sourceType": "stats",
+      "entityType": "stat",
+      "confidence": 0.9,
+      "evidence": [
+        "Matched \"leaders\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/scores/",
+      "title": "scores",
+      "sourceType": "schedule",
+      "entityType": "game",
+      "confidence": 0.88,
+      "evidence": [
+        "Matched \"scores\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/v2/how-to-use-maxpreps/",
+      "title": "How to report scores in MaxPreps for the RPI",
+      "sourceType": "schedule",
+      "entityType": "game",
+      "confidence": 0.88,
+      "evidence": [
+        "Matched \"scores\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/how-to-use-maxpreps/",
+      "title": "Report Scores",
+      "sourceType": "schedule",
+      "entityType": "game",
+      "confidence": 0.88,
+      "evidence": [
+        "Matched \"scores\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/v2/scores/",
+      "title": "Scores",
+      "sourceType": "schedule",
+      "entityType": "game",
+      "confidence": 0.88,
+      "evidence": [
+        "Matched \"scores\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/uhsaa-bracket-reveal-shows/",
+      "title": "Bracket Reveal Shows",
+      "sourceType": "bracket/tournament",
+      "entityType": "game",
+      "confidence": 0.87,
+      "evidence": [
+        "Matched \"bracket\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/uhsaa-media-information/",
+      "title": "Media",
+      "sourceType": "livestream/media",
+      "entityType": "stream",
+      "confidence": 0.84,
+      "evidence": [
+        "Matched \"media\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/v2/uhsaa-media-information/",
+      "title": "Media",
+      "sourceType": "livestream/media",
+      "entityType": "stream",
+      "confidence": 0.84,
+      "evidence": [
+        "Matched \"media\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/uhsaa-staff/",
+      "title": "Staff",
+      "sourceType": "coach/staff",
+      "entityType": "coach",
+      "confidence": 0.82,
+      "evidence": [
+        "Matched \"staff\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/coach-of-the-month/",
+      "title": "coach-of-the-month",
+      "sourceType": "coach/staff",
+      "entityType": "coach",
+      "confidence": 0.82,
+      "evidence": [
+        "Matched \"coach\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/2026/03/27/uhsaa-names-j-ryan-bishop-as-seventh-executive-director/",
+      "title": "UHSAA Names J. Ryan Bishop as Seventh Executive Director",
+      "sourceType": "camp/event",
+      "entityType": "game",
+      "confidence": 0.78,
+      "evidence": [
+        "Matched \"event\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rules-clinics/",
+      "title": "rules-clinics",
+      "sourceType": "camp/event",
+      "entityType": "game",
+      "confidence": 0.78,
+      "evidence": [
+        "Matched \"clinic\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/v2/complete-clinics/",
+      "title": "Completed",
+      "sourceType": "camp/event",
+      "entityType": "game",
+      "confidence": 0.78,
+      "evidence": [
+        "Matched \"clinic\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/sanctioned-events/",
+      "title": "sanctioned-events",
+      "sourceType": "camp/event",
+      "entityType": "game",
+      "confidence": 0.78,
+      "evidence": [
+        "Matched \"event\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/v2/rules-clinics/",
+      "title": "Training and Clinics",
+      "sourceType": "camp/event",
+      "entityType": "game",
+      "confidence": 0.78,
+      "evidence": [
+        "Matched \"clinic\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/uhsaa-baseball/",
+      "title": "uhsaa-baseball",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"baseball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/uhsaa-baseball-rpi/",
+      "title": "Rankings",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"baseball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/teams/?sid=1&amp;sport=Baseball&amp;season=Fall",
+      "title": "Teams",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"baseball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/uhsaa-football/",
+      "title": "uhsaa-football",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"football\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/teams/?sid=1&amp;sport=Football&amp;season=Fall",
+      "title": "Teams",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"football\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/uhsaa-boys-golf/",
+      "title": "uhsaa-boys-golf",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"golf\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/teams/?sid=1&amp;sport=Golf&amp;season=Fall",
+      "title": "Teams",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"golf\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/uhsaa-girls-soccer/",
+      "title": "uhsaa-girls-soccer",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"soccer\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/uhsaa-girls-soccer-rpi/",
+      "title": "Rankings",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"soccer\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/teams/?sid=2&amp;sport=Soccer&amp;season=Fall",
+      "title": "Teams",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"soccer\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/uhsaa-girls-tennis/",
+      "title": "uhsaa-girls-tennis",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"tennis\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/teams/?sid=2&amp;sport=Tennis&amp;season=Fall",
+      "title": "Teams",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"tennis\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/uhsaa-girls-volleyball/",
+      "title": "uhsaa-girls-volleyball",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"volleyball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/teams/?sid=2&amp;sport=Volleyball&amp;season=Fall",
+      "title": "Teams",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"volleyball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/uhsaa-boys-basketball/",
+      "title": "uhsaa-boys-basketball",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"basketball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/teams/?sid=1&amp;sport=Basketball&amp;season=Winter",
+      "title": "Teams",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"basketball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/uhsaa-girls-basketball/",
+      "title": "uhsaa-girls-basketball",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"basketball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/teams/?sid=2&amp;sport=Basketball&amp;season=Winter",
+      "title": "Teams",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"basketball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/uhsaa-competitive-cheer/",
+      "title": "uhsaa-competitive-cheer",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"cheer\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/uhsaa-drill-team/",
+      "title": "uhsaa-drill-team",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"drill\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/uhsaa-drill-team-rankings/",
+      "title": "Rankings",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"drill\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/uhsaa-swimming/",
+      "title": "uhsaa-swimming",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"swimming\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/uhsaa-wrestling/",
+      "title": "uhsaa-wrestling",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"wrestling\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/uhsaa-girls-wrestling/",
+      "title": "uhsaa-girls-wrestling",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"wrestling\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/teams/?sid=1&amp;sport=Baseball&amp;season=Spring",
+      "title": "Teams",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"baseball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/teams/?sid=1&amp;sport=Golf&amp;season=Spring",
+      "title": "Teams",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"golf\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/uhsaa-girls-golf/",
+      "title": "uhsaa-girls-golf",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"golf\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/teams/?sid=2&amp;sport=Golf&amp;season=Spring",
+      "title": "Teams",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"golf\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/uhsaa-boys-lacrosse/",
+      "title": "uhsaa-boys-lacrosse",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"lacrosse\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/teams/?sid=1&amp;sport=Lacrosse&amp;season=Spring",
+      "title": "Teams",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"lacrosse\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/uhsaa-girls-lacrosse/",
+      "title": "uhsaa-girls-lacrosse",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"lacrosse\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/teams/?sid=2&amp;sport=Lacrosse&amp;season=Spring",
+      "title": "Teams",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"lacrosse\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/uhsaa-boys-soccer/",
+      "title": "uhsaa-boys-soccer",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"soccer\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/teams/?sid=1&amp;sport=Soccer&amp;season=Spring",
+      "title": "Teams",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"soccer\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/uhsaa-softball/",
+      "title": "uhsaa-softball",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"softball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/teams/?sid=2&amp;sport=Softball&amp;season=Spring",
+      "title": "Teams",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"softball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/uhsaa-boys-tennis/",
+      "title": "uhsaa-boys-tennis",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"tennis\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/teams/?sid=1&amp;sport=Tennis&amp;season=Spring",
+      "title": "Teams",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"tennis\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/uhsaa-track-and-field/",
+      "title": "uhsaa-track-and-field",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"track\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/uhsaa-boys-volleyball/",
+      "title": "uhsaa-boys-volleyball",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"volleyball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/teams/?sid=1&amp;sport=Volleyball&amp;season=Spring",
+      "title": "Teams",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"volleyball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/uhsaa-esports/",
+      "title": "Esports",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"esports\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/v2/uhsaa-baseball-rpi/",
+      "title": "1A Baseball &gt;",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"baseball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/v2/football-rpi/",
+      "title": "football &gt;",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"football\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/v2/uhsaa-volleyball-rpi/",
+      "title": "Girls volleyball &gt;",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"volleyball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/v2/uhsaa-girls-soccer-rpi/",
+      "title": "Girls Soccer &gt;",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"soccer\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/v2/uhsaa-boys-basketball-rpi/",
+      "title": "Boys Basketball &gt;",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"basketball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/v2/uhsaa-girls-basketball-rpi/",
+      "title": "Girls Basketball &gt;",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"basketball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/v2/uhsaa-drill-team-rankings/",
+      "title": "Drill Team &gt;",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"drill\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/v2/uhsaa-girls-lacrosse-rpi/",
+      "title": "Girls Lacrosse &gt;",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"lacrosse\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/v2/uhsaa-boys-lacrosse-rpi/",
+      "title": "Boys Lacrosse &gt;",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"lacrosse\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/v2/uhsaa-boys-soccer-rpi/",
+      "title": "Boys Soccer &gt;",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"soccer\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/v2/uhsaa-softball-rpi/",
+      "title": "Softball &gt;",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"softball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/v2/uhsaa-boys-volleyball-rpi/",
+      "title": "Boys volleyball &gt;",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"volleyball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/football/2025",
+      "title": "2025 Football",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"football\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/girlssoccer/2025",
+      "title": "2025 Girls Soccer",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"soccer\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/volleyball/2025",
+      "title": "2025 Volleyball",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"volleyball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/baseball/2025-26",
+      "title": "2025-26 Baseball",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"baseball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/boysbasketball/2025-26",
+      "title": "2025-26 Boys Basketball",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"basketball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/girlsbasketball/2025-26",
+      "title": "2025-26 Girls Basketball",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"basketball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/boyslacrosse/2026",
+      "title": "2026 Boys Lacrosse",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"lacrosse\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/girlslacrosse/2026",
+      "title": "2026 Girls Lacrosse",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"lacrosse\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/boyssoccer/2026",
+      "title": "2026 Boys Soccer",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"soccer\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/boysvolleyball/2026",
+      "title": "2026 Boys Volleyball",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"volleyball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/softball/2026",
+      "title": "2026 Softball",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"softball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/football/2024",
+      "title": "2024 Football",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"football\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/girlssoccer/2024",
+      "title": "2024 Girls Soccer",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"soccer\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/volleyball/2024",
+      "title": "2024 Volleyball",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"volleyball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/baseball/2024-25",
+      "title": "2024-25 Baseball",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"baseball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/boysbasketball/2024-25",
+      "title": "2024-25 Boys Basketball",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"basketball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/girlsbasketball/2024-25",
+      "title": "2024-25 Girls Basketball",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"basketball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/boyslacrosse/2025",
+      "title": "2025 Boys Lacrosse",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"lacrosse\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/girlslacrosse/2025",
+      "title": "2025 Girls Lacrosse",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"lacrosse\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/boyssoccer/2025",
+      "title": "2025 Boys Soccer",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"soccer\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/boysvolleyball/2025",
+      "title": "2025 Boys Volleyball",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"volleyball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/softball/2025",
+      "title": "2025 Softball",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"softball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/football/2023",
+      "title": "2023 Football",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"football\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/girlssoccer/2023",
+      "title": "2023 Girls Soccer",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"soccer\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/volleyball/2023",
+      "title": "2023 Volleyball",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"volleyball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/baseball/2023-24",
+      "title": "2023-24 Baseball",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"baseball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/boysbasketball/2023-24",
+      "title": "2023-24 Boys Basketball",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"basketball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/girlsbasketball/2023-24",
+      "title": "2023-24 Girls Basketball",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"basketball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/boyslacrosse/2024",
+      "title": "2024 Boys Lacrosse",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"lacrosse\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/girlslacrosse/2024",
+      "title": "2024 Girls Lacrosse",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"lacrosse\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/boyssoccer/2024",
+      "title": "2024 Boys Soccer",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"soccer\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/boysvolleyball/2024",
+      "title": "2024 Boys Volleyball",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"volleyball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/softball/2024",
+      "title": "2024 Softball",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"softball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/football/2022",
+      "title": "2022 Football",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"football\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/girlssoccer/2022",
+      "title": "2022 Girls Soccer",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"soccer\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/volleyball/2022",
+      "title": "2022 Volleyball",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"volleyball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/baseball/2022-23",
+      "title": "2022-23 Baseball",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"baseball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/boysbasketball/2022-23",
+      "title": "2022-23 Boys Basketball",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"basketball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/girlsbasketball/2022-23",
+      "title": "2022-23 Girls Basketball",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"basketball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/boyslacrosse/2023",
+      "title": "2023 Boys Lacrosse",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"lacrosse\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/girlslacrosse/2023",
+      "title": "2023 Girls Lacrosse",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"lacrosse\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/boyssoccer/2023",
+      "title": "2023 Boys Soccer",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"soccer\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/softball/2023",
+      "title": "2023 Softball",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"softball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/football/2021",
+      "title": "2021 Football",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"football\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/girlssoccer/2021",
+      "title": "2021 Girls Soccer",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"soccer\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/volleyball/2021",
+      "title": "2021 Volleyball",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"volleyball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/baseball/2021-22",
+      "title": "2021-22 Baseball",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"baseball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/boysbasketball/2021-22",
+      "title": "2021-22 Boys Basketball",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"basketball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/girlsbasketball/2021-22",
+      "title": "2021-22 Girls Basketball",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"basketball\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/boyslacrosse/2022",
+      "title": "2022 Boys Lacrosse",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"lacrosse\"."
+      ]
+    },
+    {
+      "url": "https://uhsaa.org/rpi/girlslacrosse/2022",
+      "title": "2022 Girls Lacrosse",
+      "sourceType": "team",
+      "entityType": "team",
+      "confidence": 0.72,
+      "evidence": [
+        "Matched \"lacrosse\"."
+      ]
+    }
+  ],
+  "blockedByRobots": false
+}

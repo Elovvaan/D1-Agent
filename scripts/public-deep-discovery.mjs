@@ -2,6 +2,10 @@ import { createHash, randomUUID } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { dirname, resolve } from "node:path";
+import { selectAdapter } from "./ingestion/adapters/source-adapter.mjs";
+import { adapterMaxPreps } from "./ingestion/adapters/maxpreps.mjs";
+import { publisherOrgFromSource } from "./ingestion/org-resolution/organization-model.mjs";
+import { sourceSchedulerNote, refreshTierForSource } from "./ingestion/scheduler/source-scheduler.mjs";
 
 export const repoRoot = resolve(new URL("..", import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1"));
 export const importsDir = resolve(repoRoot, "data", "imports");
@@ -39,6 +43,8 @@ const sourceTypeRules = [
   { sourceType: "school", entityType: "school", confidence: 0.68, terms: ["athletics", "school", "academy", "high", "university", "college"] },
   { sourceType: "rankings", entityType: "stat", confidence: 0.66, terms: ["ranking", "rankings", "ranked"] }
 ];
+
+const adapters = [adapterMaxPreps];
 
 export function parseArgs(argv) {
   const args = {};
@@ -182,6 +188,52 @@ function publicFields({ title, url, fetchedAt, parser, sourceName, sourceType, c
   ];
 }
 
+function rankingRecordFields(record, fetchedAt, parser) {
+  const attribution = { sourceUrl: record.source_url, fetchedAt, parser, rawSnippet: record.team_name_raw };
+  const fields = [
+    { name: "name", value: `${record.team_name_raw} #${record.rank}`, attribution },
+    { name: "teamName", value: record.team_name_raw, attribution },
+    { name: "profileUrl", value: record.team_url ?? record.source_url, attribution },
+    { name: "sport", value: record.sport, attribution },
+    { name: "season", value: record.season, attribution },
+    { name: "sourceName", value: "MaxPreps", attribution },
+    { name: "sourceType", value: "rankings_page", attribution },
+    { name: "confidenceScore", value: String(record.confidence_score), attribution },
+    { name: "reviewStatus", value: record.review.length ? "pending_review" : "auto_commit_ready", attribution },
+    { name: "importedAt", value: record.imported_timestamp, attribution },
+    { name: "statMetric", value: "national_rank", attribution },
+    { name: "statValue", value: String(record.rank), attribution },
+    { name: "statContext", value: `${record.gender} ${record.sport} ${record.season}`, attribution }
+  ];
+  if (record.state) fields.push({ name: "location", value: record.state, attribution });
+  if (record.overall_record) fields.push({ name: "statContext", value: `overall_record:${record.overall_record.raw}`, attribution });
+  return fields;
+}
+
+function linkClassToEntityType(linkClass) {
+  if (linkClass === "LIVE_STREAMS") return "stream";
+  if (linkClass === "PLAYER_DIRECTORY") return "player";
+  if (linkClass === "SCORES" || linkClass === "SCHEDULES" || linkClass === "PLAYOFFS") return "game";
+  if (linkClass === "STAT_LEADERS") return "stat";
+  return "team";
+}
+
+function adapterLinkToGeneric(link) {
+  const sourceType = link.link_class.toLowerCase();
+  return {
+    url: link.href,
+    title: link.anchor_text || link.href,
+    sourceType,
+    entityType: linkClassToEntityType(link.link_class),
+    confidence: link.confidence,
+    evidence: [
+      `Adapter classified link as ${link.link_class}.`,
+      ...(link.state_hint ? [`State hint: ${link.state_hint}.`] : []),
+      ...(link.sport_hint ? [`Sport hint: ${link.sport_hint}.`] : [])
+    ]
+  };
+}
+
 export async function runDeepDiscovery(source, options = {}) {
   const sourceUrl = typeof source === "string" ? source : source.source_url;
   if (!sourceUrl) throw new Error("Provide a public school or athletics URL to import real data.");
@@ -220,6 +272,81 @@ export async function runDeepDiscovery(source, options = {}) {
   }
 
   const hubHtml = await fetchText(sourceUrl);
+  const context = { url: sourceUrl, html: hubHtml, fetchedAt };
+  const selectedAdapter = selectAdapter(adapters, context);
+  const publisherOrg = publisherOrgFromSource(typeof source === "string" ? null : source, sourceUrl);
+
+  if (selectedAdapter) {
+    const adapterResult = selectedAdapter.adapter.parseRankingPage(context);
+    result.parser = selectedAdapter.adapter.id;
+    result.publisherOrganization = publisherOrg;
+    result.refreshTier = refreshTierForSource(typeof source === "string" ? { source_type: adapterResult.classification.primary } : source);
+    result.schedulerNote = sourceSchedulerNote(typeof source === "string" ? { source_type: adapterResult.classification.primary } : source);
+    result.pageClassification = adapterResult.classification;
+    result.methodology = adapterResult.methodology;
+    result.discoveredLinks = adapterResult.links.map(adapterLinkToGeneric).slice(0, 120);
+    result.entities = adapterResult.records.map((record) => ({
+      id: recordId("ranking", `${record.source_url}:${record.rank}:${record.team_name_raw}`),
+      type: "stat",
+      sourceUrl: record.source_url,
+      sourceRef: "ranking_record",
+      fields: rankingRecordFields(record, fetchedAt, selectedAdapter.adapter.id),
+      raw: {
+        sourceLabel: "Public Record",
+        sourceName,
+        publisherOrganization: publisherOrg,
+        pageClassification: adapterResult.classification,
+        methodology: adapterResult.methodology,
+        refreshTier: result.refreshTier,
+        record,
+        confidenceScore: record.confidence_score,
+        reviewStatus: record.review.length ? "pending_review" : "auto_commit_ready",
+        reviewFlags: record.review,
+        importedAt: fetchedAt
+      }
+    }));
+    const followLinks = result.discoveredLinks.filter((link) => link.confidence >= 0.6).slice(0, maxFollow);
+    for (const link of followLinks) {
+      const entityId = recordId("public", link.url);
+      result.entities.push({
+        id: entityId,
+        type: link.entityType,
+        sourceUrl: link.url,
+        sourceRef: link.sourceType,
+        fields: publicFields({ title: link.title, url: link.url, fetchedAt, parser: selectedAdapter.adapter.id, sourceName, sourceType: link.sourceType, confidence: link.confidence }),
+        raw: {
+          sourceLabel: "Public Record",
+          sourceName,
+          publisherOrganization: publisherOrg,
+          sourceUrl: link.url,
+          importedAt: fetchedAt,
+          confidenceScore: link.confidence,
+          reviewStatus: link.confidence >= 0.85 ? "auto_commit_ready" : "pending_review",
+          sourceType: link.sourceType,
+          evidence: link.evidence
+        }
+      });
+    }
+    result.reviewQueue = result.entities
+      .filter((entity) => entity.raw.reviewStatus !== "auto_commit_ready")
+      .map((entity) => ({
+        id: `review-${entity.id}`,
+        importedEntityId: entity.id,
+        reason: "Adapter-parsed public record requires review before merge or verification.",
+        priority: Number(entity.raw.confidenceScore ?? 0) < 0.6 ? "high" : "medium",
+        decision: "pending_review",
+        evidence: {
+          sourceLabel: "Public Record",
+          sourceName,
+          sourceUrl: entity.sourceUrl,
+          confidenceScore: entity.raw.confidenceScore,
+          reviewStatus: entity.raw.reviewStatus,
+          reviewFlags: entity.raw.reviewFlags
+        }
+      }));
+    return result;
+  }
+
   const hubTitle = titleFromHtml(hubHtml, sourceUrl);
   const hubClassification = classifyPublicLink(sourceUrl, hubTitle);
   const hubEntityId = recordId("source", sourceUrl);
@@ -236,6 +363,9 @@ export async function runDeepDiscovery(source, options = {}) {
       reviewStatus: "pending_review",
       sourceLabel: "Public Record",
       sourceName,
+      publisherOrganization: publisherOrg,
+      refreshTier: refreshTierForSource(typeof source === "string" ? { source_type: hubClassification.sourceType } : source),
+      schedulerNote: sourceSchedulerNote(typeof source === "string" ? { source_type: hubClassification.sourceType } : source),
       sourceUrl,
       importedAt: fetchedAt
     }
@@ -268,6 +398,7 @@ export async function runDeepDiscovery(source, options = {}) {
       raw: {
         sourceLabel: "Public Record",
         sourceName,
+        publisherOrganization: publisherOrg,
         sourceUrl: link.url,
         importedAt: fetchedAt,
         confidenceScore: link.confidence,

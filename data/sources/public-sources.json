@@ -9,5 +9,16 @@
     "sports_supported": [],
     "notes": "Seed public source hub for statewide public rankings and sports discovery. Additional state, district, conference, school, team, roster, schedule, stats, and media hubs can be added here without changing importer code.",
     "enabled": true
+  },
+  {
+    "source_name": "MaxPreps National Basketball Rankings",
+    "source_url": "https://www.maxpreps.com/basketball/rankings/1/",
+    "state": "National",
+    "country": "US",
+    "source_level": "national",
+    "source_type": "rankings_page",
+    "sports_supported": ["basketball"],
+    "notes": "National aggregator seed source for the adapter-based ranking-page parser. Parsed through adapter_maxpreps when fingerprint confidence is high.",
+    "enabled": true
   }
 ]
