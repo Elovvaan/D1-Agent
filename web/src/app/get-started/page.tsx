@@ -7,37 +7,37 @@ const roles = [
     title: "Athlete",
     detail: "Create or claim your athlete profile, connect school data, upload film, and enter Command Center.",
     icon: UserRound,
-    href: "/onboarding/athlete"
+    href: "/sign-in?role=athlete&next=/onboarding/athlete"
   },
   {
     title: "Parent / Guardian",
     detail: "Support a minor athlete with consent, safety controls, profile approvals, and contact requests.",
     icon: ShieldCheck,
-    href: "/sign-in?role=parent"
+    href: "/sign-in?role=athlete&next=/onboarding/athlete"
   },
   {
     title: "Coach",
     detail: "Find your school, verify coaching affiliation, and manage athlete verification queues.",
     icon: Users,
-    href: "/coach?role=coach"
+    href: "/sign-in?role=coach&next=/coach"
   },
   {
     title: "Recruiter",
     detail: "Sign in to discover athletes, review verified profiles, and manage recruiting boards.",
     icon: GraduationCap,
-    href: "/recruiter?role=recruiter"
+    href: "/sign-in?role=recruiter&next=/recruiter"
   },
   {
     title: "Media Partner",
     detail: "Create a media profile, upload photos or video, tag athletes, and submit to review.",
     icon: Camera,
-    href: "/media?role=media_partner"
+    href: "/sign-in?role=media_partner&next=/media"
   },
   {
     title: "School / Organization",
     detail: "Set up school data, import public athletics pages, and prepare team workflows.",
     icon: Building2,
-    href: "/admin/import-school?role=admin"
+    href: "/sign-in?role=admin&next=/admin/import-school"
   }
 ] as const;
 

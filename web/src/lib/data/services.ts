@@ -184,6 +184,31 @@ function requireSeed<T>(value: T | undefined, label: string): T {
   return value;
 }
 
+function hasRealAthleteProfile() {
+  return hasUserStateFile("profile.json");
+}
+
+function emptyAthleteProfile(athleteId = defaultAthleteId): AthleteProfile {
+  return {
+    id: athleteId,
+    userId: "current-user",
+    fullName: "New Athlete",
+    classYear: new Date().getFullYear(),
+    sport: "",
+    primaryPosition: "",
+    jerseyNumber: "",
+    schoolName: "",
+    hometown: "",
+    bio: "",
+    visibility: "private",
+    isMinor: true,
+    parentConsentSigned: false,
+    completionPct: 0,
+    varsityStarter: false,
+    ...buildProgressionFields("B1", [], "Progression pending profile setup.")
+  };
+}
+
 export function getProgressionDefinition(level: ProgressionLevel) {
   return progressionDefinitions[level];
 }
@@ -263,10 +288,10 @@ export function getSessionContext(role: D1Role = getCurrentRole()) {
 }
 
 export function getAthleteProfile(athleteId = defaultAthleteId) {
-  const athlete = requireSeed(seedAthletes.find((item) => item.id === athleteId), `athlete ${athleteId}`);
+  const athlete = seedAthletes.find((item) => item.id === athleteId) ?? emptyAthleteProfile(athleteId);
   const saved = readUserState<Partial<AthleteProfile>>("profile.json", {});
   if (!hasUserStateFile("profile.json")) {
-    return athlete;
+    return emptyAthleteProfile(athleteId);
   }
 
   const savedLevel = saved.progressionLevel ?? determineProgressionLevelFromEducation(String(saved.classYear ?? athlete.classYear));
@@ -275,6 +300,10 @@ export function getAthleteProfile(athleteId = defaultAthleteId) {
 }
 
 export function getTrustScore(athleteId = defaultAthleteId) {
+  if (!hasRealAthleteProfile()) {
+    return { athleteId, score: 0, tier: "low", factors: [] } satisfies TrustScore;
+  }
+
   const trust = requireSeed(seedTrustScores.find((item) => item.athleteId === athleteId), `trust score ${athleteId}`);
   const documents = getSupportingDocuments();
   if (!documents.length) {
@@ -293,6 +322,10 @@ export function getTrustScore(athleteId = defaultAthleteId) {
 }
 
 export function getOpportunityScore(athleteId = defaultAthleteId) {
+  if (!hasRealAthleteProfile()) {
+    return opportunityEngine.computeScore({ recentProfileViews: 0, activeMatches: 0, coachOpens: 0, recruiterReplies: 0, daysSinceFilm: 30 });
+  }
+
   const recentProfileViews = getBrandProfile(athleteId).metrics.profileClicks;
   const activeMatches = getCollegeMatches(athleteId).length;
   const coachOpens = 2;
@@ -303,30 +336,37 @@ export function getOpportunityScore(athleteId = defaultAthleteId) {
 }
 
 export function getCollegeMatches(athleteId = defaultAthleteId) {
+  if (!hasRealAthleteProfile()) return [];
   return seedMatches.filter((match) => match.athleteId === athleteId).sort((a, b) => b.matchPct - a.matchPct);
 }
 
 export function getOpportunities(athleteId = defaultAthleteId) {
+  if (!hasRealAthleteProfile()) return [];
   return opportunityEngine.rankFeed(seedOpportunities.filter((item) => item.athleteId === athleteId));
 }
 
 export function getTimelineEvents(athleteId = defaultAthleteId) {
+  if (!hasRealAthleteProfile()) return [];
   return seedTimelineEvents.filter((event) => event.athleteId === athleteId);
 }
 
 export function getCalendarEvents(athleteId = defaultAthleteId) {
+  if (!hasRealAthleteProfile()) return [];
   return seedCalendarEvents.filter((event) => event.athleteId === athleteId);
 }
 
 export function getGames(athleteId = defaultAthleteId) {
+  if (!hasRealAthleteProfile()) return [];
   return seedGames.filter((game) => game.athleteId === athleteId);
 }
 
 export function getFilms(athleteId = defaultAthleteId) {
+  if (!hasRealAthleteProfile()) return [];
   return seedFilms.filter((film) => film.athleteId === athleteId);
 }
 
 export function getHighlights(athleteId = defaultAthleteId) {
+  if (!hasRealAthleteProfile()) return [];
   return seedHighlights.filter((highlight) => highlight.athleteId === athleteId).sort((a, b) => b.score - a.score);
 }
 
@@ -488,6 +528,20 @@ export function getBrandProfile(athleteId = defaultAthleteId) {
   try {
     const filePath = resolve(process.cwd(), "..", "data", "user-state", "brand-links.json");
     if (!existsSync(filePath)) {
+      if (!hasRealAthleteProfile()) {
+        return {
+          athleteId,
+          handles: { ...emptyBrandHandles },
+          latestPosts: [],
+          metrics: {
+            followers: 0,
+            weeklyReach: 0,
+            engagementRate: 0,
+            profileClicks: 0
+          },
+          agentRecommendations: ["Connect your real athlete brand links after profile setup."]
+        };
+      }
       return seedBrand;
     }
     const saved = readUserState<Partial<Record<SocialPlatform, string>>>("brand-links.json", {});
@@ -518,6 +572,10 @@ export function getBrandProfile(athleteId = defaultAthleteId) {
 }
 
 export function getCoachConnection() {
+  if (!hasRealAthleteProfile()) {
+    return { name: "Coach not connected", title: "Coach", orgName: "No school connected", connected: false };
+  }
+
   const coach = requireSeed(seedCoachProfiles[0], "coach profile");
   const user = requireSeed(seedUsers.find((item) => item.id === coach.userId), "coach user");
   const org = requireSeed(seedOrgs.find((item) => item.id === coach.orgId), "coach org");
@@ -567,6 +625,16 @@ export function getAdminDashboard() {
 }
 
 function getMissionItems(): MissionItem[] {
+  if (!hasRealAthleteProfile()) {
+    return [
+      { label: "Create Athlete Profile", meta: "Not started", state: "queued" },
+      { label: "Choose School / Team / Sport", meta: "Not started", state: "queued" },
+      { label: "Claim Public Roster Profile", meta: "Optional when available", state: "queued" },
+      { label: "Upload First Highlight", meta: "Not started", state: "queued" },
+      { label: "Invite Coach Verification", meta: "Not started", state: "queued" }
+    ];
+  }
+
   return [
     { label: "Create Athlete Profile", meta: "Completed", state: "done" },
     { label: "Add Academic Information", meta: "Completed", state: "done" },
@@ -582,6 +650,15 @@ function getMissionStatus(athleteId: string) {
   const trust = getTrustScore(athleteId);
   const score = getOpportunityScore(athleteId);
   const furthestStage = getCollegeMatches(athleteId).find((match) => match.stage !== "prospect")?.stage ?? "prospect";
+
+  if (!hasRealAthleteProfile()) {
+    return [
+      { label: "Profile Completion", value: "0%", detail: "Create your athlete profile to start." },
+      { label: "Trust Score", value: "0", detail: "Verification begins after real profile data is saved." },
+      { label: "Opportunity Score", value: "0", detail: "Opportunities appear after profile, film, and verified signals exist." },
+      { label: "Recruiting Progress", value: "Not Started", detail: "No active recruiting pipeline yet." }
+    ];
+  }
 
   return [
     { label: "Profile Completion", value: `${athlete.completionPct}%`, detail: "Transcript and second coach link remain." },
