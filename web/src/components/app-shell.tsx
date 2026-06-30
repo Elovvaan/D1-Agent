@@ -43,6 +43,7 @@ function getPersistedProfile(): {
   primaryPosition?: string;
   jerseyNumber?: string;
   avatarUrl?: string;
+  avatarUpdatedAt?: string;
   role?: string;
 } {
   try {
@@ -60,6 +61,7 @@ function getPersistedProfile(): {
       primaryPosition?: string;
       jerseyNumber?: string;
       avatarUrl?: string;
+      avatarUpdatedAt?: string;
     };
     return { ...profile, fullName: session.fullName ?? profile.fullName, role: session.role };
   } catch {
@@ -67,18 +69,33 @@ function getPersistedProfile(): {
   }
 }
 
+function cacheSafeUrl(url?: string, version?: string) {
+  if (!url) return "";
+  const stamp = version ? encodeURIComponent(version) : "current";
+  return `${url}${url.includes("?") ? "&" : "?"}v=${stamp}`;
+}
+
+function Avatar({ src, label, initials, size = "h-full w-full" }: { src?: string; label: string; initials: string; size?: string }) {
+  return src ? <img src={src} alt={label} className={`${size} object-cover`} /> : <>{initials}</>;
+}
+
 export function AppShell({ children }: { children: React.ReactNode }) {
   const profile = getPersistedProfile();
-  const fullName = profile.fullName || "New User";
-  const initials = fullName
-    .split(" ")
-    .map((part) => part[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
-  const classYear = profile.classYear ? `Class of ${profile.classYear}` : "Profile setup pending";
-  const position = profile.primaryPosition || "Position pending";
-  const jerseyNumber = profile.jerseyNumber || "-";
+  const hasName = Boolean(profile.fullName?.trim());
+  const fullName = hasName ? profile.fullName!.trim() : "Profile";
+  const initials = hasName
+    ? fullName
+        .split(" ")
+        .map((part) => part[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase()
+    : "AI";
+  const profileLines = [
+    profile.classYear ? `Class of ${profile.classYear}` : "",
+    profile.primaryPosition ? `${profile.primaryPosition}${profile.jerseyNumber ? ` / #${profile.jerseyNumber}` : ""}` : ""
+  ].filter(Boolean);
+  const avatarSrc = cacheSafeUrl(profile.avatarUrl, profile.avatarUpdatedAt);
   const roleLabel = profile.role ? profile.role.replaceAll("_", " ").replace(/\b\w/g, (char) => char.toUpperCase()) : "Athlete";
 
   return (
@@ -115,13 +132,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <div className="mt-8 grid gap-4">
           <div className="rounded-[18px] border border-white/10 bg-white/[0.07] p-4">
             <div className="flex items-center gap-3">
-              <div className="grid h-12 w-12 place-items-center rounded-full border-2 border-white bg-[#143486] text-sm font-black">
-                {profile.avatarUrl ? <img src={profile.avatarUrl} alt={`${fullName} profile`} className="h-full w-full rounded-full object-cover" /> : initials}
+              <div className="grid h-12 w-12 place-items-center overflow-hidden rounded-full border-2 border-white bg-[#143486] text-sm font-black">
+                <Avatar src={avatarSrc} alt={undefined as never} label={`${fullName} profile`} initials={initials} />
               </div>
-              <div>
-                <div className="text-sm font-black">{fullName}</div>
-                <div className="mt-0.5 text-xs text-[#C7D7FA]">{classYear}</div>
-                <div className="text-xs text-[#C7D7FA]">{position} / #{jerseyNumber}</div>
+              <div className="min-w-0">
+                <div className="truncate text-sm font-black">{fullName}</div>
+                {profileLines.length ? profileLines.map((line) => <div className="mt-0.5 truncate text-xs text-[#C7D7FA]" key={line}>{line}</div>) : null}
               </div>
             </div>
           </div>
@@ -142,7 +158,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <header className="mb-6 flex items-center justify-between gap-4">
             <div className="hidden min-h-12 rounded-full border border-[#DDE3EC] bg-white px-4 shadow-[0_12px_34px_rgba(10,26,63,0.06)] md:flex md:w-[360px] md:items-center md:gap-3 xl:ml-auto">
               <Search size={18} className="text-[#66718F]" />
-              <span className="text-sm font-medium text-[#66718F]">Search athletes, film, coaches...</span>
+              <span className="text-sm font-medium text-[#66718F]">Search</span>
             </div>
             <div className="ml-auto flex items-center gap-3">
               <Link href="/messages" aria-label="Notifications" className="grid h-11 w-11 place-items-center rounded-full border border-[#DDE3EC] bg-white text-[#0A1A3F] shadow-[0_10px_24px_rgba(10,26,63,0.06)]">
@@ -153,7 +169,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </Link>
               <Link href="/profile" className="flex items-center gap-3 rounded-full border border-[#DDE3EC] bg-white py-2 pl-2 pr-4 shadow-[0_10px_24px_rgba(10,26,63,0.06)]">
                 <span className="grid h-9 w-9 place-items-center overflow-hidden rounded-full bg-[#1B3FA0] text-sm font-black text-white">
-                  {profile.avatarUrl ? <img src={profile.avatarUrl} alt={`${fullName} profile`} className="h-full w-full object-cover" /> : initials}
+                  <Avatar src={avatarSrc} label={`${fullName} profile`} initials={initials} />
                 </span>
                 <span className="hidden text-left sm:block">
                   <span className="block text-sm font-black">{fullName}</span>
