@@ -75,7 +75,7 @@ function cacheSafeUrl(url?: string, version?: string) {
   return `${url}${url.includes("?") ? "&" : "?"}v=${stamp}`;
 }
 
-function Avatar({ src, label, initials, size = "h-full w-full" }: { src?: string; label: string; initials: string; size?: string }) {
+function Avatar({ src, label, initials, size = "h-full w-full" }: { src?: string; label: string; initials: string; size?: string; alt?: never }) {
   return src ? <img src={src} alt={label} className={`${size} object-cover`} /> : <>{initials}</>;
 }
 
