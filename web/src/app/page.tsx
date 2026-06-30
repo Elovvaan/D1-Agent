@@ -1,5 +1,4 @@
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import type { D1Role } from "@d1/shared";
 import {
   Bot,
@@ -31,9 +30,7 @@ const features = [
 
 export default async function LandingPage() {
   const role = (await cookies()).get("d1_role")?.value;
-  if (role && roles.has(role as D1Role)) {
-    redirect(getRoleHome(role as D1Role));
-  }
+  const dashboardHref = role && roles.has(role as D1Role) ? getRoleHome(role as D1Role) : "";
 
   return (
     <PublicSiteShell>
@@ -66,6 +63,7 @@ export default async function LandingPage() {
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Button href="/get-started" variant="cta" className="sm:min-w-40">Get Started</Button>
               <Button href="/search" variant="secondary" className="sm:min-w-40">Explore Athletes</Button>
+              {dashboardHref ? <Button href={dashboardHref} variant="dark" className="sm:min-w-48">Continue to Dashboard</Button> : null}
             </div>
           </div>
 

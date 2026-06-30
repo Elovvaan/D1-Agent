@@ -4,7 +4,6 @@ import type { D1Role } from "@d1/shared";
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { canAccessRoute, getRoleHome } from "@/lib/data/services";
-import { getSafePortalRedirect } from "@/lib/domain-config";
 
 const roles = new Set<D1Role>(["athlete", "coach", "recruiter", "media_partner", "admin"]);
 const protectedPrefixes = [
@@ -61,11 +60,6 @@ function publicAthleteProfileIsVisible() {
 export function proxy(request: NextRequest) {
   const role = readRole(request);
   const { pathname } = request.nextUrl;
-  const portalRedirect = getSafePortalRedirect(request.nextUrl.hostname);
-
-  if (portalRedirect && pathname === "/") {
-    return NextResponse.redirect(new URL(portalRedirect, request.url));
-  }
 
   if (!role) {
     if (pathname.startsWith("/athletes/")) {
@@ -77,10 +71,6 @@ export function proxy(request: NextRequest) {
     }
 
     return NextResponse.next();
-  }
-
-  if (pathname === "/") {
-    return NextResponse.redirect(new URL(getRoleHome(role), request.url));
   }
 
   if (!canAccessRoute(role, pathname)) {

@@ -37,6 +37,8 @@
 
 Unauthenticated visitors to protected routes redirect to `/sign-in?next=ORIGINAL_PATH`.
 
+The root route `/` never redirects automatically. If a valid local session exists, the landing page stays visible and shows a `Continue to Dashboard` button that links to the correct role dashboard.
+
 ## Manual Checklist
 
 1. Open a private/incognito browser.
@@ -50,6 +52,7 @@ Unauthenticated visitors to protected routes redirect to `/sign-in?next=ORIGINAL
 9. Save an athlete profile with `visibility: "public"`; revisit `/athletes/athlete-jayden-lewis`; expected: public profile page.
 10. From `/get-started`, choose Athlete; expected: `/sign-in?role=athlete&next=/onboarding/athlete`.
 11. Click Continue on sign-in; expected: protected onboarding opens with local dev role session.
+12. Revisit `/` while signed in; expected: landing page remains visible with `Continue to Dashboard`, not an automatic dashboard redirect.
 
 ## Real User Data Rule
 
