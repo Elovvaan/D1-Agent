@@ -1,5 +1,4 @@
-import { Activity, ArrowRight, Clapperboard, Search, Trophy, Users } from "lucide-react";
-import { Badge, Button, Card, PageHeader, SectionTitle, StatCard } from "@/components/design-system";
+import { ArrowRight, Search, Trophy, Users, Zap } from "lucide-react";
 import { PublicSiteShell } from "@/components/public-site-shell";
 
 const boysSports = ["Football", "Basketball", "Baseball", "Soccer", "Track & Field", "Wrestling", "Volleyball", "Tennis", "Golf", "Lacrosse", "Swimming", "Cross Country"];
@@ -7,63 +6,13 @@ const girlsSports = ["Basketball", "Volleyball", "Softball", "Soccer", "Track & 
 const coedSports = ["Archery", "Band", "Bass Fishing", "Bowling", "Dance Team", "Esports", "Flag Football", "Rifle", "Speech", "Unified Sports"];
 
 function SportPill({ label }: { label: string }) {
-  return (
-    <a className="group rounded-2xl border border-[#E4E9F1] bg-[#FAFBFD] px-4 py-3 text-sm font-black text-[#0A1A3F] transition hover:border-[#1B3FA0] hover:bg-white" href={`/search?q=${encodeURIComponent(label)}`}>
-      <span className="flex items-center justify-between gap-3">{label}<ArrowRight className="text-[#1B3FA0] opacity-0 transition group-hover:translate-x-1 group-hover:opacity-100" size={15} /></span>
-    </a>
-  );
+  return <a className="group rounded-2xl border border-white/12 bg-white/[0.07] px-4 py-3 text-sm font-black text-white transition hover:border-[#F2C200]/60 hover:bg-white/[0.1]" href={`/search?q=${encodeURIComponent(label)}`}><span className="flex items-center justify-between gap-3">{label}<ArrowRight className="text-[#F2C200] opacity-70 transition group-hover:translate-x-1 group-hover:opacity-100" size={15} /></span></a>;
 }
 
 function SportSection({ title, sports }: { title: string; sports: string[] }) {
-  return (
-    <Card>
-      <SectionTitle title={title} caption="Click a sport to search athletes, schools, teams, rankings, and public records." />
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {sports.map((sport) => <SportPill key={sport} label={sport} />)}
-      </div>
-    </Card>
-  );
+  return <section className="rounded-[26px] border border-white/12 bg-white/[0.045] p-5 backdrop-blur"><div className="mb-4 flex items-center justify-between"><h2 className="text-xs font-black uppercase tracking-[0.22em] text-[#F2C200]">{title}</h2><span className="rounded-full bg-white/10 px-3 py-1 text-xs font-black text-[#C8D6FF]">{sports.length}</span></div><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{sports.map((sport) => <SportPill key={sport} label={sport} />)}</div></section>;
 }
 
 export default function SportsPage() {
-  return (
-    <PublicSiteShell>
-      <section className="mx-auto max-w-[1440px] px-4 py-12 sm:px-6 lg:px-8">
-        <PageHeader
-          eyebrow="Sports"
-          title="Browse every athlete path by sport."
-          description="The public sports page should act like a clean sports directory. Pick a sport, search the network, and move into schools, teams, rankings, athletes, or film."
-          action={<Button href="/search" variant="cta"><Search size={17} /> Search Sports</Button>}
-        />
-
-        <Card className="overflow-hidden">
-          <div className="grid gap-6 lg:grid-cols-[1fr_360px] lg:items-center">
-            <div>
-              <div className="flex flex-wrap gap-2"><Badge tone="blue">Sports</Badge><Badge tone="green">Schools</Badge><Badge tone="yellow">Athletes</Badge></div>
-              <h2 className="mt-5 text-3xl font-black tracking-tight text-[#0A1A3F] sm:text-4xl">Sports are the front door to discovery.</h2>
-              <p className="mt-4 max-w-3xl text-sm font-semibold leading-6 text-[#66718F]">A visitor should be able to start with basketball, football, soccer, or any other sport and keep moving through public MyD1 pages without entering the private app.</p>
-            </div>
-            <div className="rounded-[28px] bg-[#0A1A3F] p-5 text-white shadow-[0_24px_60px_rgba(10,26,63,0.22)]">
-              <div className="text-xs font-black uppercase tracking-[0.18em] text-[#9DB5FF]">Progression</div>
-              <div className="mt-3 text-2xl font-black">Youth to elite.</div>
-              <p className="mt-3 text-sm font-semibold leading-6 text-[#DCE7FF]">Stats, film, school records, verified profiles, and recruiting tools connect after the public discovery layer.</p>
-            </div>
-          </div>
-        </Card>
-
-        <div className="mt-6 grid gap-4 md:grid-cols-4">
-          <StatCard label="Performance" value="Stats" detail="Public stats and verified records." icon={Activity} />
-          <StatCard label="Film" value="Highlights" detail="Public media discovery layer." icon={Clapperboard} tone="blue" />
-          <StatCard label="Path" value="A1-D1" detail="Progression from foundation to elite." icon={Trophy} tone="yellow" />
-          <StatCard label="Network" value="Teams" detail="Schools, rosters, and teams." icon={Users} tone="green" />
-        </div>
-
-        <div className="mt-6 grid gap-6">
-          <SportSection title="Boys Sports" sports={boysSports} />
-          <SportSection title="Girls Sports" sports={girlsSports} />
-          <SportSection title="Co-ed and Emerging Sports" sports={coedSports} />
-        </div>
-      </section>
-    </PublicSiteShell>
-  );
+  return <PublicSiteShell variant="dark"><section className="relative overflow-hidden bg-[#061331] text-white"><div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_20%,rgba(27,63,160,0.62),transparent_36%),linear-gradient(135deg,#061331,#08245B_56%,#061331)]" /><div className="absolute -right-20 top-24 h-96 w-96 rounded-full border-[10px] border-[#F2C200]/70 opacity-75" /><div className="absolute inset-0 opacity-[0.16] [background-image:radial-gradient(circle_at_1px_1px,white_1px,transparent_0)] [background-size:22px_22px]" /><div className="relative mx-auto max-w-[1440px] px-4 py-16 sm:px-6 lg:px-8"><div className="grid gap-8 lg:grid-cols-[0.85fr_1fr] lg:items-end"><div><div className="text-xs font-black uppercase tracking-[0.28em] text-[#F2C200]">Sports</div><h1 className="mt-4 text-5xl font-black leading-[0.98] tracking-tight sm:text-6xl">Built for every athlete progression path.</h1><p className="mt-5 max-w-2xl text-sm font-semibold leading-7 text-[#C8D6FF]">Pick a sport, search the network, and move into schools, teams, rankings, athletes, or film.</p></div><form className="rounded-[26px] border border-white/12 bg-white/[0.055] p-4"><div className="flex min-h-14 items-center gap-3 rounded-2xl bg-white px-5 text-[#0A1A3F]"><Search size={20} className="text-[#66718F]" /><input className="flex-1 bg-transparent text-sm font-semibold outline-none" name="q" type="search" /></div></form></div><div className="mt-8 grid gap-4 md:grid-cols-3"><div className="rounded-2xl border border-white/12 bg-white/[0.06] p-5"><Trophy className="text-[#F2C200]" /><h2 className="mt-4 font-black">Performance</h2><p className="mt-2 text-sm font-semibold leading-6 text-[#C8D6FF]">Public stats, verified records, and sport context.</p></div><div className="rounded-2xl border border-white/12 bg-white/[0.06] p-5"><Users className="text-[#F2C200]" /><h2 className="mt-4 font-black">Teams</h2><p className="mt-2 text-sm font-semibold leading-6 text-[#C8D6FF]">Schools, rosters, coaches, and athlete discovery.</p></div><div className="rounded-2xl border border-white/12 bg-white/[0.06] p-5"><Zap className="text-[#F2C200]" /><h2 className="mt-4 font-black">Pathways</h2><p className="mt-2 text-sm font-semibold leading-6 text-[#C8D6FF]">From youth foundation to elite readiness.</p></div></div><div className="mt-8 grid gap-5"><SportSection title="Boys Sports" sports={boysSports} /><SportSection title="Girls Sports" sports={girlsSports} /><SportSection title="Co-ed and Emerging Sports" sports={coedSports} /></div></div></section></PublicSiteShell>;
 }
