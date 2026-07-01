@@ -8,9 +8,18 @@ export function StoredAvatar({ src, label, initials, className = "h-full w-full 
   const [clientSrc, setClientSrc] = useState<string | undefined>(src);
 
   useEffect(() => {
-    const stored = window.localStorage.getItem(LOCAL_AVATAR_KEY);
-    if (stored) setClientSrc(stored);
-  }, []);
+    const readStored = () => {
+      const stored = window.localStorage.getItem(LOCAL_AVATAR_KEY);
+      setClientSrc(stored || src);
+    };
+    readStored();
+    window.addEventListener("storage", readStored);
+    window.addEventListener("myd1-avatar-updated", readStored);
+    return () => {
+      window.removeEventListener("storage", readStored);
+      window.removeEventListener("myd1-avatar-updated", readStored);
+    };
+  }, [src]);
 
   if (clientSrc) return <img src={clientSrc} alt={label} className={className} />;
   return <>{initials}</>;
