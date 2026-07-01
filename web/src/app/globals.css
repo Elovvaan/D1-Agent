@@ -2,13 +2,16 @@
 @source "../**/*.{ts,tsx}";
 
 :root {
+  --d1-deep: #061331;
+  --d1-navy: #0A1A3F;
   --d1-blue: #1B3FA0;
+  --d1-gold: #F2C200;
   --d1-yellow: #F2C200;
   --d1-silver: #C7CDD6;
   --d1-white: #FFFFFF;
-  --d1-navy: #0A1A3F;
-  --background: #F7F9FC;
-  --foreground: #0A1A3F;
+  --d1-ice: #DCE7FF;
+  --background: #061331;
+  --foreground: #FFFFFF;
 }
 
 @theme inline {
@@ -24,7 +27,9 @@
 
 body {
   margin: 0;
-  background: var(--background);
+  background:
+    radial-gradient(circle at 80% 20%, rgba(27, 63, 160, 0.38), transparent 32%),
+    linear-gradient(135deg, var(--d1-deep), #08245B 55%, var(--d1-deep));
   color: var(--foreground);
 }
 
@@ -38,4 +43,9 @@ input,
 textarea,
 select {
   font: inherit;
+}
+
+::selection {
+  background: var(--d1-gold);
+  color: var(--d1-deep);
 }
