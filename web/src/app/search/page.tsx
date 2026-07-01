@@ -1,4 +1,4 @@
-import { ArrowRight, Filter, Search } from "lucide-react";
+import { ArrowRight, Filter, Search, MapPin, Trophy, Medal, GraduationCap, Zap, HandHeart, Users, ShieldCheck, Sparkles, DollarSign } from "lucide-react";
 import { EntityMark } from "@/components/entity-mark";
 import { Badge } from "@/components/design-system";
 import { PublicSiteShell } from "@/components/public-site-shell";
@@ -7,32 +7,31 @@ import type { IdentityRefType } from "@/lib/asset-identity/types";
 
 const quickTypes = ["Schools", "Teams", "Athletes", "Coaches", "Games"];
 const browseSports = ["Football", "Basketball", "Baseball", "Soccer", "Track & Field", "Volleyball", "Wrestling", "Softball", "Tennis", "Golf", "Lacrosse", "Swimming"];
+const discoverFilters = ["ZIP or City", "Sport", "Age / Grade", "Date", "Free / Paid", "Distance", "Open Now", "Verified"];
+const discoverCategories = [
+  { title: "Opportunities Near You", detail: "Local sports and community programs by city or ZIP.", icon: MapPin },
+  { title: "Camps & Clinics", detail: "Skill camps, position clinics, school camps, and seasonal training.", icon: Trophy },
+  { title: "Showcases & Combines", detail: "Evaluation events, combines, exposure events, and verified showcases.", icon: Medal },
+  { title: "Scholarships", detail: "Athletic, academic, leadership, STEM, community, and need-based support.", icon: GraduationCap },
+  { title: "Training Programs", detail: "Strength, speed, coaching, recovery, and performance work.", icon: Zap },
+  { title: "Equipment Giveaways", detail: "Cleat drives, uniforms, gear assistance, and grant-funded equipment.", icon: HandHeart },
+  { title: "Community Programs", detail: "City recreation, nonprofits, youth leagues, and local support programs.", icon: Users },
+  { title: "College Recruiting Events", detail: "Visits, coach showcases, evaluation camps, and exposure events.", icon: ShieldCheck },
+  { title: "Academic & Leadership", detail: "Tutoring, test prep, STEM camps, and leadership academies.", icon: Sparkles },
+  { title: "NIL Education", detail: "Brand building, money skills, compliance basics, and marketing.", icon: DollarSign }
+];
 
-function refTypeForGroup(group: string): IdentityRefType {
-  if (group === "Athletes") return "Athlete";
-  if (group === "Teams") return "Team";
-  if (group === "Schools") return "School";
-  return "Organization";
-}
+function refTypeForGroup(group: string): IdentityRefType { if (group === "Athletes") return "Athlete"; if (group === "Teams") return "Team"; if (group === "Schools") return "School"; return "Organization"; }
+function toneForGroup(group: string) { if (group === "Schools") return "green" as const; if (group === "Athletes") return "yellow" as const; if (group === "Teams") return "blue" as const; return "silver" as const; }
+function ResultCard({ result }: { result: PublicDirectoryResult }) { const refType = refTypeForGroup(result.group); return <a className="group rounded-2xl border border-white/12 bg-white/[0.07] p-4 transition hover:border-[#F2C200]/60 hover:bg-white/[0.1]" href={result.href}><div className="flex items-center justify-between gap-4"><div className="flex min-w-0 items-center gap-3"><EntityMark entity={{ ref_type: refType, ref_id: result.id, display_name: result.title }} kind={refType === "Athlete" ? "headshot" : "logo"} /><div className="min-w-0"><div className="truncate text-sm font-black text-white">{result.title}</div><div className="mt-1 text-xs font-semibold text-[#C8D6FF]">{result.detail}</div></div></div><div className="flex items-center gap-2"><Badge tone={toneForGroup(result.group)}>{result.typeLabel}</Badge><ArrowRight className="text-[#F2C200] transition group-hover:translate-x-1" size={16} /></div></div></a>; }
+function Pill({ label, base = "/search" }: { label: string; base?: string }) { return <a className="rounded-xl border border-white/14 bg-white/[0.07] px-4 py-2 text-sm font-black text-white transition hover:border-[#F2C200]/60 hover:bg-white/[0.1]" href={`${base}?q=${encodeURIComponent(label)}`}>{label}</a>; }
+function DiscoverCard({ item }: { item: (typeof discoverCategories)[number] }) { const Icon = item.icon; return <a href={`/discover?category=${encodeURIComponent(item.title)}`} className="group rounded-[26px] border border-white/12 bg-white/[0.065] p-5 shadow-[0_24px_70px_rgba(0,0,0,0.2)] backdrop-blur transition hover:-translate-y-1 hover:border-[#F2C200]/60 hover:bg-white/[0.095]"><div className="flex items-start justify-between gap-4"><span className="grid h-14 w-14 place-items-center rounded-2xl border border-[#F2C200]/40 bg-[#F2C200]/18 text-[#F2C200]"><Icon size={24} /></span><ArrowRight className="text-[#F2C200] transition group-hover:translate-x-1" size={18} /></div><h2 className="mt-5 text-xl font-black tracking-tight text-white">{item.title}</h2><p className="mt-3 text-sm font-semibold leading-6 text-[#C8D6FF]">{item.detail}</p></a>; }
 
-function toneForGroup(group: string) {
-  if (group === "Schools") return "green" as const;
-  if (group === "Athletes") return "yellow" as const;
-  if (group === "Teams") return "blue" as const;
-  return "silver" as const;
-}
+function DiscoverMode() { return <PublicSiteShell variant="dark"><section className="relative min-h-screen overflow-hidden bg-[#061331] text-white"><div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_18%,rgba(27,63,160,0.58),transparent_34%),linear-gradient(135deg,#061331,#08245B_55%,#061331)]" /><div className="absolute -left-20 top-0 h-full w-72 skew-x-[-12deg] bg-[#F2C200]" /><div className="absolute inset-0 opacity-[0.14] [background-image:radial-gradient(circle_at_1px_1px,white_1px,transparent_0)] [background-size:22px_22px]" /><div className="relative mx-auto max-w-[1440px] px-4 py-16 sm:px-6 lg:px-8"><div className="grid gap-10 lg:grid-cols-[0.85fr_1fr] lg:items-end"><div><div className="text-xs font-black uppercase tracking-[0.3em] text-[#F2C200]">Discover</div><h1 className="mt-5 text-5xl font-black leading-[0.96] tracking-tight sm:text-6xl">Find what is next for the athlete.</h1><p className="mt-5 max-w-2xl text-sm font-semibold leading-7 text-[#DCE7FF]">Camps, showcases, scholarships, training, community programs, recruiting events, equipment support, academics, and NIL education in one public hub.</p></div><form className="rounded-[28px] border border-white/12 bg-white/[0.06] p-4 shadow-[0_24px_70px_rgba(0,0,0,0.22)] backdrop-blur"><div className="grid gap-3 md:grid-cols-[1fr_auto]"><div className="flex min-h-14 items-center gap-3 rounded-2xl bg-white px-5 text-[#061331]"><Search size={20} className="text-[#66718F]" /><input className="flex-1 bg-transparent text-sm font-semibold outline-none" name="q" type="search" /></div><button className="rounded-2xl bg-[#F2C200] px-6 text-sm font-black text-[#061331]">Search</button></div><div className="mt-4 flex flex-wrap gap-2">{discoverFilters.map((filter) => <span className="rounded-xl border border-white/14 bg-white/[0.08] px-3 py-2 text-xs font-black text-[#DCE7FF]" key={filter}>{filter}</span>)}</div></form></div><div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">{discoverCategories.map((item) => <DiscoverCard key={item.title} item={item} />)}</div></div></section></PublicSiteShell>; }
 
-function ResultCard({ result }: { result: PublicDirectoryResult }) {
-  const refType = refTypeForGroup(result.group);
-  return <a className="group rounded-2xl border border-white/12 bg-white/[0.07] p-4 transition hover:border-[#F2C200]/60 hover:bg-white/[0.1]" href={result.href}><div className="flex items-center justify-between gap-4"><div className="flex min-w-0 items-center gap-3"><EntityMark entity={{ ref_type: refType, ref_id: result.id, display_name: result.title }} kind={refType === "Athlete" ? "headshot" : "logo"} /><div className="min-w-0"><div className="truncate text-sm font-black text-white">{result.title}</div><div className="mt-1 text-xs font-semibold text-[#C8D6FF]">{result.detail}</div></div></div><div className="flex items-center gap-2"><Badge tone={toneForGroup(result.group)}>{result.typeLabel}</Badge><ArrowRight className="text-[#F2C200] transition group-hover:translate-x-1" size={16} /></div></div></a>;
-}
-
-function Pill({ label }: { label: string }) {
-  return <a className="rounded-xl border border-white/14 bg-white/[0.07] px-4 py-2 text-sm font-black text-white transition hover:border-[#F2C200]/60 hover:bg-white/[0.1]" href={`/search?q=${encodeURIComponent(label)}`}>{label}</a>;
-}
-
-export default async function PublicSearchPage({ searchParams }: { searchParams?: Promise<{ q?: string }> }) {
+export default async function PublicSearchPage({ searchParams }: { searchParams?: Promise<{ q?: string; mode?: string }> }) {
   const params = searchParams ? await searchParams : {};
+  if (params.mode === "discover") return <DiscoverMode />;
   const query = (params.q ?? "").trim();
   const groups = searchPublicDirectory(query);
   const flatResults = groups.flatMap((group) => group.results).filter((result) => result.group !== "Sources" && result.group !== "Organizations");
