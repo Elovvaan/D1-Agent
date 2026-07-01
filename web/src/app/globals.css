@@ -8,3 +8,9 @@ body{margin:0;background:linear-gradient(135deg,#061331,#08245B 55%,#061331);col
 a{color:inherit;text-decoration:none}
 button,input,textarea,select{font:inherit}
 ::selection{background:#F2C200;color:#061331}
+section[class*="bg-white"],div[class*="bg-white"][class*="shadow"],div[class*="bg-white"][class*="border"]{background:rgba(255,255,255,.075)!important;color:#fff!important;border-color:rgba(255,255,255,.12)!important;box-shadow:0 24px 70px rgba(0,0,0,.22)!important;backdrop-filter:blur(18px)}
+[class*="text-[#0A1A3F]"],[class*="text-[#101828]"],[class*="text-[#1B3FA0]"]{color:#fff!important}
+[class*="text-[#66718F]"],[class*="text-[#56617D]"]{color:#DCE7FF!important}
+[class*="border-[#DDE3EC]"],[class*="border-[#E4E9F1]"],[class*="border-[#C7CDD6]"]{border-color:rgba(255,255,255,.12)!important}
+a[class*="rounded"]:hover,button[class*="rounded"]:hover,section[class*="rounded"]:hover,div[class*="rounded"][class*="border"]:hover{border-color:rgba(242,194,0,.58)!important}
+input,textarea,select{background:rgba(255,255,255,.96)!important;color:#061331!important}
