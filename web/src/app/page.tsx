@@ -1,21 +1,7 @@
 import { cookies } from "next/headers";
 import type { D1Role } from "@d1/shared";
-import {
-  Bot,
-  Building2,
-  Camera,
-  Clapperboard,
-  Database,
-  GraduationCap,
-  ListChecks,
-  Search,
-  ShieldCheck,
-  Swords,
-  Trophy,
-  UserRound,
-  Users
-} from "lucide-react";
-import { Badge, Button, Card, StatCard } from "@/components/design-system";
+import { ArrowRight, Bot, Building2, Camera, Clapperboard, Database, GraduationCap, ListChecks, PlayCircle, Search, ShieldCheck, Swords, Trophy, UserRound, Users, Zap } from "lucide-react";
+import { Badge, Button, StatCard } from "@/components/design-system";
 import { PublicSiteShell } from "@/components/public-site-shell";
 import { getPublicDirectoryCounters, getRoleHome } from "@/lib/data/services";
 
@@ -31,6 +17,19 @@ const features = [
   { title: "Media Partners", detail: "Support photographers, videographers, livestream crews, newspapers, and creators.", icon: Camera, tone: "yellow" },
   { title: "Public Sports Search", detail: "Search athletes, schools, teams, games, tournaments, coaches, and public stats.", icon: Search, tone: "blue" }
 ] as const;
+
+function DarkStatCard({ label, value, detail, icon: Icon, tone }: { label: string; value: string; detail: string; icon: typeof Building2; tone: "blue" | "green" | "yellow" }) {
+  const toneClass = tone === "green" ? "bg-emerald-500/18 text-emerald-300 border-emerald-400/30" : tone === "yellow" ? "bg-[#F2C200]/18 text-[#F2C200] border-[#F2C200]/35" : "bg-[#325CFF]/22 text-[#AFC3FF] border-[#5475FF]/35";
+  return (
+    <a href="/search" className="group rounded-[24px] border border-white/12 bg-white/[0.055] p-5 shadow-[0_24px_70px_rgba(0,0,0,0.22)] backdrop-blur transition hover:-translate-y-1 hover:border-[#F2C200]/55 hover:bg-white/[0.08]">
+      <div className={`grid h-12 w-12 place-items-center rounded-2xl border ${toneClass}`}><Icon size={21} /></div>
+      <div className="mt-5 text-xs font-black uppercase tracking-[0.16em] text-[#C8D6FF]">{label}</div>
+      <div className="mt-3 text-4xl font-black tracking-tight text-white">{value}</div>
+      <p className="mt-3 text-sm font-semibold leading-6 text-[#C9D7F7]">{detail}</p>
+      <ArrowRight className="mt-4 text-[#F2C200] transition group-hover:translate-x-1" size={18} />
+    </a>
+  );
+}
 
 export default async function LandingPage() {
   const role = (await cookies()).get("d1_role")?.value;
@@ -48,88 +47,49 @@ export default async function LandingPage() {
   ] as const;
 
   return (
-    <PublicSiteShell>
-      <section className="relative overflow-hidden bg-[#0A1A3F]">
-        <div className="absolute inset-0">
-          <img src="/brand/MYD1 Cover photo.png" alt="" aria-hidden="true" className="h-full w-full object-cover object-center opacity-85" />
-          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(10,26,63,0.92),rgba(10,26,63,0.74)_44%,rgba(10,26,63,0.42)),linear-gradient(180deg,rgba(10,26,63,0.3),rgba(5,12,31,0.9))]" />
-          <div className="absolute inset-x-0 bottom-0 h-52 bg-[linear-gradient(180deg,transparent,rgba(5,12,31,0.86))]" />
-        </div>
+    <PublicSiteShell variant="dark">
+      <section className="relative overflow-hidden bg-[#061331] text-white">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(27,63,160,0.56),transparent_34%),linear-gradient(135deg,#061331_0%,#08245B_52%,#061331_100%)]" />
+        <div className="absolute -left-20 top-0 h-full w-72 skew-x-[-12deg] bg-[#F2C200] shadow-[0_0_90px_rgba(242,194,0,0.34)]" />
+        <div className="absolute left-32 top-0 h-full w-28 skew-x-[-12deg] border-r border-[#F2C200]/35 bg-[#0A1A3F]/55" />
+        <div className="absolute inset-0 opacity-[0.16] [background-image:radial-gradient(circle_at_1px_1px,white_1px,transparent_0)] [background-size:22px_22px]" />
 
-        <div className="relative mx-auto grid min-h-[680px] max-w-[1440px] content-center gap-10 px-4 py-20 sm:px-6 lg:grid-cols-[1fr_440px] lg:px-8">
-          <div className="max-w-4xl">
-            <div className="flex flex-wrap gap-2">
-              <Badge tone="yellow">Verified profiles</Badge>
-              <Badge tone="green">Public sports directory</Badge>
-              <Badge>One AI career Agent</Badge>
-            </div>
-            <h1 className="mt-7 max-w-4xl text-5xl font-black tracking-tight text-white sm:text-6xl lg:text-7xl">
-              Build Your Athletic Career.
+        <div className="relative mx-auto grid max-w-[1440px] gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8 lg:py-20">
+          <div className="flex flex-col justify-center lg:pl-10">
+            <div className="text-xs font-black uppercase tracking-[0.32em] text-[#F2C200]">Live Directory</div>
+            <h1 className="mt-6 max-w-3xl text-5xl font-black uppercase leading-[0.94] tracking-tight sm:text-6xl lg:text-7xl">
+              Real public sports data, <span className="text-[#F2C200]">indexed</span> as it imports.
             </h1>
-            <p className="mt-6 max-w-3xl text-lg font-semibold leading-8 text-[#DDE8FF]">
-              MyD1 helps athletes build verified profiles, organize highlights, connect with coaches, and grow their athletic career from youth sports through the professional level.
-            </p>
+            <p className="mt-6 max-w-2xl text-lg font-semibold leading-8 text-[#DCE7FF]">The public sports database for athletes, coaches, schools, and the future of the game.</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Button href="/get-started" variant="cta" className="sm:min-w-40">Get Started</Button>
-              <Button href="/search" variant="secondary" className="sm:min-w-40">Explore Athletes</Button>
-              {dashboardHref ? <Button href={dashboardHref} variant="dark" className="sm:min-w-48">Continue to Dashboard</Button> : null}
+              <Button href="/search" variant="cta" className="sm:min-w-44">Explore Directory <ArrowRight size={17} /></Button>
+              <Button href="/about" variant="dark" className="sm:min-w-40"><PlayCircle size={17} /> How It Works</Button>
+              {dashboardHref ? <Button href={dashboardHref} variant="secondary" className="sm:min-w-48">Continue Dashboard</Button> : null}
+            </div>
+            <div className="mt-10 grid gap-5">
+              <div className="flex gap-4"><span className="grid h-12 w-12 place-items-center rounded-full border border-[#F2C200]/45 text-[#F2C200]"><ShieldCheck size={22} /></span><div><div className="font-black">Verified & Trusted</div><p className="mt-1 text-sm font-semibold leading-6 text-[#C9D7F7]">Every record is sourced, scored, and reviewed before it becomes verified.</p></div></div>
+              <div className="flex gap-4"><span className="grid h-12 w-12 place-items-center rounded-full border border-[#F2C200]/45 text-[#F2C200]"><Database size={22} /></span><div><div className="font-black">Always Growing</div><p className="mt-1 text-sm font-semibold leading-6 text-[#C9D7F7]">The directory expands as public sports records import.</p></div></div>
+              <div className="flex gap-4"><span className="grid h-12 w-12 place-items-center rounded-full border border-[#F2C200]/45 text-[#F2C200]"><Zap size={22} /></span><div><div className="font-black">Built for Performance</div><p className="mt-1 text-sm font-semibold leading-6 text-[#C9D7F7]">Fast search, clean public pages, and Operations review behind the scenes.</p></div></div>
             </div>
           </div>
 
-          <Card className="h-fit bg-white/95 shadow-[0_24px_70px_rgba(0,0,0,0.22)]">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-xs font-black uppercase tracking-[0.12em] text-[#1B3FA0]">Career Path</div>
-                <div className="mt-2 text-2xl font-black">A1 to D1</div>
-              </div>
-              <Trophy className="text-[#F2C200]" size={34} />
-            </div>
-            <div className="mt-5 grid gap-3">
-              {["A1 Foundation", "B1 Recruit", "C1 College", "D1 Elite"].map((item, index) => (
-                <div className="flex items-center gap-3 rounded-2xl border border-[#E4E9F1] bg-[#FAFBFD] p-4" key={item}>
-                  <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#EAF0FF] text-sm font-black text-[#1B3FA0]">{index + 1}</span>
-                  <span className="text-sm font-black text-[#0A1A3F]">{item}</span>
-                </div>
-              ))}
-            </div>
-          </Card>
+          <div className="grid content-center gap-4 sm:grid-cols-2 xl:grid-cols-4 lg:xl:grid-cols-2">
+            {liveCounters.map((counter) => <DarkStatCard key={counter.label} label={counter.label} value={String(counter.value)} detail={counter.detail} icon={counter.icon} tone={counter.tone} />)}
+          </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-[1440px] px-4 py-12 sm:px-6 lg:px-8">
-        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.14em] text-[#1B3FA0]">Live Directory</p>
-            <h2 className="mt-2 text-3xl font-black tracking-tight text-[#0A1A3F]">Real public sports data, indexed as it imports.</h2>
+      <section className="relative overflow-hidden bg-white text-[#0A1A3F]">
+        <div className="absolute -left-14 top-0 h-full w-40 skew-x-[-12deg] bg-[#F2C200]" />
+        <div className="absolute right-0 top-0 h-full w-1/2 opacity-[0.06] [background-image:radial-gradient(circle_at_1px_1px,#0A1A3F_1px,transparent_0)] [background-size:22px_22px]" />
+        <div className="relative mx-auto max-w-[1440px] px-4 py-14 sm:px-6 lg:px-8">
+          <div className="mb-7 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div><p className="text-xs font-black uppercase tracking-[0.24em] text-[#1B3FA0]">Platform</p><h2 className="mt-2 text-4xl font-black tracking-tight">Everything around the athlete, organized.</h2></div>
+            <Button href="/search" variant="dark">Search Public Directory <ArrowRight size={17} /></Button>
           </div>
-          <Button href="/search" variant="secondary">Explore Directory</Button>
-        </div>
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {liveCounters.map((counter) => (
-            <StatCard
-              key={counter.label}
-              label={counter.label}
-              value={String(counter.value)}
-              detail={counter.detail}
-              icon={counter.icon}
-              tone={counter.tone}
-            />
-          ))}
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-[1440px] px-4 py-14 sm:px-6 lg:px-8">
-        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.14em] text-[#1B3FA0]">Platform</p>
-            <h2 className="mt-2 text-3xl font-black tracking-tight text-[#0A1A3F]">Everything around the athlete, organized.</h2>
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {features.map((feature) => <StatCard key={feature.title} label={feature.title} value="" detail={feature.detail} icon={feature.icon} tone={feature.tone} />)}
           </div>
-          <Button href="/search" variant="secondary">Search Public Directory</Button>
-        </div>
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {features.map((feature) => (
-            <StatCard key={feature.title} label={feature.title} value="" detail={feature.detail} icon={feature.icon} tone={feature.tone} />
-          ))}
         </div>
       </section>
     </PublicSiteShell>
