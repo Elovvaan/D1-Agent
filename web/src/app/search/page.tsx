@@ -3,6 +3,7 @@ import { EntityMark } from "@/components/entity-mark";
 import { Badge } from "@/components/design-system";
 import { PublicSiteShell } from "@/components/public-site-shell";
 import { searchPublicDirectory, type PublicDirectoryResult } from "@/lib/data/services";
+import { searchOperationsIntakeDirectory } from "@/lib/data/public-intake-search";
 import type { IdentityRefType } from "@/lib/asset-identity/types";
 
 const quickTypes = ["Schools", "Teams", "Athletes", "Coaches", "Games"];
@@ -21,9 +22,24 @@ const discoverCategories = [
   { title: "NIL Education", detail: "Brand building, money skills, compliance basics, and marketing.", icon: DollarSign }
 ];
 
+function mergeDirectoryGroups(groups: Array<{ group: PublicDirectoryResult["group"]; results: PublicDirectoryResult[] }>) {
+  const order: PublicDirectoryResult["group"][] = ["Athletes", "Schools", "Teams", "Rankings", "Games", "Coaches", "Sources", "Organizations"];
+  const buckets = new Map<PublicDirectoryResult["group"], PublicDirectoryResult[]>();
+  const seen = new Set<string>();
+  for (const group of groups) {
+    for (const result of group.results) {
+      const key = `${result.group}:${result.id}:${result.sourceUrl ?? ""}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      buckets.set(result.group, [...(buckets.get(result.group) ?? []), result]);
+    }
+  }
+  return order.map((group) => ({ group, results: buckets.get(group) ?? [] })).filter((group) => group.results.length);
+}
+
 function refTypeForGroup(group: string): IdentityRefType { if (group === "Athletes") return "Athlete"; if (group === "Teams") return "Team"; if (group === "Schools") return "School"; return "Organization"; }
 function toneForGroup(group: string) { if (group === "Schools") return "green" as const; if (group === "Athletes") return "yellow" as const; if (group === "Teams") return "blue" as const; return "silver" as const; }
-function ResultCard({ result }: { result: PublicDirectoryResult }) { const refType = refTypeForGroup(result.group); return <a className="group rounded-2xl border border-white/12 bg-white/[0.07] p-4 transition hover:border-[#F2C200]/60 hover:bg-white/[0.1]" href={result.href}><div className="flex items-center justify-between gap-4"><div className="flex min-w-0 items-center gap-3"><EntityMark entity={{ ref_type: refType, ref_id: result.id, display_name: result.title }} kind={refType === "Athlete" ? "headshot" : "logo"} /><div className="min-w-0"><div className="truncate text-sm font-black text-white">{result.title}</div><div className="mt-1 text-xs font-semibold text-[#C8D6FF]">{result.detail}</div></div></div><div className="flex items-center gap-2"><Badge tone={toneForGroup(result.group)}>{result.typeLabel}</Badge><ArrowRight className="text-[#F2C200] transition group-hover:translate-x-1" size={16} /></div></div></a>; }
+function ResultCard({ result }: { result: PublicDirectoryResult }) { const refType = refTypeForGroup(result.group); return <a className="group rounded-2xl border border-white/12 bg-white/[0.07] p-4 transition hover:border-[#F2C200]/60 hover:bg-white/[0.1]" href={result.href}><div className="flex items-center justify-between gap-4"><div className="flex min-w-0 items-center gap-3"><EntityMark entity={{ ref_type: refType, ref_id: result.id, display_name: result.title }} kind={refType === "Athlete" ? "headshot" : "logo"} /><div className="min-w-0"><div className="truncate text-sm font-black text-white">{result.title}</div><div className="mt-1 text-xs font-semibold text-[#C8D6FF]">{result.detail}</div>{result.sourceUrl ? <div className="mt-1 truncate text-[11px] font-semibold text-[#F2C200]">Source: {result.sourceUrl}</div> : null}</div></div><div className="flex items-center gap-2"><Badge tone={toneForGroup(result.group)}>{result.typeLabel}</Badge><ArrowRight className="text-[#F2C200] transition group-hover:translate-x-1" size={16} /></div></div></a>; }
 function Pill({ label, base = "/search" }: { label: string; base?: string }) { return <a className="rounded-xl border border-white/14 bg-white/[0.07] px-4 py-2 text-sm font-black text-white transition hover:border-[#F2C200]/60 hover:bg-white/[0.1]" href={`${base}?q=${encodeURIComponent(label)}`}>{label}</a>; }
 function DiscoverCard({ item }: { item: (typeof discoverCategories)[number] }) { const Icon = item.icon; return <a href={`/discover?category=${encodeURIComponent(item.title)}`} className="group rounded-[26px] border border-white/12 bg-white/[0.065] p-5 shadow-[0_24px_70px_rgba(0,0,0,0.2)] backdrop-blur transition hover:-translate-y-1 hover:border-[#F2C200]/60 hover:bg-white/[0.095]"><div className="flex items-start justify-between gap-4"><span className="grid h-14 w-14 place-items-center rounded-2xl border border-[#F2C200]/40 bg-[#F2C200]/18 text-[#F2C200]"><Icon size={24} /></span><ArrowRight className="text-[#F2C200] transition group-hover:translate-x-1" size={18} /></div><h2 className="mt-5 text-xl font-black tracking-tight text-white">{item.title}</h2><p className="mt-3 text-sm font-semibold leading-6 text-[#C8D6FF]">{item.detail}</p></a>; }
 
@@ -33,7 +49,9 @@ export default async function PublicSearchPage({ searchParams }: { searchParams?
   const params = searchParams ? await searchParams : {};
   if (params.mode === "discover") return <DiscoverMode />;
   const query = (params.q ?? "").trim();
-  const groups = searchPublicDirectory(query);
+  const publicGroups = searchPublicDirectory(query);
+  const intakeGroups = searchOperationsIntakeDirectory(query);
+  const groups = mergeDirectoryGroups([...publicGroups, ...intakeGroups]);
   const flatResults = groups.flatMap((group) => group.results).filter((result) => result.group !== "Sources" && result.group !== "Organizations");
   return <PublicSiteShell variant="dark"><section className="relative overflow-hidden bg-[#061331] text-white"><div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_25%,rgba(27,63,160,0.62),transparent_36%),linear-gradient(135deg,#061331,#08245B_54%,#061331)]" /><div className="absolute inset-0 opacity-[0.16] [background-image:radial-gradient(circle_at_1px_1px,white_1px,transparent_0)] [background-size:22px_22px]" /><div className="relative mx-auto max-w-[1440px] px-4 py-16 sm:px-6 lg:px-8"><div className="mx-auto max-w-4xl text-center"><h1 className="text-5xl font-black tracking-tight sm:text-6xl">Search everything.<br /><span className="text-[#F2C200]">Real data. Real fast.</span></h1><p className="mt-5 text-sm font-semibold leading-6 text-[#C8D6FF]">Search public schools, teams, athletes, games, coaches, rankings, and source-backed records.</p><form className="mt-8 grid gap-3 md:grid-cols-[1fr_auto]"><label className="sr-only" htmlFor="q">Search MyD1</label><div className="flex min-h-14 items-center gap-3 rounded-2xl bg-white px-5 text-[#0A1A3F] shadow-[0_20px_60px_rgba(0,0,0,0.28)]"><Search size={20} className="text-[#66718F]" /><input className="min-h-11 flex-1 bg-transparent text-sm font-semibold outline-none" defaultValue={query} id="q" name="q" type="search" /></div><button className="inline-flex min-h-14 items-center justify-center gap-2 rounded-2xl border border-white/16 bg-white/[0.07] px-5 text-sm font-black text-white"><Filter size={17} /> Filters</button></form><div className="mt-5 flex flex-wrap justify-center gap-2">{quickTypes.map((item) => <Pill key={item} label={item} />)}</div></div>{query ? <div className="mt-10 grid gap-4">{flatResults.length ? groups.map((group) => ({ ...group, results: group.results.filter((result) => result.group !== "Sources" && result.group !== "Organizations") })).filter((group) => group.results.length).map((group) => <div className="rounded-[26px] border border-white/12 bg-white/[0.045] p-5" key={group.group}><div className="mb-4 flex items-center justify-between"><h2 className="text-xs font-black uppercase tracking-[0.22em] text-[#F2C200]">{group.group}</h2><span className="rounded-full bg-white/10 px-3 py-1 text-xs font-black text-[#C8D6FF]">{group.results.length}</span></div><div className="grid gap-3">{group.results.map((result) => <ResultCard key={`${result.group}-${result.id}-${result.href}`} result={result} />)}</div></div>) : <div className="rounded-[26px] border border-white/12 bg-white/[0.06] p-6 text-center"><h2 className="text-2xl font-black">No results found</h2><p className="mt-2 text-sm font-semibold text-[#C8D6FF]">Try another athlete, school, sport, state, ranking, or team.</p></div>}</div> : <div className="mt-10 rounded-[26px] border border-white/12 bg-white/[0.045] p-5"><h2 className="text-xs font-black uppercase tracking-[0.22em] text-[#F2C200]">Browse Sports</h2><div className="mt-4 flex flex-wrap gap-2">{browseSports.map((sport) => <Pill key={sport} label={sport} />)}</div></div>}</div></section></PublicSiteShell>;
 }
