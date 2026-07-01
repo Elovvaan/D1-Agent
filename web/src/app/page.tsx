@@ -1,7 +1,7 @@
 import { ArrowRight, Bot, Building2, Camera, Clapperboard, Database, GraduationCap, ListChecks, PlayCircle, Search, ShieldCheck, Swords, UserRound, Users, Zap } from "lucide-react";
 import { Button, StatCard } from "@/components/design-system";
 import { PublicSiteShell } from "@/components/public-site-shell";
-import { getPublicDirectoryCounters } from "@/lib/data/services";
+import { getPublicDataCounters } from "@/lib/data/public-data-engine";
 
 const features = [
   { title: "Athlete Profiles", detail: "Build a visibility-safe public home for verified athletic identity.", icon: UserRound, tone: "blue" },
@@ -20,7 +20,7 @@ function DarkStatCard({ label, value, detail, icon: Icon, tone }: { label: strin
 }
 
 export default function LandingPage() {
-  const counters = getPublicDirectoryCounters();
+  const counters = getPublicDataCounters();
   const liveCounters = [
     { label: "Schools", value: counters.schools, detail: "Public school records indexed.", icon: Building2, tone: "blue" },
     { label: "Teams", value: counters.teams, detail: "Team records discovered from imports.", icon: Users, tone: "green" },
