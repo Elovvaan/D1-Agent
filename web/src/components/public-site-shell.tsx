@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Facebook, Instagram, Youtube } from "lucide-react";
 import { brandConfig } from "@/lib/domain-config";
+import { myd1SocialChannels } from "@/lib/social-channels";
 
 const navItems = [
   { href: "/", label: "Home" },
@@ -10,7 +11,15 @@ const navItems = [
   { href: "/sports", label: "Sports" }
 ] as const;
 
+const socialIcons = {
+  facebook: Facebook,
+  instagram: Instagram,
+  youtube: Youtube
+};
+
 export function PublicSiteShell({ children }: { children: React.ReactNode }) {
+  const connectedSocials = myd1SocialChannels.filter((channel) => channel.status === "connected-url" && channel.url);
+
   return (
     <div className="min-h-screen bg-[#F5F7FB] text-[#0A1A3F]">
       <img
@@ -71,9 +80,14 @@ export function PublicSiteShell({ children }: { children: React.ReactNode }) {
             <Link href="/terms">Terms</Link>
             <Link href="/support">Support</Link>
             <Link href="/contact">Contact</Link>
-            <a href="https://instagram.com" rel="noreferrer" target="_blank">Instagram</a>
-            <a href="https://x.com" rel="noreferrer" target="_blank">X</a>
-            <a href="https://youtube.com" rel="noreferrer" target="_blank">YouTube</a>
+            {connectedSocials.map((channel) => {
+              const Icon = socialIcons[channel.id as keyof typeof socialIcons];
+              return (
+                <a className="inline-flex items-center gap-1 rounded-xl px-2 py-1 transition hover:bg-[#EAF0FF]" href={channel.url} key={channel.id} rel="noreferrer" target="_blank">
+                  {Icon ? <Icon size={15} /> : null} {channel.label}
+                </a>
+              );
+            })}
           </div>
         </div>
       </footer>
