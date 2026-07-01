@@ -1,70 +1,13 @@
-import { ArrowRight, Bot, Building2, Clapperboard, Search, ShieldCheck, Trophy, Users } from "lucide-react";
-import { Badge, Button, Card, ObjectList, PageHeader, SectionTitle, StatCard } from "@/components/design-system";
+import { ArrowRight, Bot, Database, Search, ShieldCheck, Zap } from "lucide-react";
+import { Button } from "@/components/design-system";
 import { PublicSiteShell } from "@/components/public-site-shell";
 
+const points = [
+  { title: "Real Sources", detail: "Public records, uploads, and verified corrections stay attached to canonical entities.", icon: Database },
+  { title: "Verified & Trusted", detail: "Records are reviewed before they become verified public signals.", icon: ShieldCheck },
+  { title: "Built for Growth", detail: "Search, assets, rosters, and communications flow through one entity graph.", icon: Zap }
+];
+
 export default function AboutPage() {
-  return (
-    <PublicSiteShell>
-      <section className="mx-auto max-w-[1440px] px-4 py-12 sm:px-6 lg:px-8">
-        <PageHeader
-          eyebrow="About MyD1"
-          title="A public sports discovery layer with a private career command center behind it."
-          description="MyD1 helps athletes, families, coaches, schools, media partners, and recruiters move through one connected sports ecosystem without exposing private tools on the public side."
-          action={<Button href="/get-started" variant="cta">Get Started <ArrowRight size={16} /></Button>}
-        />
-
-        <Card className="overflow-hidden">
-          <div className="grid gap-6 lg:grid-cols-[1fr_360px] lg:items-center">
-            <div>
-              <div className="flex flex-wrap gap-2">
-                <Badge tone="blue">Public Discovery</Badge>
-                <Badge tone="green">Verified Profiles</Badge>
-                <Badge tone="yellow">D1 Agent</Badge>
-              </div>
-              <h2 className="mt-5 text-3xl font-black tracking-tight text-[#0A1A3F] sm:text-4xl">The athlete profile should not live in pieces.</h2>
-              <p className="mt-4 max-w-3xl text-sm font-semibold leading-6 text-[#66718F]">
-                Film, stats, school records, public discovery, coach verification, recruiting activity, and communication should work together. MyD1 keeps the public experience clean while giving each signed-in role the tools they actually need.
-              </p>
-            </div>
-            <div className="rounded-[28px] bg-[#0A1A3F] p-5 text-white shadow-[0_24px_60px_rgba(10,26,63,0.22)]">
-              <div className="text-xs font-black uppercase tracking-[0.18em] text-[#9DB5FF]">What MyD1 separates</div>
-              <div className="mt-3 text-2xl font-black">Discovery from management.</div>
-              <p className="mt-3 text-sm font-semibold leading-6 text-[#DCE7FF]">Visitors search and explore. Athletes manage careers. Operators support the whole platform privately.</p>
-            </div>
-          </div>
-        </Card>
-
-        <div className="mt-6 grid gap-4 md:grid-cols-4">
-          <StatCard label="Public" value="Search" detail="Athletes, schools, teams, rankings, and sports." icon={Search} />
-          <StatCard label="Athlete" value="Profile" detail="Identity, film, stats, and recruiting path." icon={Users} tone="blue" />
-          <StatCard label="School" value="Directory" detail="Teams, schedules, rosters, and public records." icon={Building2} tone="green" />
-          <StatCard label="Agent" value="Support" detail="Guided next steps behind the scenes." icon={Bot} tone="yellow" />
-        </div>
-
-        <div className="mt-6 grid gap-6 xl:grid-cols-2">
-          <Card>
-            <SectionTitle title="What the public sees" caption="A clean sports website that does not expose backend records or private dashboards." />
-            <ObjectList
-              items={[
-                { title: "Public sports search", detail: "Search athletes, schools, teams, sports, rankings, and public pages without signing in.", icon: Search, tone: "blue" },
-                { title: "Clean public profiles", detail: "Public profile pages show only appropriate public-facing details, film, stats, and source context.", icon: ShieldCheck, tone: "green" },
-                { title: "Sports discovery", detail: "Browse by sport, state, school, team, ranking, and eventually game or tournament.", icon: Trophy, tone: "yellow" }
-              ]}
-            />
-          </Card>
-
-          <Card>
-            <SectionTitle title="What happens after sign in" caption="The platform becomes role-specific while keeping the same MyD1 identity." />
-            <ObjectList
-              items={[
-                { title: "Athletes manage careers", detail: "Profiles, film, highlights, recruiting progress, coach connection, and trust score.", icon: Clapperboard, tone: "blue" },
-                { title: "Schools and media stay limited", detail: "School admins and media partners upload or tag content without controlling athlete identity.", icon: Building2, tone: "green" },
-                { title: "Operators support the system", detail: "Private Operations Center handles inbox, uploads, search issues, support, and fixes.", icon: Bot, tone: "yellow" }
-              ]}
-            />
-          </Card>
-        </div>
-      </section>
-    </PublicSiteShell>
-  );
+  return <PublicSiteShell variant="dark"><section className="relative overflow-hidden bg-[#061331] text-white"><div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_30%,rgba(27,63,160,0.7),transparent_35%),linear-gradient(135deg,#061331,#08245B_56%,#061331)]" /><div className="absolute right-0 top-0 h-full w-1/2 rounded-l-full border-l-[8px] border-[#F2C200] bg-[url('/brand/MYD1 Cover photo.png')] bg-cover bg-center opacity-35" /><div className="absolute inset-0 opacity-[0.15] [background-image:radial-gradient(circle_at_1px_1px,white_1px,transparent_0)] [background-size:22px_22px]" /><div className="relative mx-auto grid min-h-[720px] max-w-[1440px] gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[0.78fr_1fr] lg:px-8"><div className="flex flex-col justify-center"><div className="text-xs font-black uppercase tracking-[0.28em] text-[#F2C200]">About MyD1</div><h1 className="mt-5 text-5xl font-black leading-[0.98] tracking-tight sm:text-6xl">Built for the game.<br /><span className="text-[#F2C200]">Backed by real data.</span></h1><p className="mt-6 max-w-2xl text-sm font-semibold leading-7 text-[#DCE7FF]">MyD1 is the public sports directory and athlete platform where search, profiles, film, school data, and verified corrections all work from the same source-backed system.</p><div className="mt-8 flex flex-col gap-3 sm:flex-row"><Button href="/search" variant="cta">Search Directory <ArrowRight size={17} /></Button><Button href="/get-started" variant="dark"><Bot size={17} /> Start Profile</Button></div><div className="mt-10 grid gap-5">{points.map(({ title, detail, icon: Icon }) => <div className="flex gap-4" key={title}><span className="grid h-12 w-12 place-items-center rounded-full border border-[#F2C200]/45 text-[#F2C200]"><Icon size={22} /></span><div><div className="font-black">{title}</div><p className="mt-1 text-sm font-semibold leading-6 text-[#C9D7F7]">{detail}</p></div></div>)}</div></div><div className="hidden items-end justify-end lg:flex"><div className="grid w-full max-w-xl grid-cols-2 gap-4 rounded-[32px] border border-white/12 bg-white/[0.055] p-5 backdrop-blur"><div className="rounded-2xl bg-white/[0.08] p-5"><div className="text-4xl font-black text-[#F2C200]">Real</div><p className="mt-2 text-sm font-semibold text-[#C8D6FF]">Public sports records</p></div><div className="rounded-2xl bg-white/[0.08] p-5"><div className="text-4xl font-black text-[#F2C200]">One</div><p className="mt-2 text-sm font-semibold text-[#C8D6FF]">D1 Agent system</p></div><div className="rounded-2xl bg-white/[0.08] p-5"><div className="text-4xl font-black text-[#F2C200]">Clean</div><p className="mt-2 text-sm font-semibold text-[#C8D6FF]">Public discovery</p></div><div className="rounded-2xl bg-white/[0.08] p-5"><div className="text-4xl font-black text-[#F2C200]">Live</div><p className="mt-2 text-sm font-semibold text-[#C8D6FF]">Operations review</p></div></div></div></div></section><section className="bg-white px-4 py-14 text-[#0A1A3F] sm:px-6 lg:px-8"><div className="mx-auto max-w-[1440px]"><div className="grid gap-4 md:grid-cols-3"><a className="rounded-2xl border border-[#DDE3EC] bg-white p-5 shadow-[0_20px_55px_rgba(10,26,63,0.08)]" href="/search"><Search className="text-[#1B3FA0]" /><h2 className="mt-4 font-black">Public Discovery</h2><p className="mt-2 text-sm font-semibold leading-6 text-[#66718F]">Search without exposing private dashboards.</p></a><a className="rounded-2xl border border-[#DDE3EC] bg-white p-5 shadow-[0_20px_55px_rgba(10,26,63,0.08)]" href="/schools"><Database className="text-[#1B3FA0]" /><h2 className="mt-4 font-black">School Graph</h2><p className="mt-2 text-sm font-semibold leading-6 text-[#66718F]">Schools, teams, rosters, and public records.</p></a><a className="rounded-2xl border border-[#DDE3EC] bg-white p-5 shadow-[0_20px_55px_rgba(10,26,63,0.08)]" href="/sports"><Zap className="text-[#1B3FA0]" /><h2 className="mt-4 font-black">Sports Pathways</h2><p className="mt-2 text-sm font-semibold leading-6 text-[#66718F]">Browse the network by sport and progression path.</p></a></div></div></section></PublicSiteShell>;
 }
