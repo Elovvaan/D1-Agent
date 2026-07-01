@@ -1,4 +1,4 @@
-export type D1Role = "athlete" | "parent" | "coach" | "recruiter" | "media_partner" | "organization" | "admin";
+export type D1Role = "athlete" | "coach" | "recruiter" | "media_partner" | "admin";
 export type MembershipPlan = "d1_free" | "d1_pro" | "team" | "enterprise";
 export type MembershipState = "active" | "pending" | "revoked";
 export type OrgType = "high_school" | "club" | "college" | "platform";
