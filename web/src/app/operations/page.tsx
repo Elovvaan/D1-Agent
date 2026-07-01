@@ -13,7 +13,7 @@ const OPERATOR_COOKIE_VALUE = "granted";
 type UploadRecord = { title?: string; name?: string; url?: string; type?: string; uploadedAt?: string };
 type SavedProfile = { id?: string; fullName?: string; sport?: string; schoolName?: string; classYear?: number; primaryPosition?: string; avatarUrl?: string; avatarUpdatedAt?: string; visibility?: string };
 type IssueRecord = { id: string; status?: string };
-type IntakeRecord = { id: string; sourceType?: string; state?: string; district?: string; school?: string; sport?: string; sourceUrl?: string; pdf?: { name?: string }; status?: string; createdAt?: string };
+type IntakeRecord = { id: string; sourceType?: string; sourceName?: string; state?: string; district?: string; school?: string; sport?: string; sourceUrl?: string; pdf?: { name?: string }; status?: string; createdAt?: string };
 
 function readUserState<T>(fileName: string, fallback: T): T { try { const filePath = resolve(process.cwd(), "..", "data", "user-state", fileName); if (!existsSync(filePath)) return fallback; return JSON.parse(readFileSync(filePath, "utf8")) as T; } catch { return fallback; } }
 function hasUserState(fileName: string) { return existsSync(resolve(process.cwd(), "..", "data", "user-state", fileName)); }
