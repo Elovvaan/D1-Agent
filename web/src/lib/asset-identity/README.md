@@ -1,0 +1,1 @@
+Asset identity resolver core. Public surfaces should render canonical entity assets through resolveAsset and fall back to deterministic initials.
