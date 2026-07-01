@@ -3,31 +3,174 @@ import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { resolve } from "node:path";
 import { cookies } from "next/headers";
 import type { LucideIcon } from "lucide-react";
-import { BadgeCheck, Bot, BrainCircuit, Building2, ClipboardList, Code2, Database, FileText, Github, Globe2, Inbox, KeyRound, LifeBuoy, Link2, MapPinned, Radio, Search, ShieldCheck, Upload, UserRound, UsersRound } from "lucide-react";
+import {
+  BadgeCheck,
+  ClipboardList,
+  Code2,
+  Database,
+  FileText,
+  Github,
+  Globe2,
+  Inbox,
+  KeyRound,
+  LifeBuoy,
+  MapPinned,
+  MessageSquare,
+  Radio,
+  Search,
+  ShieldCheck,
+  Upload,
+  UserRound,
+  UsersRound,
+  Video
+} from "lucide-react";
 import { OperationsCommunicationsPanel } from "./communications-panel";
-import { recordBuildRoomRequest, recordDataIntake, recordSupportIssue, recordViewAsUser, signInOperator, signOutOperator } from "./actions";
+import {
+  recordBuildRoomRequest,
+  recordDataIntake,
+  recordSupportIssue,
+  recordViewAsUser,
+  signInOperator,
+  signOutOperator
+} from "./actions";
 
 const OPERATOR_COOKIE = "myd1_operator_access";
 const OPERATOR_COOKIE_VALUE = "granted";
 
 type UploadRecord = { title?: string; name?: string; url?: string; type?: string; uploadedAt?: string };
 type SavedProfile = { id?: string; fullName?: string; sport?: string; schoolName?: string; classYear?: number; primaryPosition?: string; avatarUrl?: string; avatarUpdatedAt?: string; visibility?: string };
-type IssueRecord = { id: string; status?: string };
+type IssueRecord = { id: string; subject?: string; affectedArea?: string; severity?: string; status?: string; createdAt?: string };
 type IntakeRecord = { id: string; sourceType?: string; sourceName?: string; state?: string; district?: string; school?: string; sport?: string; sourceUrl?: string; pdf?: { name?: string }; status?: string; createdAt?: string };
+type AuditRecord = { id: string; action?: string; occurredAt?: string };
 
-function readUserState<T>(fileName: string, fallback: T): T { try { const filePath = resolve(process.cwd(), "..", "data", "user-state", fileName); if (!existsSync(filePath)) return fallback; return JSON.parse(readFileSync(filePath, "utf8")) as T; } catch { return fallback; } }
-function hasUserState(fileName: string) { return existsSync(resolve(process.cwd(), "..", "data", "user-state", fileName)); }
-function fileCount(relativePath: string) { try { const dir = resolve(process.cwd(), relativePath); if (!existsSync(dir)) return 0; return readdirSync(dir).length; } catch { return 0; } }
-function directorySize(relativePath: string) { try { const dir = resolve(process.cwd(), relativePath); if (!existsSync(dir)) return 0; return readdirSync(dir).reduce((total, file) => total + statSync(resolve(dir, file)).size, 0); } catch { return 0; } }
-function formatBytes(bytes: number) { return bytes ? `${(bytes / 1024 / 1024).toFixed(1)} MB` : "0 MB"; }
-function statusMessage(status?: string) { const messages: Record<string, string> = { "operator-ready": "Operations Center unlocked.", "operator-denied": "Access code rejected.", "operator-code-missing": "Set MYD1_OPERATOR_ACCESS_CODE in Railway before using this console.", "issue-recorded": "Support issue recorded.", "inbound-message-recorded": "Message saved to the operator inbox.", "build-request-recorded": "Build request recorded.", "data-intake-recorded": "Data intake saved to the review queue." }; return status ? messages[status] : ""; }
-function cacheSafeUrl(url?: string, version?: string) { if (!url) return ""; return `${url}${url.includes("?") ? "&" : "?"}v=${encodeURIComponent(version ?? "current")}`; }
-function matchText(query: string, values: Array<string | number | undefined>) { if (!query) return false; return values.filter(Boolean).join(" ").toLowerCase().includes(query.toLowerCase()); }
-function inputClass() { return "min-h-12 rounded-2xl border border-white/10 bg-white px-4 text-sm font-black text-[#061331] outline-none"; }
-function ShellCard({ children, className = "", id }: { children: React.ReactNode; className?: string; id?: string }) { return <section id={id} className={`rounded-[28px] border border-white/10 bg-white/[0.08] p-5 shadow-[0_24px_70px_rgba(0,0,0,0.22)] ${className}`}>{children}</section>; }
-function Metric({ label, value, detail, icon: Icon, tone = "gold" }: { label: string; value: string; detail: string; icon: LucideIcon; tone?: "gold" | "blue" | "green" }) { const toneClass = tone === "green" ? "bg-[#13C172] text-[#061331]" : tone === "blue" ? "bg-[#244FC1] text-white" : "bg-[#F2C200] text-[#061331]"; return <div className="rounded-3xl border border-white/10 bg-white/[0.08] p-4 transition hover:-translate-y-1 hover:border-[#F2C200]/50"><div className="flex items-center justify-between gap-3"><div><div className="text-xs font-black uppercase tracking-[0.18em] text-[#9DB5FF]">{label}</div><div className="mt-2 text-2xl font-black text-white">{value}</div></div><div className={`grid h-11 w-11 place-items-center rounded-2xl ${toneClass}`}><Icon size={20} /></div></div><p className="mt-3 text-sm font-semibold leading-6 text-[#CAD7FF]">{detail}</p></div>; }
-function MiniField({ label, name, placeholder, type = "text" }: { label: string; name: string; placeholder?: string; type?: string }) { return <label className="grid gap-2 text-sm font-black text-white"><span>{label}</span><input className={inputClass()} name={name} placeholder={placeholder} type={type} /></label>; }
-function LoginView({ status }: { status?: string }) { const message = statusMessage(status); return <main className="min-h-screen bg-[#061331] px-5 py-8 text-white"><div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-5xl items-center justify-center"><ShellCard className="w-full max-w-xl"><div className="mx-auto grid h-16 w-16 place-items-center rounded-3xl bg-[#F2C200] text-[#061331]"><KeyRound size={30} /></div><div className="mt-6 text-center"><p className="text-xs font-black uppercase tracking-[0.24em] text-[#9DB5FF]">Private operator access</p><h1 className="mt-3 text-4xl font-black tracking-tight">MYD1 Operations Center</h1><p className="mt-3 text-sm font-semibold leading-6 text-[#CAD7FF]">Private back window for platform data, support, intake, and review queues.</p></div>{message ? <div className="mt-5 rounded-2xl border border-[#F2C200]/30 bg-[#F2C200]/10 px-4 py-3 text-sm font-black text-[#FFE27A]">{message}</div> : null}<form action={signInOperator} className="mt-6 grid gap-3"><label className="grid gap-2 text-sm font-black text-white">Access code<input className={inputClass()} name="accessCode" type="password" required /></label><button className="rounded-2xl bg-[#F2C200] px-5 py-3 text-sm font-black text-[#061331]" type="submit">Unlock Console</button></form></ShellCard></div></main>; }
+function readUserState<T>(fileName: string, fallback: T): T {
+  try {
+    const filePath = resolve(process.cwd(), "..", "data", "user-state", fileName);
+    if (!existsSync(filePath)) return fallback;
+    return JSON.parse(readFileSync(filePath, "utf8")) as T;
+  } catch {
+    return fallback;
+  }
+}
+
+function hasUserState(fileName: string) {
+  return existsSync(resolve(process.cwd(), "..", "data", "user-state", fileName));
+}
+
+function fileCount(relativePath: string) {
+  try {
+    const dir = resolve(process.cwd(), relativePath);
+    if (!existsSync(dir)) return 0;
+    return readdirSync(dir).length;
+  } catch {
+    return 0;
+  }
+}
+
+function directorySize(relativePath: string) {
+  try {
+    const dir = resolve(process.cwd(), relativePath);
+    if (!existsSync(dir)) return 0;
+    return readdirSync(dir).reduce((total, file) => total + statSync(resolve(dir, file)).size, 0);
+  } catch {
+    return 0;
+  }
+}
+
+function formatBytes(bytes: number) {
+  return bytes ? `${(bytes / 1024 / 1024).toFixed(1)} MB` : "0 MB";
+}
+
+function statusMessage(status?: string) {
+  const messages: Record<string, string> = {
+    "operator-ready": "Operations Center unlocked.",
+    "operator-denied": "Access code rejected.",
+    "operator-code-missing": "Set MYD1_OPERATOR_ACCESS_CODE in Railway before using this console.",
+    "issue-recorded": "Support issue recorded.",
+    "inbound-message-recorded": "Message saved to the operator inbox.",
+    "build-request-recorded": "Build request recorded.",
+    "data-intake-recorded": "Data intake saved to the review queue."
+  };
+  return status ? messages[status] : "";
+}
+
+function cacheSafeUrl(url?: string, version?: string) {
+  if (!url) return "";
+  return `${url}${url.includes("?") ? "&" : "?"}v=${encodeURIComponent(version ?? "current")}`;
+}
+
+function matchText(query: string, values: Array<string | number | undefined>) {
+  if (!query) return false;
+  return values.filter(Boolean).join(" ").toLowerCase().includes(query.toLowerCase());
+}
+
+function inputClass() {
+  return "min-h-12 rounded-2xl border border-white/10 bg-white px-4 text-sm font-black text-[#061331] outline-none";
+}
+
+function ShellCard({ children, className = "", id }: { children: React.ReactNode; className?: string; id?: string }) {
+  return <section id={id} className={`rounded-[28px] border border-white/10 bg-white/[0.08] p-5 shadow-[0_24px_70px_rgba(0,0,0,0.22)] ${className}`}>{children}</section>;
+}
+
+function Metric({ label, value, detail, icon: Icon, tone = "gold" }: { label: string; value: string; detail: string; icon: LucideIcon; tone?: "gold" | "blue" | "green" }) {
+  const toneClass = tone === "green" ? "bg-[#13C172] text-[#061331]" : tone === "blue" ? "bg-[#244FC1] text-white" : "bg-[#F2C200] text-[#061331]";
+  return (
+    <div className="rounded-3xl border border-white/10 bg-white/[0.08] p-4 transition hover:-translate-y-1 hover:border-[#F2C200]/50">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <div className="text-xs font-black uppercase tracking-[0.18em] text-[#9DB5FF]">{label}</div>
+          <div className="mt-2 text-2xl font-black text-white">{value}</div>
+        </div>
+        <div className={`grid h-11 w-11 place-items-center rounded-2xl ${toneClass}`}><Icon size={20} /></div>
+      </div>
+      <p className="mt-3 text-sm font-semibold leading-6 text-[#CAD7FF]">{detail}</p>
+    </div>
+  );
+}
+
+function MiniField({ label, name, placeholder, type = "text" }: { label: string; name: string; placeholder?: string; type?: string }) {
+  return (
+    <label className="grid gap-2 text-sm font-black text-white">
+      <span>{label}</span>
+      <input className={inputClass()} name={name} placeholder={placeholder} type={type} />
+    </label>
+  );
+}
+
+function TabLink({ href, icon: Icon, label, detail }: { href: string; icon: LucideIcon; label: string; detail: string }) {
+  return (
+    <a className="group flex gap-3 rounded-2xl border border-white/10 bg-[#071A43] p-3 transition hover:-translate-y-0.5 hover:border-[#F2C200]/60 hover:bg-[#102A64]" href={href}>
+      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white/[0.08] text-[#F2C200] group-hover:bg-[#F2C200] group-hover:text-[#061331]"><Icon size={18} /></span>
+      <span>
+        <span className="block text-sm font-black text-white">{label}</span>
+        <span className="mt-0.5 block text-xs font-semibold leading-4 text-[#9DB5FF]">{detail}</span>
+      </span>
+    </a>
+  );
+}
+
+function LoginView({ status }: { status?: string }) {
+  const message = statusMessage(status);
+  return (
+    <main className="min-h-screen bg-[#061331] px-5 py-8 text-white">
+      <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-5xl items-center justify-center">
+        <ShellCard className="w-full max-w-xl">
+          <div className="mx-auto grid h-16 w-16 place-items-center rounded-3xl bg-[#F2C200] text-[#061331]"><KeyRound size={30} /></div>
+          <div className="mt-6 text-center">
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-[#9DB5FF]">Private operator access</p>
+            <h1 className="mt-3 text-4xl font-black tracking-tight">MYD1 Operations Center</h1>
+            <p className="mt-3 text-sm font-semibold leading-6 text-[#CAD7FF]">Private back window for platform data, support, intake, and review queues.</p>
+          </div>
+          {message ? <div className="mt-5 rounded-2xl border border-[#F2C200]/30 bg-[#F2C200]/10 px-4 py-3 text-sm font-black text-[#FFE27A]">{message}</div> : null}
+          <form action={signInOperator} className="mt-6 grid gap-3">
+            <label className="grid gap-2 text-sm font-black text-white">Access code<input className={inputClass()} name="accessCode" type="password" required /></label>
+            <button className="rounded-2xl bg-[#F2C200] px-5 py-3 text-sm font-black text-[#061331]" type="submit">Unlock Console</button>
+          </form>
+        </ShellCard>
+      </div>
+    </main>
+  );
+}
 
 export default async function OperationsPage({ searchParams }: { searchParams?: Promise<{ q?: string; status?: string }> }) {
   const params = searchParams ? await searchParams : {};
@@ -41,7 +184,7 @@ export default async function OperationsPage({ searchParams }: { searchParams?: 
   const issues = readUserState<{ items?: IssueRecord[] }>("operator-issues.json", { items: [] }).items ?? [];
   const inbox = readUserState<{ items?: Array<{ id: string; status?: string }> }>("operator-inbox.json", { items: [] }).items ?? [];
   const intake = readUserState<{ items?: IntakeRecord[] }>("operator-data-intake.json", { items: [] }).items ?? [];
-  const auditItems = readUserState<{ items?: Array<{ id: string; action?: string; occurredAt?: string }> }>("operator-audit.json", { items: [] }).items ?? [];
+  const auditItems = readUserState<{ items?: AuditRecord[] }>("operator-audit.json", { items: [] }).items ?? [];
   const films = Array.isArray(uploads.films) ? uploads.films : [];
   const highlights = Array.isArray(uploads.highlights) ? uploads.highlights : [];
   const allMedia = [...films.map((item) => ({ ...item, kind: "Film" })), ...highlights.map((item) => ({ ...item, kind: "Highlight" }))];
@@ -52,19 +195,142 @@ export default async function OperationsPage({ searchParams }: { searchParams?: 
   const openMessages = inbox.filter((item) => item.status !== "closed").length;
   const queuedIntake = intake.filter((item) => item.status !== "closed").length;
 
-  return <main className="min-h-screen bg-[#061331] px-4 py-6 text-white sm:px-6 lg:px-8"><div className="mx-auto max-w-[1720px]"><header className="relative overflow-hidden rounded-[34px] border border-white/10 bg-[#10224D] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.24)] lg:p-7"><div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[#244FC1]/35 blur-3xl" /><div className="absolute -left-12 bottom-0 h-40 w-52 skew-x-[-18deg] bg-[#F2C200]/85" /><div className="relative flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between"><div><p className="text-xs font-black uppercase tracking-[0.24em] text-[#9DB5FF]">MYD1 private back window</p><h1 className="mt-2 text-4xl font-black tracking-tight sm:text-5xl">Operations Center</h1><p className="mt-3 max-w-3xl text-sm font-semibold leading-6 text-[#CAD7FF]">Manual data intake, PDF collection, public URL scanning queue, claim-account prep, support desk, and system review.</p></div><div className="flex flex-wrap gap-2"><Link className="rounded-2xl border border-white/10 bg-white px-4 py-2 text-sm font-black text-[#061331]" href="/profile">Open Profile Studio</Link><form action={signOutOperator}><button className="rounded-2xl border border-white/10 bg-white/[0.08] px-4 py-2 text-sm font-black text-white" type="submit">Lock Console</button></form></div></div></header>{message ? <div className="mt-5 rounded-2xl border border-[#F2C200]/30 bg-[#F2C200]/10 px-4 py-3 text-sm font-black text-[#FFE27A]">{message}</div> : null}
+  return (
+    <main className="min-h-screen bg-[#061331] px-4 py-6 text-white sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1720px]">
+        <header className="relative overflow-hidden rounded-[34px] border border-white/10 bg-[#10224D] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.24)] lg:p-7">
+          <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[#244FC1]/35 blur-3xl" />
+          <div className="absolute -left-12 bottom-0 h-40 w-52 skew-x-[-18deg] bg-[#F2C200]/85" />
+          <div className="relative flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.24em] text-[#9DB5FF]">MYD1 private back window</p>
+              <h1 className="mt-2 text-4xl font-black tracking-tight sm:text-5xl">Operations Center</h1>
+              <p className="mt-3 max-w-3xl text-sm font-semibold leading-6 text-[#CAD7FF]">Manual data intake, PDF collection, public URL scanning queue, claim-account prep, support desk, and system review.</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Link className="rounded-2xl border border-white/10 bg-white px-4 py-2 text-sm font-black text-[#061331]" href="/profile">Open Profile Studio</Link>
+              <form action={signOutOperator}><button className="rounded-2xl border border-white/10 bg-white/[0.08] px-4 py-2 text-sm font-black text-white" type="submit">Lock Console</button></form>
+            </div>
+          </div>
+        </header>
 
-<section className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-6"><Metric label="Railway" value="Auto" detail="GitHub main deploy flow." icon={Radio} /><Metric label="GitHub" value="Live" detail="Repository connected." icon={Github} /><Metric label="Data Intake" value={`${queuedIntake}`} detail="Manual sources queued." icon={Database} tone="green" /><Metric label="Inbox" value={`${openMessages}`} detail="Open messages." icon={Inbox} /><Metric label="Uploads" value={`${fileCount("public/uploads")}`} detail={`${formatBytes(directorySize("public/uploads"))} stored.`} icon={Upload} /><Metric label="Issues" value={`${openIssues}`} detail="Open operator records." icon={LifeBuoy} /></section>
+        {message ? <div className="mt-5 rounded-2xl border border-[#F2C200]/30 bg-[#F2C200]/10 px-4 py-3 text-sm font-black text-[#FFE27A]">{message}</div> : null}
 
-<ShellCard className="mt-6"><div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between"><div><p className="text-xs font-black uppercase tracking-[0.2em] text-[#9DB5FF]">Universal search</p><h2 className="mt-2 text-2xl font-black">Find athletes, schools, districts, PDFs, URLs, messages, issues, and app areas</h2></div><form className="flex w-full gap-2 lg:max-w-xl" action="/operations"><input className={inputClass()} name="q" defaultValue={query} placeholder="Search operations" /><button className="grid h-12 w-12 place-items-center rounded-2xl bg-[#F2C200] text-[#061331]" type="submit" aria-label="Search"><Search size={20} /></button></form></div></ShellCard>
+        <ShellCard className="sticky top-0 z-40 mt-6 bg-[#10224D]/95 backdrop-blur">
+          <form className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between" action="/operations">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-[#9DB5FF]">Universal search</p>
+              <h2 className="mt-2 text-2xl font-black">Open athletes, schools, districts, PDFs, URLs, messages, issues, and app areas</h2>
+            </div>
+            <div className="flex w-full gap-2 lg:max-w-2xl">
+              <input className={inputClass()} name="q" defaultValue={query} placeholder="Search operations" />
+              <button className="grid h-12 w-12 place-items-center rounded-2xl bg-[#F2C200] text-[#061331]" type="submit" aria-label="Search"><Search size={20} /></button>
+            </div>
+          </form>
+        </ShellCard>
 
-<ShellCard id="data-intake" className="mt-6"><div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]"><div><p className="text-xs font-black uppercase tracking-[0.2em] text-[#9DB5FF]">Data intake cockpit</p><h2 className="mt-2 text-3xl font-black">Build claimable athlete records from real sources.</h2><p className="mt-3 text-sm font-semibold leading-6 text-[#CAD7FF]">Queue state, district, school, roster pages, PDFs, stat sheets, and manual notes here. Records stay in review before anything becomes public or claimable.</p><div className="mt-5 grid gap-3 sm:grid-cols-2"><div className="rounded-2xl border border-white/10 bg-[#071A43] p-4"><Globe2 className="text-[#F2C200]" /><div className="mt-3 text-sm font-black">Website URL Scan</div><p className="mt-1 text-xs font-semibold text-[#CAD7FF]">Roster, stats, school pages, district pages.</p></div><div className="rounded-2xl border border-white/10 bg-[#071A43] p-4"><FileText className="text-[#F2C200]" /><div className="mt-3 text-sm font-black">PDF Intake</div><p className="mt-1 text-xs font-semibold text-[#CAD7FF]">Programs, schedules, rosters, prospect sheets.</p></div><div className="rounded-2xl border border-white/10 bg-[#071A43] p-4"><MapPinned className="text-[#F2C200]" /><div className="mt-3 text-sm font-black">State + District</div><p className="mt-1 text-xs font-semibold text-[#CAD7FF]">Organize imports by geography and school system.</p></div><div className="rounded-2xl border border-white/10 bg-[#071A43] p-4"><UsersRound className="text-[#F2C200]" /><div className="mt-3 text-sm font-black">Claim Prep</div><p className="mt-1 text-xs font-semibold text-[#CAD7FF]">Create review-safe records families can claim later.</p></div></div></div><form action={recordDataIntake} className="grid gap-4 rounded-[24px] border border-white/10 bg-[#071A43] p-5"><div className="grid gap-4 sm:grid-cols-2"><label className="grid gap-2 text-sm font-black text-white">Source type<select className={inputClass()} name="sourceType" defaultValue="website"><option value="website">Website URL</option><option value="pdf">PDF / document</option><option value="manual">Manual entry</option><option value="district">District / state source</option></select></label><MiniField label="Source name" name="sourceName" placeholder="School, district, publisher" /><MiniField label="State" name="state" placeholder="UT, GA, TX..." /><MiniField label="District" name="district" placeholder="District or region" /><MiniField label="School" name="school" placeholder="School name" /><MiniField label="Sport" name="sport" placeholder="Basketball, football..." /><MiniField label="Class year" name="classYear" placeholder="2028" /><MiniField label="Source URL" name="sourceUrl" placeholder="https://..." /></div><label className="grid gap-2 text-sm font-black text-white">PDF / file<input className="rounded-2xl border border-white/10 bg-white px-4 py-3 text-sm font-black text-[#061331]" name="pdfFile" type="file" accept="application/pdf,image/*,.csv,.xlsx,.xls,.doc,.docx" /></label><label className="grid gap-2 text-sm font-black text-white">Athlete / roster notes<textarea className="min-h-28 rounded-2xl border border-white/10 bg-white px-4 py-3 text-sm font-semibold text-[#061331] outline-none" name="athleteText" placeholder="Paste names, jersey numbers, stats, notes, source context..." /></label><label className="grid gap-2 text-sm font-black text-white">Operator notes<textarea className="min-h-20 rounded-2xl border border-white/10 bg-white px-4 py-3 text-sm font-semibold text-[#061331] outline-none" name="notes" placeholder="What should review check before this becomes claimable?" /></label><button className="w-fit rounded-2xl bg-[#F2C200] px-5 py-3 text-sm font-black text-[#061331]" type="submit">Save Data Intake</button></form></div></ShellCard>
+        <section className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-6">
+          <Metric label="Railway" value="Auto" detail="GitHub main deploy flow." icon={Radio} />
+          <Metric label="GitHub" value="Live" detail="Repository connected." icon={Github} />
+          <Metric label="Data Intake" value={`${queuedIntake}`} detail="Manual sources queued." icon={Database} tone="green" />
+          <Metric label="Inbox" value={`${openMessages}`} detail="Open messages." icon={Inbox} />
+          <Metric label="Uploads" value={`${fileCount("public/uploads")}`} detail={`${formatBytes(directorySize("public/uploads"))} stored.`} icon={Upload} />
+          <Metric label="Issues" value={`${openIssues}`} detail="Open operator records." icon={LifeBuoy} />
+        </section>
 
-<div className="mt-6 grid gap-6 xl:grid-cols-[1fr_0.9fr]"><ShellCard><div className="flex items-start justify-between"><div><p className="text-xs font-black uppercase tracking-[0.2em] text-[#9DB5FF]">Intake Queue</p><h2 className="mt-2 text-2xl font-black">Latest manual sources</h2></div><ClipboardList className="text-[#F2C200]" /></div><div className="mt-5 grid gap-3">{intake.length ? intake.slice(0, 6).map((item) => <div className="rounded-2xl border border-white/10 bg-[#071A43] p-4" key={item.id}><div className="flex flex-wrap items-center justify-between gap-2"><div className="text-sm font-black text-white">{item.school || item.sourceName || item.sourceUrl || item.pdf?.name || "Queued source"}</div><span className="rounded-full bg-[#F2C200]/15 px-3 py-1 text-xs font-black text-[#F2C200]">{item.status || "queued"}</span></div><div className="mt-2 text-xs font-semibold leading-5 text-[#CAD7FF]">{[item.state, item.district, item.sport, item.sourceType].filter(Boolean).join(" • ") || "No classification yet"}</div>{item.sourceUrl ? <div className="mt-2 truncate text-xs font-semibold text-[#9DB5FF]">{item.sourceUrl}</div> : null}</div>) : <div className="rounded-2xl border border-white/10 bg-[#071A43] p-4 text-sm font-black text-[#CAD7FF]">No intake records yet.</div>}</div></ShellCard><ShellCard><div><p className="text-xs font-black uppercase tracking-[0.2em] text-[#9DB5FF]">System State</p><h2 className="mt-2 text-2xl font-black">Backend files</h2></div><div className="mt-5 grid gap-3">{[["Profile", hasUserState("profile.json")], ["Uploads", hasUserState("uploads.json")], ["Inbox", hasUserState("operator-inbox.json")], ["Data intake", hasUserState("operator-data-intake.json")], ["Hero media", hasUserState("hero-media.json")], ["Operator issues", hasUserState("operator-issues.json")], ["Operator audit", hasUserState("operator-audit.json")]].map(([label, exists]) => <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-[#071A43] px-4 py-3" key={String(label)}><span className="text-sm font-black text-white">{label}</span><span className={exists ? "text-sm font-black text-[#80F2AE]" : "text-sm font-black text-[#FFD66B]"}>{exists ? "Present" : "Not created"}</span></div>)}</div></ShellCard></div>
+        <div className="mt-6 grid gap-6 xl:grid-cols-[310px_1fr]">
+          <aside className="xl:sticky xl:top-40 xl:self-start">
+            <ShellCard>
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-[#9DB5FF]">Operator tabs</p>
+              <div className="mt-4 grid gap-2">
+                <TabLink href="#data-intake" icon={Database} label="Data Intake" detail="PDFs, URLs, schools, rosters" />
+                <TabLink href="#user-inspector" icon={UserRound} label="User Inspector" detail="Current account and claim prep" />
+                <TabLink href="#system-state" icon={ShieldCheck} label="System State" detail="Backend files and environment health" />
+                <TabLink href="#ai-build-room" icon={Code2} label="AI Build Room" detail="Feature and bug requests" />
+                <TabLink href="#support" icon={LifeBuoy} label="Support Desk" detail="User issues and reports" />
+                <TabLink href="#media-inspector" icon={Video} label="Media Inspector" detail="Playback and upload checks" />
+                <TabLink href="#communications" icon={MessageSquare} label="Communications Intake" detail="Email, Facebook, web messages" />
+                <TabLink href="#media-upload" icon={Upload} label="Media Upload" detail="Storage queue and file records" />
+              </div>
+            </ShellCard>
+          </aside>
 
-<OperationsCommunicationsPanel />
+          <div className="grid gap-6">
+            <ShellCard id="data-intake">
+              <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[0.2em] text-[#9DB5FF]">Data intake cockpit</p>
+                  <h2 className="mt-2 text-3xl font-black">Build claimable athlete records from real sources.</h2>
+                  <p className="mt-3 text-sm font-semibold leading-6 text-[#CAD7FF]">Queue state, district, school, roster pages, PDFs, stat sheets, and manual notes here. Records stay in review before anything becomes public or claimable.</p>
+                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                    <div className="rounded-2xl border border-white/10 bg-[#071A43] p-4"><Globe2 className="text-[#F2C200]" /><div className="mt-3 text-sm font-black">Website URL Scan</div><p className="mt-1 text-xs font-semibold text-[#CAD7FF]">Roster, stats, school pages, district pages.</p></div>
+                    <div className="rounded-2xl border border-white/10 bg-[#071A43] p-4"><FileText className="text-[#F2C200]" /><div className="mt-3 text-sm font-black">PDF Intake</div><p className="mt-1 text-xs font-semibold text-[#CAD7FF]">Programs, schedules, rosters, prospect sheets.</p></div>
+                    <div className="rounded-2xl border border-white/10 bg-[#071A43] p-4"><MapPinned className="text-[#F2C200]" /><div className="mt-3 text-sm font-black">State + District</div><p className="mt-1 text-xs font-semibold text-[#CAD7FF]">Organize imports by geography and school system.</p></div>
+                    <div className="rounded-2xl border border-white/10 bg-[#071A43] p-4"><UsersRound className="text-[#F2C200]" /><div className="mt-3 text-sm font-black">Claim Prep</div><p className="mt-1 text-xs font-semibold text-[#CAD7FF]">Create review-safe records families can claim later.</p></div>
+                  </div>
+                </div>
+                <form action={recordDataIntake} className="grid gap-4 rounded-[24px] border border-white/10 bg-[#071A43] p-5">
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <label className="grid gap-2 text-sm font-black text-white">Source type<select className={inputClass()} name="sourceType" defaultValue="website"><option value="website">Website URL</option><option value="pdf">PDF / document</option><option value="manual">Manual entry</option><option value="district">District / state source</option></select></label>
+                    <MiniField label="Source name" name="sourceName" placeholder="School, district, publisher" />
+                    <MiniField label="State" name="state" placeholder="UT, GA, TX..." />
+                    <MiniField label="District" name="district" placeholder="District or region" />
+                    <MiniField label="School" name="school" placeholder="School name" />
+                    <MiniField label="Sport" name="sport" placeholder="Basketball, football..." />
+                    <MiniField label="Class year" name="classYear" placeholder="2028" />
+                    <MiniField label="Source URL" name="sourceUrl" placeholder="https://..." />
+                  </div>
+                  <label className="grid gap-2 text-sm font-black text-white">PDF / file<input className="rounded-2xl border border-white/10 bg-white px-4 py-3 text-sm font-black text-[#061331]" name="pdfFile" type="file" accept="application/pdf,image/*,.csv,.xlsx,.xls,.doc,.docx" /></label>
+                  <label className="grid gap-2 text-sm font-black text-white">Athlete / roster notes<textarea className="min-h-28 rounded-2xl border border-white/10 bg-white px-4 py-3 text-sm font-semibold text-[#061331] outline-none" name="athleteText" placeholder="Paste names, jersey numbers, stats, notes, source context..." /></label>
+                  <label className="grid gap-2 text-sm font-black text-white">Operator notes<textarea className="min-h-20 rounded-2xl border border-white/10 bg-white px-4 py-3 text-sm font-semibold text-[#061331] outline-none" name="notes" placeholder="What should review check before this becomes claimable?" /></label>
+                  <button className="w-fit rounded-2xl bg-[#F2C200] px-5 py-3 text-sm font-black text-[#061331]" type="submit">Save Data Intake</button>
+                </form>
+              </div>
+            </ShellCard>
 
-<div className="mt-6 grid gap-6 xl:grid-cols-[1.15fr_0.85fr]"><ShellCard><div className="flex items-start justify-between gap-4"><div><p className="text-xs font-black uppercase tracking-[0.2em] text-[#9DB5FF]">User inspector</p><h2 className="mt-2 text-2xl font-black">Current athlete account</h2></div><BadgeCheck className="text-[#F2C200]" size={28} /></div><div className="mt-5 flex flex-col gap-5 lg:flex-row"><div className="grid h-28 w-28 shrink-0 place-items-center overflow-hidden rounded-full border-4 border-white bg-[#1B3FA0] text-2xl font-black">{avatarSrc ? <img src={avatarSrc} alt="Profile" className="h-full w-full object-cover" /> : <UserRound size={38} />}</div><div className="grid flex-1 gap-3 sm:grid-cols-2">{[["Name", savedProfile.fullName || "Not set"], ["School", savedProfile.schoolName || "Not set"], ["Sport", savedProfile.sport || "Not set"], ["Class", savedProfile.classYear ? String(savedProfile.classYear) : "Not set"], ["Position", savedProfile.primaryPosition || "Not set"], ["Visibility", savedProfile.visibility || "Not set"]].map(([label, val]) => <div className="rounded-2xl border border-white/10 bg-[#071A43] p-4" key={label}><div className="text-xs font-black uppercase tracking-[0.16em] text-[#9DB5FF]">{label}</div><div className="mt-1 text-sm font-black text-white">{val}</div></div>)}</div></div><div className="mt-5 flex flex-wrap gap-2"><Link className="rounded-2xl bg-[#F2C200] px-4 py-2 text-sm font-black text-[#061331]" href="/profile">Open Profile Studio</Link><Link className="rounded-2xl border border-white/10 bg-white/[0.08] px-4 py-2 text-sm font-black text-white" href="/athletes/athlete-current">View Public Profile</Link><form action={recordViewAsUser}><input name="userId" type="hidden" value="athlete-current" /><input name="returnTo" type="hidden" value="/athletes/athlete-current" /><button className="rounded-2xl border border-white/10 bg-white/[0.08] px-4 py-2 text-sm font-black text-white" type="submit">View As User</button></form></div></ShellCard><ShellCard id="media"><div className="flex items-start justify-between"><div><p className="text-xs font-black uppercase tracking-[0.2em] text-[#9DB5FF]">Media inspector</p><h2 className="mt-2 text-2xl font-black">Uploads and playback checks</h2></div><Upload className="text-[#F2C200]" /></div><div className="mt-5 grid gap-3">{mediaMatches.length ? mediaMatches.map((item) => <div className="rounded-2xl border border-white/10 bg-[#071A43] p-4" key={`${item.kind}-${item.url ?? item.name ?? item.title}`}><div className="text-sm font-black text-white">{item.title || item.name || item.kind}</div><div className="mt-1 text-xs font-semibold text-[#CAD7FF]">{item.kind} {item.type ? `• ${item.type}` : ""}</div></div>) : <div className="rounded-2xl border border-white/10 bg-[#071A43] p-4 text-sm font-black text-[#CAD7FF]">No upload records found.</div>}</div></ShellCard></div>
+            <ShellCard id="intake-queue">
+              <div className="flex items-start justify-between">
+                <div><p className="text-xs font-black uppercase tracking-[0.2em] text-[#9DB5FF]">Intake Queue</p><h2 className="mt-2 text-2xl font-black">Latest manual sources</h2></div>
+                <ClipboardList className="text-[#F2C200]" />
+              </div>
+              <div className="mt-5 grid gap-3">
+                {intake.length ? intake.slice(0, 6).map((item) => <div className="rounded-2xl border border-white/10 bg-[#071A43] p-4" key={item.id}><div className="flex flex-wrap items-center justify-between gap-2"><div className="text-sm font-black text-white">{item.school || item.sourceName || item.sourceUrl || item.pdf?.name || "Queued source"}</div><span className="rounded-full bg-[#F2C200]/15 px-3 py-1 text-xs font-black text-[#F2C200]">{item.status || "queued"}</span></div><div className="mt-2 text-xs font-semibold leading-5 text-[#CAD7FF]">{[item.state, item.district, item.sport, item.sourceType].filter(Boolean).join(" • ") || "No classification yet"}</div>{item.sourceUrl ? <div className="mt-2 truncate text-xs font-semibold text-[#9DB5FF]">{item.sourceUrl}</div> : null}</div>) : <div className="rounded-2xl border border-white/10 bg-[#071A43] p-4 text-sm font-black text-[#CAD7FF]">No intake records yet.</div>}
+              </div>
+            </ShellCard>
 
-<div className="mt-6 grid gap-6 xl:grid-cols-2"><ShellCard id="support"><div><p className="text-xs font-black uppercase tracking-[0.2em] text-[#9DB5FF]">Support desk</p><h2 className="mt-2 text-2xl font-black">Record user issue</h2></div><form action={recordSupportIssue} className="mt-5 grid gap-4"><MiniField label="Subject" name="subject" /><div className="grid gap-4 sm:grid-cols-3"><MiniField label="Area" name="affectedArea" /><MiniField label="Account type" name="accountType" /><label className="grid gap-2 text-sm font-black text-white">Severity<select className={inputClass()} name="severity" defaultValue="review"><option value="review">Review</option><option value="urgent">Urgent</option><option value="bug">Bug</option></select></label></div><label className="grid gap-2 text-sm font-black text-white">Detail<textarea className="min-h-28 rounded-2xl border border-white/10 bg-white px-4 py-3 text-sm font-semibold text-[#061331] outline-none" name="detail" /></label><button className="w-fit rounded-2xl bg-[#F2C200] px-5 py-3 text-sm font-black text-[#061331]" type="submit">Record Issue</button></form></ShellCard><ShellCard id="build-room"><div><p className="text-xs font-black uppercase tracking-[0.2em] text-[#9DB5FF]">AI build room</p><h2 className="mt-2 text-2xl font-black">Capture platform improvement</h2></div><form action={recordBuildRoomRequest} className="mt-5 grid gap-4"><MiniField label="Area" name="area" /><label className="grid gap-2 text-sm font-black text-white">Request<textarea className="min-h-36 rounded-2xl border border-white/10 bg-white px-4 py-3 text-sm font-semibold text-[#061331] outline-none" name="request" /></label><button className="w-fit rounded-2xl bg-[#F2C200] px-5 py-3 text-sm font-black text-[#061331]" type="submit"><Code2 className="inline" size={16} /> Save Build Request</button></form><div className="mt-5 rounded-2xl border border-white/10 bg-[#071A43] p-4"><div className="text-sm font-black text-white">Recent operator activity</div>{auditItems.slice(0, 4).map((item) => <div className="mt-2 flex justify-between gap-3 text-xs font-semibold text-[#CAD7FF]" key={item.id}><span>{item.action}</span><span>{item.occurredAt ? new Date(item.occurredAt).toLocaleString() : ""}</span></div>)}</div></ShellCard></div><p className="py-8 text-center text-xs font-black text-[#75A0FF]">MYD1 Operations Center is private. Public users stay in the public platform.</p></div></main>;
+            <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
+              <ShellCard id="user-inspector">
+                <div className="flex items-start justify-between gap-4"><div><p className="text-xs font-black uppercase tracking-[0.2em] text-[#9DB5FF]">User inspector</p><h2 className="mt-2 text-2xl font-black">Current athlete account</h2></div><BadgeCheck className="text-[#F2C200]" size={28} /></div>
+                <div className="mt-5 flex flex-col gap-5 lg:flex-row"><div className="grid h-28 w-28 shrink-0 place-items-center overflow-hidden rounded-full border-4 border-white bg-[#1B3FA0] text-2xl font-black">{avatarSrc ? <img src={avatarSrc} alt="Profile" className="h-full w-full object-cover" /> : <UserRound size={38} />}</div><div className="grid flex-1 gap-3 sm:grid-cols-2">{[["Name", savedProfile.fullName || "Not set"], ["School", savedProfile.schoolName || "Not set"], ["Sport", savedProfile.sport || "Not set"], ["Class", savedProfile.classYear ? String(savedProfile.classYear) : "Not set"], ["Position", savedProfile.primaryPosition || "Not set"], ["Visibility", savedProfile.visibility || "Not set"]].map(([label, val]) => <div className="rounded-2xl border border-white/10 bg-[#071A43] p-4" key={label}><div className="text-xs font-black uppercase tracking-[0.16em] text-[#9DB5FF]">{label}</div><div className="mt-1 text-sm font-black text-white">{val}</div></div>)}</div></div>
+                <div className="mt-5 flex flex-wrap gap-2"><Link className="rounded-2xl bg-[#F2C200] px-4 py-2 text-sm font-black text-[#061331]" href="/profile">Open Profile Studio</Link><Link className="rounded-2xl border border-white/10 bg-white/[0.08] px-4 py-2 text-sm font-black text-white" href="/athletes/athlete-current">View Public Profile</Link><form action={recordViewAsUser}><input name="userId" type="hidden" value="athlete-current" /><input name="returnTo" type="hidden" value="/athletes/athlete-current" /><button className="rounded-2xl border border-white/10 bg-white/[0.08] px-4 py-2 text-sm font-black text-white" type="submit">View As User</button></form></div>
+              </ShellCard>
+
+              <ShellCard id="system-state">
+                <div><p className="text-xs font-black uppercase tracking-[0.2em] text-[#9DB5FF]">System State</p><h2 className="mt-2 text-2xl font-black">Backend files</h2></div>
+                <div className="mt-5 grid gap-3">{[["Profile", hasUserState("profile.json")], ["Uploads", hasUserState("uploads.json")], ["Inbox", hasUserState("operator-inbox.json")], ["Data intake", hasUserState("operator-data-intake.json")], ["Hero media", hasUserState("hero-media.json")], ["Operator issues", hasUserState("operator-issues.json")], ["Operator audit", hasUserState("operator-audit.json")]].map(([label, exists]) => <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-[#071A43] px-4 py-3" key={String(label)}><span className="text-sm font-black text-white">{label}</span><span className={exists ? "text-sm font-black text-[#80F2AE]" : "text-sm font-black text-[#FFD66B]"}>{exists ? "Present" : "Not created"}</span></div>)}</div>
+              </ShellCard>
+            </div>
+
+            <ShellCard id="communications">
+              <OperationsCommunicationsPanel />
+            </ShellCard>
+
+            <div className="grid gap-6 xl:grid-cols-2">
+              <ShellCard id="support"><div><p className="text-xs font-black uppercase tracking-[0.2em] text-[#9DB5FF]">Support desk</p><h2 className="mt-2 text-2xl font-black">Record user issue</h2></div><form action={recordSupportIssue} className="mt-5 grid gap-4"><MiniField label="Subject" name="subject" /><div className="grid gap-4 sm:grid-cols-3"><MiniField label="Area" name="affectedArea" /><MiniField label="Account type" name="accountType" /><label className="grid gap-2 text-sm font-black text-white">Severity<select className={inputClass()} name="severity" defaultValue="review"><option value="review">Review</option><option value="urgent">Urgent</option><option value="bug">Bug</option></select></label></div><label className="grid gap-2 text-sm font-black text-white">Detail<textarea className="min-h-28 rounded-2xl border border-white/10 bg-white px-4 py-3 text-sm font-semibold text-[#061331] outline-none" name="detail" /></label><button className="w-fit rounded-2xl bg-[#F2C200] px-5 py-3 text-sm font-black text-[#061331]" type="submit">Record Issue</button></form></ShellCard>
+
+              <ShellCard id="ai-build-room"><div><p className="text-xs font-black uppercase tracking-[0.2em] text-[#9DB5FF]">AI build room</p><h2 className="mt-2 text-2xl font-black">Capture platform improvement</h2></div><form action={recordBuildRoomRequest} className="mt-5 grid gap-4"><MiniField label="Area" name="area" /><label className="grid gap-2 text-sm font-black text-white">Request<textarea className="min-h-36 rounded-2xl border border-white/10 bg-white px-4 py-3 text-sm font-semibold text-[#061331] outline-none" name="request" /></label><button className="w-fit rounded-2xl bg-[#F2C200] px-5 py-3 text-sm font-black text-[#061331]" type="submit"><Code2 className="inline" size={16} /> Save Build Request</button></form><div className="mt-5 rounded-2xl border border-white/10 bg-[#071A43] p-4"><div className="text-sm font-black text-white">Recent operator activity</div>{auditItems.slice(0, 4).map((item) => <div className="mt-2 flex justify-between gap-3 text-xs font-semibold text-[#CAD7FF]" key={item.id}><span>{item.action}</span><span>{item.occurredAt ? new Date(item.occurredAt).toLocaleString() : ""}</span></div>)}</div></ShellCard>
+            </div>
+
+            <div className="grid gap-6 xl:grid-cols-2">
+              <ShellCard id="media-inspector"><div className="flex items-start justify-between"><div><p className="text-xs font-black uppercase tracking-[0.2em] text-[#9DB5FF]">Media inspector</p><h2 className="mt-2 text-2xl font-black">Playback checks</h2></div><Video className="text-[#F2C200]" /></div><div className="mt-5 grid gap-3">{mediaMatches.length ? mediaMatches.map((item) => <div className="rounded-2xl border border-white/10 bg-[#071A43] p-4" key={`${item.kind}-${item.url ?? item.name ?? item.title}`}><div className="text-sm font-black text-white">{item.title || item.name || item.kind}</div><div className="mt-1 text-xs font-semibold text-[#CAD7FF]">{item.kind} {item.type ? `• ${item.type}` : ""}</div></div>) : <div className="rounded-2xl border border-white/10 bg-[#071A43] p-4 text-sm font-black text-[#CAD7FF]">No media records found.</div>}</div></ShellCard>
+
+              <ShellCard id="media-upload"><div className="flex items-start justify-between"><div><p className="text-xs font-black uppercase tracking-[0.2em] text-[#9DB5FF]">Media upload</p><h2 className="mt-2 text-2xl font-black">Storage queue</h2></div><Upload className="text-[#F2C200]" /></div><div className="mt-5 grid gap-3"><div className="rounded-2xl border border-white/10 bg-[#071A43] p-4"><div className="text-sm font-black text-white">Upload files stored</div><div className="mt-1 text-xs font-semibold text-[#CAD7FF]">{fileCount("public/uploads")} files • {formatBytes(directorySize("public/uploads"))}</div></div><Link className="w-fit rounded-2xl bg-[#F2C200] px-4 py-2 text-sm font-black text-[#061331]" href="/profile">Open upload workspace</Link></div></ShellCard>
+            </div>
+          </div>
+        </div>
+
+        <p className="py-8 text-center text-xs font-black text-[#75A0FF]">MYD1 Operations Center is private. Public users stay in the public platform.</p>
+      </div>
+    </main>
+  );
 }
