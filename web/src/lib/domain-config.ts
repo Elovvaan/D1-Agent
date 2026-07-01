@@ -1,29 +1,29 @@
 export const brandConfig = {
   primaryBrand: "MyD1",
   agentProductName: "D1 Agent",
-  primaryDomain: "myd1.sports",
-  appDomain: "myd1.app"
+  primaryDomain: "myd1sports.pro",
+  appDomain: "myd1sports.pro"
 } as const;
 
 export const portalDomains = {
-  marketing: "myd1.sports",
-  app: "app.myd1.sports",
-  coach: "coach.myd1.sports",
-  recruiter: "recruiter.myd1.sports",
-  team: "team.myd1.sports",
-  media: "media.myd1.sports",
-  admin: "admin.myd1.sports",
-  api: "api.myd1.sports",
+  marketing: "myd1sports.pro",
+  app: "myd1sports.pro",
+  coach: "coach.myd1sports.pro",
+  recruiter: "recruiter.myd1sports.pro",
+  team: "team.myd1sports.pro",
+  media: "media.myd1sports.pro",
+  admin: "admin.myd1sports.pro",
+  api: "api.myd1sports.pro",
   appShort: "myd1.app"
 } as const;
 
 export const portalRoutingNotes = {
-  "coach.myd1.sports": "Coach portal",
-  "recruiter.myd1.sports": "Recruiter portal",
-  "team.myd1.sports": "Team portal",
-  "media.myd1.sports": "Media/film",
-  "admin.myd1.sports": "Admin",
-  "api.myd1.sports": "API"
+  "coach.myd1sports.pro": "Coach portal",
+  "recruiter.myd1sports.pro": "Recruiter portal",
+  "team.myd1sports.pro": "Team portal",
+  "media.myd1sports.pro": "Media/film",
+  "admin.myd1sports.pro": "Admin",
+  "api.myd1sports.pro": "API"
 } as const;
 
 function withoutTrailingSlash(value: string) {
