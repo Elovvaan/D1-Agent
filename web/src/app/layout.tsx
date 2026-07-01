@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { brandConfig, getAppBaseUrl, getMarketingBaseUrl } from "@/lib/domain-config";
+import { brandConfig, getMarketingBaseUrl } from "@/lib/domain-config";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -13,26 +13,41 @@ const geistMono = Geist_Mono({
   subsets: ["latin"]
 });
 
+const siteUrl = getMarketingBaseUrl();
+const shareTitle = "MyD1 | The Athlete Profile. The Public Sports Network.";
+const shareDescription = "Verified athletic profiles, public sports search, film, recruiting workflows, and career tools powered by the D1 Agent.";
+const shareImage = "/opengraph-image";
+
 export const metadata: Metadata = {
-  metadataBase: new URL(getAppBaseUrl()),
+  metadataBase: new URL(siteUrl),
   title: {
-    default: brandConfig.primaryBrand,
+    default: shareTitle,
     template: `%s | ${brandConfig.primaryBrand}`
   },
-  description: `${brandConfig.primaryBrand} is the athlete platform powered by ${brandConfig.agentProductName}.`,
+  description: shareDescription,
+  alternates: {
+    canonical: siteUrl
+  },
   openGraph: {
-    title: brandConfig.primaryBrand,
-    description: `${brandConfig.primaryBrand} is the athlete platform powered by ${brandConfig.agentProductName}.`,
+    title: shareTitle,
+    description: shareDescription,
     siteName: brandConfig.primaryBrand,
-    url: getMarketingBaseUrl(),
-    images: ["/brand/MYD1 Cover photo.png"],
+    url: siteUrl,
+    images: [
+      {
+        url: shareImage,
+        width: 1200,
+        height: 630,
+        alt: "MyD1 athlete platform share preview"
+      }
+    ],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: brandConfig.primaryBrand,
-    description: `${brandConfig.primaryBrand} is the athlete platform powered by ${brandConfig.agentProductName}.`,
-    images: ["/brand/MYD1 Cover photo.png"]
+    title: shareTitle,
+    description: shareDescription,
+    images: [shareImage]
   },
   icons: {
     icon: "/brand/MYD1 LOGO.png",
