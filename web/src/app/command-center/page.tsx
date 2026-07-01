@@ -46,7 +46,6 @@ export default function CommandCenterPage() {
             </div>
             <div className="absolute bottom-0 right-2 z-10 hidden h-[105%] w-[38%] lg:block">
               <StoredHeroCutout src={heroMedia.playerCutoutUrl} label={`${data.athlete.fullName} player cutout`} className="absolute bottom-0 right-3 h-full max-h-[390px] w-full object-contain object-bottom drop-shadow-[0_24px_36px_rgba(0,0,0,0.45)]" />
-              {!heroMedia.playerCutoutUrl ? <div className="absolute bottom-0 right-12 h-64 w-44"><div className="absolute bottom-0 left-1/2 h-48 w-28 -translate-x-1/2 rounded-t-[80px] bg-white/15 shadow-[0_24px_50px_rgba(0,0,0,0.32)]" /><div className="absolute left-1/2 top-0 h-20 w-20 -translate-x-1/2 rounded-full bg-white/20" /><div className="absolute bottom-16 left-0 h-20 w-12 rotate-[-18deg] rounded-full bg-white/12" /><div className="absolute bottom-16 right-0 h-20 w-12 rotate-[18deg] rounded-full bg-white/12" /></div> : null}
             </div>
           </section>
           <Card className="mt-6"><h2 className="text-sm font-black uppercase tracking-[0.08em] text-[#111827]">Mission Status</h2><div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-4">{data.missionStatus.map((metric) => <StatusMetric key={metric.label} label={metric.label} value={metric.value} detail={metric.detail} />)}</div></Card>
