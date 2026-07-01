@@ -1,13 +1,17 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
-const LOCAL_HERO_PLAYER_KEY = "myd1-hero-player-photo-preview";
-const HERO_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
+export const HERO_PLAYER_PHOTO_PREVIEW_KEY = "myd1-hero-player-photo-preview";
+export const HERO_PLAYER_PHOTO_UPDATED_EVENT = "myd1-hero-player-photo-updated";
 
-function HeroFallback() {
+function isUsableImageSrc(value: string | null) {
+  return Boolean(value && (/^data:image\//.test(value) || value.startsWith("/") || /^https?:\/\//.test(value)));
+}
+
+function SilhouettePlaceholder() {
   return (
-    <div className="absolute bottom-0 right-12 h-64 w-44">
+    <div className="absolute bottom-0 right-12 h-64 w-44" aria-hidden="true">
       <div className="absolute bottom-0 left-1/2 h-48 w-28 -translate-x-1/2 rounded-t-[80px] bg-white/15 shadow-[0_24px_50px_rgba(0,0,0,0.32)]" />
       <div className="absolute left-1/2 top-0 h-20 w-20 -translate-x-1/2 rounded-full bg-white/20" />
       <div className="absolute bottom-16 left-0 h-20 w-12 rotate-[-18deg] rounded-full bg-white/12" />
@@ -16,72 +20,60 @@ function HeroFallback() {
   );
 }
 
-export function StoredHeroCutout({ src, label, className }: { src?: string; label: string; className: string }) {
-  const [clientSrc, setClientSrc] = useState<string | undefined>(src);
-  const [message, setMessage] = useState("");
-  const inputRef = useRef<HTMLInputElement | null>(null);
+export function readStoredHeroPlayerPhoto() {
+  if (typeof window === "undefined") return "";
+  const storedSrc = localStorage.getItem(HERO_PLAYER_PHOTO_PREVIEW_KEY);
+  return isUsableImageSrc(storedSrc) ? storedSrc ?? "" : "";
+}
 
-  const saveSrc = (nextSrc: string) => {
-    try {
-      window.localStorage.setItem(LOCAL_HERO_PLAYER_KEY, nextSrc);
-      setClientSrc(nextSrc);
-      setMessage("Player photo applied.");
-      window.dispatchEvent(new Event("myd1-hero-player-updated"));
-    } catch {
-      setMessage("Image is too large for browser save. Choose a smaller cutout PNG.");
-    }
-  };
+export function writeStoredHeroPlayerPhoto(src: string) {
+  localStorage.setItem(HERO_PLAYER_PHOTO_PREVIEW_KEY, src);
+  window.dispatchEvent(new Event(HERO_PLAYER_PHOTO_UPDATED_EVENT));
+}
+
+export function clearStoredHeroPlayerPhoto() {
+  localStorage.removeItem(HERO_PLAYER_PHOTO_PREVIEW_KEY);
+  window.dispatchEvent(new Event(HERO_PLAYER_PHOTO_UPDATED_EVENT));
+}
+
+export function StoredHeroCutout({ athleteName }: { athleteName: string }) {
+  const [mounted, setMounted] = useState(false);
+  const [cutoutSrc, setCutoutSrc] = useState("");
 
   useEffect(() => {
-    const readStored = () => {
-      const stored = window.localStorage.getItem(LOCAL_HERO_PLAYER_KEY);
-      setClientSrc(stored || src);
+    const syncCutout = () => {
+      const nextSrc = readStoredHeroPlayerPhoto();
+      setCutoutSrc(isUsableImageSrc(nextSrc) ? nextSrc : "");
     };
-    readStored();
-    window.addEventListener("storage", readStored);
-    window.addEventListener("myd1-hero-player-updated", readStored);
+
+    setMounted(true);
+    syncCutout();
+    window.addEventListener("storage", syncCutout);
+    window.addEventListener(HERO_PLAYER_PHOTO_UPDATED_EVENT, syncCutout);
+
     return () => {
-      window.removeEventListener("storage", readStored);
-      window.removeEventListener("myd1-hero-player-updated", readStored);
+      window.removeEventListener("storage", syncCutout);
+      window.removeEventListener(HERO_PLAYER_PHOTO_UPDATED_EVENT, syncCutout);
     };
-  }, [src]);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
+
+  if (!cutoutSrc) {
+    return <SilhouettePlaceholder />;
+  }
 
   return (
-    <>
-      {clientSrc ? <img src={clientSrc} alt={label} className={className} /> : <HeroFallback />}
-      <div className="absolute bottom-4 right-4 z-20 flex flex-col items-end gap-2">
-        <input
-          ref={inputRef}
-          className="hidden"
-          type="file"
-          accept="image/*"
-          onChange={(event) => {
-            const file = event.target.files?.[0];
-            setMessage("");
-            if (!file) return;
-            if (!file.type.startsWith("image/")) {
-              setMessage("Choose an image file.");
-              return;
-            }
-            if (file.size > HERO_IMAGE_MAX_BYTES) {
-              setMessage("Choose an image under 5 MB.");
-              return;
-            }
-            const reader = new FileReader();
-            reader.onload = () => saveSrc(String(reader.result ?? ""));
-            reader.onerror = () => setMessage("Could not load that image.");
-            reader.readAsDataURL(file);
-          }}
-        />
-        {message ? <span className="rounded-full bg-white px-3 py-1 text-xs font-black text-[#061331] shadow-lg">{message}</span> : null}
-        <button
-          type="button"
-          onClick={() => inputRef.current?.click()}
-          className="rounded-full bg-[#F2C200] px-4 py-2 text-xs font-black text-[#061331] shadow-[0_14px_28px_rgba(242,194,0,0.25)] transition hover:-translate-y-0.5"
-        >
-          {clientSrc ? "Change Player Photo" : "Upload Player Photo"}
-        </button>
-      </div>
-    </>
+    <img
+      src={cutoutSrc}
+      alt={`${athleteName} player cutout`}
+      className="absolute bottom-0 right-3 h-full max-h-[390px] w-full object-contain object-bottom drop-shadow-[0_24px_36px_rgba(0,0,0,0.45)]"
+      onError={() => {
+        clearStoredHeroPlayerPhoto();
+        setCutoutSrc("");
+      }}
+    />
   );
 }

@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { Badge, Button, Card } from "@/components/design-system";
+import { HeroPlayerPhotoForm } from "@/components/hero-player-photo-form";
 import { StoredHeroCutout } from "@/components/stored-hero-cutout";
 import { getAthleteHeroMedia, getCommandCenterData, toTitle } from "@/lib/data/services";
 
@@ -41,11 +42,11 @@ export default function CommandCenterPage() {
               <h1 className="text-4xl font-black tracking-tight text-white lg:text-5xl">Good Morning, {data.athlete.fullName.split(" ")[0]}.<span className="mt-2 block text-[#F2C200]">I&apos;m your Agent.</span></h1>
               <p className="mt-5 max-w-xl text-base font-medium leading-7 text-[#DDE8FF]">I checked your saved profile, media, recruiting board, and verification signals. Your next actions are based only on real data in MyD1.</p>
               <p className="mt-3 max-w-xl text-sm font-black leading-6 text-white">{data.missionStatus[0]?.label}: {data.missionStatus[0]?.value} - {data.missionStatus[1]?.label}: {data.missionStatus[1]?.value}</p>
-              {!hasHeroBackground && !heroMedia.playerCutoutUrl ? <div className="mt-4 inline-flex rounded-2xl border border-white/10 bg-white/[0.08] px-4 py-3 text-sm font-black text-white">Upload your first highlight and player photo to personalize your Command Center.</div> : !heroMedia.playerCutoutUrl ? <div className="mt-4 inline-flex rounded-2xl border border-white/10 bg-white/[0.08] px-4 py-3 text-sm font-black text-white">Upload a player photo to personalize your Command Center.</div> : null}
               <div className="mt-6 flex flex-wrap gap-2"><Badge tone="yellow">Agent active</Badge><Badge tone={data.coachConnection.connected ? "green" : "silver"}>{data.coachConnection.connected ? "Coach connected" : "Coach not connected"}</Badge><Badge tone={hasHeroBackground ? "blue" : "silver"}>{hasHeroBackground ? "Media connected" : "Media pending"}</Badge></div>
+              <HeroPlayerPhotoForm athleteName={data.athlete.fullName} variant="command-center" />
             </div>
             <div className="absolute bottom-0 right-2 z-10 hidden h-[105%] w-[38%] lg:block">
-              <StoredHeroCutout src={heroMedia.playerCutoutUrl} label={`${data.athlete.fullName} player cutout`} className="absolute bottom-0 right-3 h-full max-h-[390px] w-full object-contain object-bottom drop-shadow-[0_24px_36px_rgba(0,0,0,0.45)]" />
+              <StoredHeroCutout athleteName={data.athlete.fullName} />
             </div>
           </section>
           <Card className="mt-6"><h2 className="text-sm font-black uppercase tracking-[0.08em] text-[#111827]">Mission Status</h2><div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-4">{data.missionStatus.map((metric) => <StatusMetric key={metric.label} label={metric.label} value={metric.value} detail={metric.detail} />)}</div></Card>

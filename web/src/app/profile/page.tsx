@@ -27,9 +27,6 @@ export default async function ProfilePage({ searchParams }: { searchParams?: Pro
   const stats = getStats();
   const brand = getBrandProfile();
   const visibilityOptions = [{ label: "Public", value: "public", detail: "Visible to visitors with the public profile link." }, { label: "Recruiters Only", value: "recruiters_only", detail: "Visible only inside recruiter access flows." }, { label: "Private", value: "private", detail: "Hidden from public discovery and sharing." }];
-  const height = stats.find((stat) => stat.metric === "Height / Weight");
-  const forty = stats.find((stat) => stat.metric === "Forty Yard");
-  const gpa = stats.find((stat) => stat.metric === "GPA");
   const initials = athlete.fullName.split(" ").map((part) => part[0]).join("").slice(0, 2).toUpperCase();
 
   return (
@@ -41,7 +38,7 @@ export default async function ProfilePage({ searchParams }: { searchParams?: Pro
           <SectionTitle title="Profile Picture" caption="Uploads update the sidebar, top bar, and profile surfaces immediately." />
           <ProfilePictureForm athleteName={athlete.fullName} currentAvatarUrl={savedProfile.avatarUrl} initials={initials} />
           <div className="mt-6 grid gap-4 border-t border-[#E4E9F1] pt-5 xl:grid-cols-2">
-            <HeroPlayerPhotoForm athleteName={athlete.fullName} currentUrl={heroMedia.playerCutoutUrl} />
+            <HeroPlayerPhotoForm athleteName={athlete.fullName} />
             <form action={saveHeroBackgroundVideo} className="grid gap-3 rounded-2xl border border-[#E4E9F1] bg-[#FAFBFD] p-4"><div><div className="text-sm font-black text-[#0A1A3F]">Hero Background Video</div><p className="mt-1 text-xs font-semibold leading-5 text-[#66718F]">Defaults to latest published highlight when empty.</p></div>{heroMedia.videoUrl ? <a className="text-sm font-black text-[#1B3FA0]" href={heroMedia.videoUrl} rel="noreferrer" target="_blank">Current hero video: {heroMedia.title}</a> : <div className="rounded-xl border border-[#DDE3EC] bg-white px-3 py-2 text-xs font-semibold text-[#66718F]">No hero video selected.</div>}<input className="rounded-xl border border-[#C7CDD6] bg-white px-3 py-2 text-sm font-semibold" name="heroBackgroundTitle" placeholder="Featured highlight title" /><input className="rounded-xl border border-[#C7CDD6] bg-white px-3 py-2 text-sm font-semibold text-[#66718F]" name="heroBackgroundVideo" type="file" accept="video/*" required /><Button variant="secondary" className="w-fit">Upload Hero Video</Button></form>
           </div>
         </Card>
