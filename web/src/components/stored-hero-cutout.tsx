@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const LOCAL_HERO_PLAYER_KEY = "myd1-hero-player-photo-preview";
+const HERO_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
 
 function HeroFallback() {
   return (
@@ -17,6 +18,19 @@ function HeroFallback() {
 
 export function StoredHeroCutout({ src, label, className }: { src?: string; label: string; className: string }) {
   const [clientSrc, setClientSrc] = useState<string | undefined>(src);
+  const [message, setMessage] = useState("");
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const saveSrc = (nextSrc: string) => {
+    try {
+      window.localStorage.setItem(LOCAL_HERO_PLAYER_KEY, nextSrc);
+      setClientSrc(nextSrc);
+      setMessage("Player photo applied.");
+      window.dispatchEvent(new Event("myd1-hero-player-updated"));
+    } catch {
+      setMessage("Image is too large for browser save. Choose a smaller cutout PNG.");
+    }
+  };
 
   useEffect(() => {
     const readStored = () => {
@@ -32,6 +46,42 @@ export function StoredHeroCutout({ src, label, className }: { src?: string; labe
     };
   }, [src]);
 
-  if (!clientSrc) return <HeroFallback />;
-  return <img src={clientSrc} alt={label} className={className} />;
+  return (
+    <>
+      {clientSrc ? <img src={clientSrc} alt={label} className={className} /> : <HeroFallback />}
+      <div className="absolute bottom-4 right-4 z-20 flex flex-col items-end gap-2">
+        <input
+          ref={inputRef}
+          className="hidden"
+          type="file"
+          accept="image/*"
+          onChange={(event) => {
+            const file = event.target.files?.[0];
+            setMessage("");
+            if (!file) return;
+            if (!file.type.startsWith("image/")) {
+              setMessage("Choose an image file.");
+              return;
+            }
+            if (file.size > HERO_IMAGE_MAX_BYTES) {
+              setMessage("Choose an image under 5 MB.");
+              return;
+            }
+            const reader = new FileReader();
+            reader.onload = () => saveSrc(String(reader.result ?? ""));
+            reader.onerror = () => setMessage("Could not load that image.");
+            reader.readAsDataURL(file);
+          }}
+        />
+        {message ? <span className="rounded-full bg-white px-3 py-1 text-xs font-black text-[#061331] shadow-lg">{message}</span> : null}
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          className="rounded-full bg-[#F2C200] px-4 py-2 text-xs font-black text-[#061331] shadow-[0_14px_28px_rgba(242,194,0,0.25)] transition hover:-translate-y-0.5"
+        >
+          {clientSrc ? "Change Player Photo" : "Upload Player Photo"}
+        </button>
+      </div>
+    </>
+  );
 }
