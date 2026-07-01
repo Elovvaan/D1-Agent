@@ -5,6 +5,14 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: "64mb"
     }
+  },
+  async rewrites() {
+    return [
+      {
+        source: "/discover",
+        destination: "/search?mode=discover"
+      }
+    ];
   }
 };
 
