@@ -1,40 +1,62 @@
-import type { AgentIntentContext, AthleteBrandProfile, AthleteHeroMedia, AthleteProfile, CalendarEvent, CommandCenterData, D1Role, Film, Game, Highlight, MatchStage, MissionItem, ProgressionLevel, ProgressionMilestone, RecruitingOpportunity, SocialPlatform, StatLine, TimelineEvent, TimelineState, TrustScore } from "@d1/shared";
-import { existsSync, readFileSync, readdirSync } from "node:fs";
-import { join, resolve } from "node:path";
+import type { AgentIntentContext, AthleteBrandProfile, AthleteHeroMedia, AthleteProfile, CalendarEvent, CollegeMatch, CommandCenterData, D1Role, Film, Game, Highlight, MatchStage, MissionItem, ProgressionLevel, RecruitingOpportunity, SocialPlatform, StatLine, TimelineState, TrustScore } from "@d1/shared";
+import { existsSync, readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { agentService } from "@/lib/services/agent-service";
 import { opportunityEngine } from "@/lib/services/opportunity-engine";
 import { getDirectoryGraph, getDirectoryGraphNode, type DirectoryGraphNode } from "@/lib/data/directory-graph";
-import {
-  seedAthletes,
-  seedBrandProfiles,
-  seedCalendarEvents,
-  seedCoachProfiles,
-  seedFilms,
-  seedGames,
-  seedHighlights,
-  seedMatches,
-  seedMemberships,
-  seedMessages,
-  seedOpportunities,
-  seedOrgs,
-  seedRecruiterProfiles,
-  seedStats,
-  seedTimelineEvents,
-  seedTrustScores,
-  seedUsers
-} from "./seed-data";
+import { seedAthletes, seedBrandProfiles, seedCalendarEvents, seedFilms, seedGames, seedHighlights, seedMatches, seedMemberships, seedMessages, seedOpportunities, seedOrgs, seedStats, seedTimelineEvents, seedTrustScores, seedUsers } from "./seed-data";
 
 export const defaultAthleteId = "athlete-jayden-lewis";
+export type PublicDirectoryGroupName = "Schools" | "Teams" | "Athletes" | "Rankings" | "Games" | "Organizations" | "Sources" | "Coaches";
+export type PublicDirectoryResult = { id: string; title: string; detail: string; href: string; group: PublicDirectoryGroupName; typeLabel: string; sourceLabel: "Public Record" | "Public Profile" | "Source Registry"; sourceUrl?: string; importedAt?: string; confidence?: number };
+export type PublicDirectorySection = { title: string; caption: string; results: PublicDirectoryResult[] };
+export type PublicDirectoryCounters = { schools: number; teams: number; athletes: number; coaches: number; games: number; sources: number; recordsImported: number; pendingReview: number };
+type UploadedMediaFile = { title?: string; name?: string; url?: string };
 
-const emptyBrandHandles: Record<SocialPlatform, string> = {
-  instagram: "",
-  tiktok: "",
-  youtube: "",
-  hudl: "",
-  x: "",
-  website: ""
-};
+type SavedDocument = { name: string; url: string; kind?: string; uploadedAt: string };
+const emptyBrandHandles: Record<SocialPlatform, string> = { instagram: "", tiktok: "", youtube: "", hudl: "", x: "", website: "" };
 
-// NOTE: this file is intentionally preserved whole-file because this repo is being edited through the GitHub contents API.
-// The public-directory graph mapping at the bottom must include player -> Athletes so imported roster/player graph nodes are searchable.
+function readUserState<T>(fileName: string, fallback: T): T { try { const filePath = resolve(process.cwd(), "..", "data", "user-state", fileName); return existsSync(filePath) ? JSON.parse(readFileSync(filePath, "utf8")) as T : fallback; } catch { return fallback; } }
+export function toTitle(value: string) { return value.replace(/[_-]+/g, " ").replace(/\b\w/g, (char) => char.toUpperCase()).trim(); }
+export function getProgressionDefinition(level: ProgressionLevel) { const defs = { A1: { label: "A1 Foundation", stage: "Foundation development", description: "Build your foundation.", milestones: ["complete athlete profile"] }, B1: { label: "B1 Recruit", stage: "Recruiting profile", description: "Your recruiting journey is active.", milestones: ["complete recruiting profile"], next: "C1" as ProgressionLevel }, C1: { label: "C1 College", stage: "Collegiate profile", description: "Manage your college profile.", milestones: ["complete college profile"], next: "D1" as ProgressionLevel }, D1: { label: "D1 Elite", stage: "Elite career management", description: "Operate at the elite level.", milestones: ["complete elite profile"] } }; return defs[level]; }
+export function determineProgressionLevelFromEducation(): ProgressionLevel { return "B1"; }
+export function buildProgressionFields(level: ProgressionLevel) { const d = getProgressionDefinition(level); return { progressionLevel: level, progressionLabel: d.label, progressionStage: d.stage, progressionDescription: d.description, progressionPercent: 0, nextProgressionLevel: d.next, progressionMilestones: d.milestones.map((label) => ({ label, complete: false, source: "self-reported" as const })), progressionHistory: [{ level, label: d.label, occurredAt: new Date().toISOString(), note: "Progression initialized." }] }; }
+function emptyAthleteProfile(athleteId = defaultAthleteId): AthleteProfile { return { id: athleteId, userId: "current-user", fullName: "New Athlete", classYear: new Date().getFullYear(), sport: "", primaryPosition: "", schoolName: "", hometown: "", bio: "", visibility: "private", isMinor: true, parentConsentSigned: false, completionPct: 0, varsityStarter: false, ...buildProgressionFields("B1") }; }
 
+export function getCurrentRole(): D1Role { return "athlete"; }
+export function getRoleHome(role: D1Role) { return ({ athlete: "/profile", coach: "/coach", recruiter: "/recruiter", media_partner: "/media", admin: "/operations" } as Record<D1Role, string>)[role] ?? "/profile"; }
+export function canAccessRoute(role: D1Role, pathname: string) { if (role === "admin") return true; if (pathname.startsWith("/coach")) return role === "coach"; if (pathname.startsWith("/recruiter")) return role === "recruiter"; if (pathname.startsWith("/media")) return role === "media_partner"; if (pathname.startsWith("/admin") || pathname.startsWith("/operations")) return false; return true; }
+export function getSessionContext(role: D1Role = getCurrentRole()) { const membership = seedMemberships.find((item) => item.role === role) ?? seedMemberships[0]; const user = seedUsers.find((item) => item.id === membership.userId) ?? seedUsers[0]; const org = membership.orgId ? seedOrgs.find((item) => item.id === membership.orgId) : undefined; return { role, user, membership, org }; }
+export function getAthleteProfile(athleteId = defaultAthleteId) { const saved = readUserState<Partial<AthleteProfile>>("profile.json", {}); const seed = seedAthletes.find((item) => item.id === athleteId) ?? emptyAthleteProfile(athleteId); return { ...seed, ...buildProgressionFields(saved.progressionLevel ?? seed.progressionLevel ?? "B1"), ...saved, id: seed.id, userId: seed.userId }; }
+export function getGames(athleteId = defaultAthleteId) { return seedGames.filter((item) => item.athleteId === athleteId); }
+export function getFilms(athleteId = defaultAthleteId) { const uploads = readUserState<{ films?: UploadedMediaFile[] }>("uploads.json", { films: [] }).films ?? []; return [...uploads.map((item, index) => ({ id: `upload-film-${index}`, athleteId, gameId: "uploaded", title: item.title || item.name || "Uploaded film", type: "clip", durationSeconds: 0, processingState: "ready", viewCount: 0, videoUrl: item.url } as Film)), ...seedFilms.filter((item) => item.athleteId === athleteId)]; }
+export function getHighlights(athleteId = defaultAthleteId) { return seedHighlights.filter((item) => item.athleteId === athleteId); }
+export function getStats(athleteId = defaultAthleteId) { return seedStats.filter((item) => item.athleteId === athleteId); }
+export const getPublicStats = getStats;
+export function getTrustScore(athleteId = defaultAthleteId) { return seedTrustScores.find((item) => item.athleteId === athleteId) ?? { athleteId, score: 0, tier: "low", factors: [] } as TrustScore; }
+export function getOpportunities(athleteId = defaultAthleteId) { return seedOpportunities.filter((item) => item.athleteId === athleteId); }
+export function getCollegeMatches(athleteId = defaultAthleteId) { return seedMatches.filter((item) => item.athleteId === athleteId) as CollegeMatch[]; }
+export function getTimelineEvents(athleteId = defaultAthleteId) { return seedTimelineEvents.filter((item) => item.athleteId === athleteId); }
+export function getCalendarEvents(athleteId = defaultAthleteId) { return seedCalendarEvents.filter((item) => item.athleteId === athleteId); }
+export function getMessages() { return seedMessages; }
+export function getSupportingDocuments() { return readUserState<{ documents?: SavedDocument[] }>("documents.json", { documents: [] }).documents ?? []; }
+export function getBrandProfile(athleteId = defaultAthleteId): AthleteBrandProfile { return seedBrandProfiles.find((item) => item.athleteId === athleteId) ?? { athleteId, handles: emptyBrandHandles, latestPosts: [], metrics: { followers: 0, weeklyReach: 0, engagementRate: 0, profileClicks: 0 }, agentRecommendations: [] }; }
+export function getAthleteHeroMedia(): AthleteHeroMedia { const hero = readUserState<{ playerCutoutUrl?: string; backgroundVideoUrl?: string; backgroundVideoTitle?: string }>("hero-media.json", {}); return { title: hero.backgroundVideoTitle || "Athlete media", videoUrl: hero.backgroundVideoUrl, playerCutoutUrl: hero.playerCutoutUrl, fallbackText: "Upload hero media from Profile Studio." }; }
+export function getCoachConnection() { return { name: "Coach Marcus Davis", title: "Head Coach", orgName: "North Ridge High", connected: false }; }
+export function getOpportunityScore(athleteId = defaultAthleteId) { return opportunityEngine.score({ athlete: getAthleteProfile(athleteId), trust: getTrustScore(athleteId), stats: getStats(athleteId), matches: getCollegeMatches(athleteId), opportunities: getOpportunities(athleteId), films: getFilms(athleteId) }); }
+export function getMissionItems(): MissionItem[] { return [{ label: "Complete profile", meta: "Profile Studio", state: "active" as TimelineState }]; }
+export function getMissionStatus(athleteId = defaultAthleteId) { return [{ label: "Profile", value: `${getAthleteProfile(athleteId).completionPct}%`, detail: "Profile completion" }]; }
+export function getAgentIntentContext(athleteId = defaultAthleteId, input: { currentPage?: string; userQuestion?: string } = {}): AgentIntentContext { return { userQuestion: input.userQuestion, currentPage: input.currentPage ?? "profile", progressionLevel: getAthleteProfile(athleteId).progressionLevel, profileCompleteness: getAthleteProfile(athleteId).completionPct, recentActivity: [], uploadedMediaCount: getFilms(athleteId).length, recruitingStatus: "prospect" as MatchStage, publicStatsCount: getStats(athleteId).length, opportunityCount: getOpportunities(athleteId).length, trustScore: getTrustScore(athleteId).score, brandCompleteness: 0 }; }
+export function getDailyBrief(athleteId = defaultAthleteId) { return agentService.dailyBrief({ trust: getTrustScore(athleteId), matches: [], opportunities: getOpportunities(athleteId), nextGame: getCalendarEvents(athleteId)[0]?.title ?? "No upcoming game connected", intentContext: getAgentIntentContext(athleteId) }); }
+export function getAgentResponse(input: { question: string; currentPage?: string; athleteId?: string }) { return agentService.respond({ question: input.question, context: getAgentIntentContext(input.athleteId ?? defaultAthleteId, { currentPage: input.currentPage, userQuestion: input.question }) }); }
+export function getCommandCenterData(athleteId = defaultAthleteId): CommandCenterData { const missionItems = getMissionItems(); return { athlete: getAthleteProfile(athleteId), trustScore: getTrustScore(athleteId), opportunityScore: getOpportunityScore(athleteId), missionStatus: getMissionStatus(athleteId), todayMission: { completionPct: 0, items: missionItems }, dailyBrief: getDailyBrief(athleteId), opportunities: getOpportunities(athleteId), timeline: getTimelineEvents(athleteId).map((item, index) => ({ ...item, state: (index === 0 ? "active" : item.state) as TimelineState })), matches: getCollegeMatches(athleteId), events: getCalendarEvents(athleteId), coachConnection: getCoachConnection(), brandProfile: getBrandProfile(athleteId) }; }
+export function getPublicAthleteHomepage(athleteId = defaultAthleteId) { return { athlete: getAthleteProfile(athleteId), heroMedia: getAthleteHeroMedia(), trustScore: getTrustScore(athleteId), opportunityScore: getOpportunityScore(athleteId), stats: getStats(athleteId), highlights: getHighlights(athleteId), matches: getCollegeMatches(athleteId), brandProfile: getBrandProfile(athleteId) }; }
+
+const publicDirectoryGroupOrder: PublicDirectoryGroupName[] = ["Schools", "Teams", "Athletes", "Rankings", "Games", "Organizations", "Sources", "Coaches"];
+function graphNodeToDirectoryResult(node: DirectoryGraphNode): PublicDirectoryResult | null { if (node.type === "import_session" || node.type === "review_queue_item") return null; const groupByType: Record<string, PublicDirectoryGroupName> = { school: "Schools", team: "Teams", player: "Athletes", ranking: "Rankings", organization: "Organizations", source: "Sources" }; const group = groupByType[node.type]; if (!group) return null; return { id: node.id, title: node.name, detail: node.detail, href: `/directory/${node.type}/${node.id}`, group, typeLabel: node.label, sourceLabel: node.type === "source" ? "Source Registry" : "Public Record", sourceUrl: node.sourceUrl, importedAt: node.importedAt, confidence: node.confidence }; }
+function seedDirectoryResults(): PublicDirectoryResult[] { const athlete = getAthleteProfile(); return [{ id: athlete.id, title: athlete.fullName, detail: `${athlete.sport} - ${athlete.primaryPosition} - ${athlete.schoolName}`, href: `/athletes/${athlete.id}`, group: "Athletes", typeLabel: "Public Profile", sourceLabel: "Public Profile" }, ...seedOrgs.map((org) => ({ id: org.id, title: org.name, detail: [org.city, org.state, org.division].filter(Boolean).join(" - "), href: `/directory/school/${org.id}`, group: org.type === "high_school" ? "Schools" as const : "Organizations" as const, typeLabel: toTitle(org.type), sourceLabel: "Public Profile" as const }))]; }
+function buildPublicDirectoryIndex() { const results = [...seedDirectoryResults(), ...(getDirectoryGraph().nodes.map(graphNodeToDirectoryResult).filter(Boolean) as PublicDirectoryResult[])]; const seen = new Set<string>(); return results.filter((item) => { const key = `${item.group}:${item.id}:${item.sourceUrl ?? ""}`; if (seen.has(key)) return false; seen.add(key); return true; }); }
+export function searchPublicDirectory(query: string) { const normalized = query.trim().toLowerCase(); const all = buildPublicDirectoryIndex().filter((item) => !normalized || [item.title, item.detail, item.group, item.typeLabel, item.sourceUrl ?? ""].join(" ").toLowerCase().includes(normalized)); return publicDirectoryGroupOrder.map((group) => ({ group, results: all.filter((item) => item.group === group) })).filter((group) => group.results.length); }
+export function getPublicDirectoryCounters(): PublicDirectoryCounters { const results = buildPublicDirectoryIndex(); const count = (group: PublicDirectoryGroupName) => results.filter((item) => item.group === group).length; return { schools: count("Schools"), teams: count("Teams"), athletes: count("Athletes"), coaches: count("Coaches"), games: count("Games"), sources: count("Sources"), recordsImported: results.length, pendingReview: getDirectoryGraph().nodes.filter((node) => node.reviewStatus === "pending_review").length }; }
+export function getPublicDirectoryDiscoverySections(): PublicDirectorySection[] { return searchPublicDirectory("").map((group) => ({ title: group.group, caption: `${group.results.length} public records`, results: group.results.slice(0, 8) })); }
+export function getPublicDirectoryRecord(id: string) { const graphNode = getDirectoryGraphNode("", id) ?? getDirectoryGraph().nodes.find((node) => node.id === id); const result = buildPublicDirectoryIndex().find((item) => item.id === id); if (!result) return null; return { ...result, entity: result, title: result.title, fields: graphNode?.fields ?? [{ name: "name", value: result.title }, { name: "detail", value: result.detail }], graphNode, typeLabel: result.typeLabel }; }
