@@ -16,6 +16,7 @@ const OPERATOR_INBOX_FILE = "operator-inbox.json";
 const OPERATOR_DATA_INTAKE_FILE = "operator-data-intake.json";
 const OPERATOR_NCES_RUNS_FILE = "operator-nces-runs.json";
 const STATE_PROFILES_FILE = "state-profiles.json";
+const PAGE_PROFILES_FILE = "page-profiles.json";
 
 type ExtractedAthlete = { name: string; school: string; city?: string; state?: string };
 type ExtractedCoach = { name: string; roles: string[]; school?: string; sport?: string; state?: string };
@@ -42,13 +43,26 @@ export async function recordBuildRoomRequest(formData: FormData) { const request
 
 export async function saveStateProfile(formData: FormData) {
   const stateCode = value(formData, "stateCode").toUpperCase();
-  if (!stateCode) redirect("/operations/profile-manager?status=missing-state");
+  const returnTab = value(formData, "returnTab") || "schools";
+  if (!stateCode) redirect("/operations?status=missing-state");
   await appendUserState(STATE_PROFILES_FILE, { id: `state-profile-${stateCode}-${randomUUID()}`, stateCode, displayName: value(formData, "displayName"), tagline: value(formData, "tagline"), bio: value(formData, "bio"), coverImageUrl: value(formData, "coverImageUrl"), badgeImageUrl: value(formData, "badgeImageUrl"), featureVideoUrl: value(formData, "featureVideoUrl"), primarySport: value(formData, "primarySport"), updatedAt: new Date().toISOString() });
-  await audit("state-profile-saved", { stateCode });
+  await audit("state-profile-saved", { stateCode, returnTab });
   revalidatePath("/schools");
   revalidatePath(`/schools/${stateCode.toLowerCase()}`);
+  revalidatePath("/operations");
   revalidatePath("/operations/profile-manager");
-  redirect(`/operations/profile-manager?state=${stateCode}&status=state-profile-saved`);
+  redirect(`/operations?tab=${returnTab}&state=${stateCode}&status=state-profile-saved`);
+}
+
+export async function savePageProfile(formData: FormData) {
+  const pageKey = value(formData, "pageKey") || "home";
+  const stateCode = value(formData, "stateCode").toUpperCase();
+  await appendUserState(PAGE_PROFILES_FILE, { id: `page-profile-${pageKey}-${stateCode || "global"}-${randomUUID()}`, pageKey, stateCode, headline: value(formData, "headline"), subheadline: value(formData, "subheadline"), body: value(formData, "body"), coverImageUrl: value(formData, "coverImageUrl"), badgeImageUrl: value(formData, "badgeImageUrl"), featureVideoUrl: value(formData, "featureVideoUrl"), ctaLabel: value(formData, "ctaLabel"), ctaHref: value(formData, "ctaHref"), updatedAt: new Date().toISOString() });
+  await audit("page-profile-saved", { pageKey, stateCode });
+  revalidatePath("/");
+  revalidatePath(`/${pageKey === "home" ? "" : pageKey}`);
+  revalidatePath("/operations");
+  redirect(`/operations?tab=${pageKey}&state=${stateCode}&status=page-profile-saved`);
 }
 
 export async function recordDataIntake(formData: FormData) {
@@ -70,7 +84,7 @@ export async function recordDataIntake(formData: FormData) {
   const pdfMeta = pdf instanceof File && pdf.size > 0 ? { name: pdf.name, size: pdf.size, type: pdf.type || "application/pdf" } : undefined;
   await appendUserState(OPERATOR_DATA_INTAKE_FILE, { id: `intake-${randomUUID()}`, sourceType, state, district, school, sport, classYear, sourceUrl, sourceName, notes, athleteText: athleteText.slice(0, 200000), sourceFetchStatus: sourceUrl ? (fetchedText ? "fetched" : pastedAthleteText ? "pasted_text_used" : "fetch_failed_or_blocked") : "manual", extractedAthletes, extractedCoaches, extractedCount: extractedAthletes.length, extractedCoachCount: extractedCoaches.length, pdf: pdfMeta, status: "queued_for_review", createdAt: new Date().toISOString() });
   await audit("data-intake-recorded", { sourceType, state, district, school, sport, sourceUrl, pdfName: pdfMeta?.name, extractedCount: extractedAthletes.length, extractedCoachCount: extractedCoaches.length });
-  redirect("/operations?status=data-intake-recorded&tab=data-intake");
+  redirect("/operations?status=data-intake-recorded&tab=schools");
 }
 
 export async function ingestNcesCcdCsv(formData: FormData) {
