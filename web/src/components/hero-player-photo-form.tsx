@@ -39,7 +39,7 @@ export function HeroPlayerPhotoForm({ athleteName, currentPlayerCutoutUrl, varia
         previewSrc ? (
           <img
             src={previewSrc}
-            alt={`${athleteName} Command Center cutout preview`}
+            alt={`${athleteName} hero player photo preview`}
             className="h-32 w-fit rounded-xl object-contain"
             onError={() => setPreviewSrc("")}
           />
