@@ -1,6 +1,6 @@
 "use server";
 
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { createHash, createHmac } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { revalidatePath } from "next/cache";
@@ -49,21 +49,32 @@ function hasRailwayR2Config() {
   );
 }
 
-function r2Client() {
-  return new S3Client({
-    region: process.env.RAILWAY_R2_REGION || "auto",
-    endpoint: process.env.RAILWAY_R2_ENDPOINT,
-    forcePathStyle: true,
-    credentials: {
-      accessKeyId: process.env.RAILWAY_R2_ACCESS_KEY_ID || "",
-      secretAccessKey: process.env.RAILWAY_R2_SECRET_ACCESS_KEY || ""
-    }
-  });
+function encodePathSegment(value: string) {
+  return encodeURIComponent(value).replace(/[!'()*]/g, (char) => `%${char.charCodeAt(0).toString(16).toUpperCase()}`);
+}
+
+function sha256Hex(value: Buffer | string) {
+  return createHash("sha256").update(value).digest("hex");
+}
+
+function hmac(key: Buffer | string, value: string) {
+  return createHmac("sha256", key).update(value).digest();
+}
+
+function hmacHex(key: Buffer | string, value: string) {
+  return createHmac("sha256", key).update(value).digest("hex");
+}
+
+function signingKey(secret: string, dateStamp: string, region: string) {
+  const kDate = hmac(`AWS4${secret}`, dateStamp);
+  const kRegion = hmac(kDate, region);
+  const kService = hmac(kRegion, "s3");
+  return hmac(kService, "aws4_request");
 }
 
 function publicR2Url(key: string) {
   const base = String(process.env.RAILWAY_R2_PUBLIC_URL || "").replace(/\/$/, "");
-  return `${base}/${key}`;
+  return `${base}/${key.split("/").map(encodePathSegment).join("/")}`;
 }
 
 async function saveLocalPublicImage(file: File, safeName: string, uploadedAt: string): Promise<SavedUpload> {
@@ -82,18 +93,45 @@ async function saveLocalPublicImage(file: File, safeName: string, uploadedAt: st
 }
 
 async function saveRailwayR2Image(file: File, safeName: string, uploadedAt: string): Promise<SavedUpload> {
+  const endpoint = String(process.env.RAILWAY_R2_ENDPOINT || "").replace(/\/$/, "");
+  const accessKeyId = String(process.env.RAILWAY_R2_ACCESS_KEY_ID || "");
+  const secretAccessKey = String(process.env.RAILWAY_R2_SECRET_ACCESS_KEY || "");
+  const bucket = String(process.env.RAILWAY_R2_BUCKET || "");
+  const region = String(process.env.RAILWAY_R2_REGION || "auto");
   const key = `role-profiles/${safeName}`;
   const body = Buffer.from(await file.arrayBuffer());
+  const contentType = file.type || "application/octet-stream";
+  const now = new Date();
+  const amzDate = now.toISOString().replace(/[:-]|\.\d{3}/g, "");
+  const dateStamp = amzDate.slice(0, 8);
+  const payloadHash = sha256Hex(body);
+  const endpointUrl = new URL(endpoint);
+  const canonicalUri = `/${encodePathSegment(bucket)}/${key.split("/").map(encodePathSegment).join("/")}`;
+  const uploadUrl = `${endpoint}${canonicalUri}`;
+  const signedHeaders = "content-type;host;x-amz-content-sha256;x-amz-date";
+  const canonicalHeaders = `content-type:${contentType}\nhost:${endpointUrl.host}\nx-amz-content-sha256:${payloadHash}\nx-amz-date:${amzDate}\n`;
+  const canonicalRequest = ["PUT", canonicalUri, "", canonicalHeaders, signedHeaders, payloadHash].join("\n");
+  const credentialScope = `${dateStamp}/${region}/s3/aws4_request`;
+  const stringToSign = ["AWS4-HMAC-SHA256", amzDate, credentialScope, sha256Hex(canonicalRequest)].join("\n");
+  const signature = hmacHex(signingKey(secretAccessKey, dateStamp, region), stringToSign);
+  const authorization = `AWS4-HMAC-SHA256 Credential=${accessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
 
-  await r2Client().send(
-    new PutObjectCommand({
-      Bucket: process.env.RAILWAY_R2_BUCKET,
-      Key: key,
-      Body: body,
-      ContentType: file.type || "application/octet-stream",
-      CacheControl: "public, max-age=31536000, immutable"
-    })
-  );
+  const response = await fetch(uploadUrl, {
+    method: "PUT",
+    headers: {
+      Authorization: authorization,
+      "Content-Type": contentType,
+      "x-amz-content-sha256": payloadHash,
+      "x-amz-date": amzDate,
+      "Cache-Control": "public, max-age=31536000, immutable"
+    },
+    body
+  });
+
+  if (!response.ok) {
+    const message = await response.text().catch(() => "");
+    throw new Error(`Railway R2 upload failed (${response.status}). ${message}`.trim());
+  }
 
   return {
     name: file.name,
