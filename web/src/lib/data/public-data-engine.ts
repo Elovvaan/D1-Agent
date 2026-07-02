@@ -1,4 +1,5 @@
 import { getPublicDirectoryCounters, searchPublicDirectory, type PublicDirectoryResult } from "./services";
+import { getOperationsIntakeDirectoryResults, searchOperationsIntakeDirectory } from "./public-intake-search";
 
 export type { PublicDirectoryResult };
 
@@ -27,6 +28,7 @@ export type PublicStateNode = {
   }>;
 };
 
+const groupOrder: PublicDirectoryResult["group"][] = ["Athletes", "Schools", "Teams", "Rankings", "Games", "Coaches", "Sources", "Organizations"];
 const stateNames: Record<string, string> = {
   AL: "Alabama", AK: "Alaska", AZ: "Arizona", AR: "Arkansas", CA: "California", CO: "Colorado", CT: "Connecticut", DE: "Delaware", FL: "Florida", GA: "Georgia", HI: "Hawaii", ID: "Idaho", IL: "Illinois", IN: "Indiana", IA: "Iowa", KS: "Kansas", KY: "Kentucky", LA: "Louisiana", ME: "Maine", MD: "Maryland", MA: "Massachusetts", MI: "Michigan", MN: "Minnesota", MS: "Mississippi", MO: "Missouri", MT: "Montana", NE: "Nebraska", NV: "Nevada", NH: "New Hampshire", NJ: "New Jersey", NM: "New Mexico", NY: "New York", NC: "North Carolina", ND: "North Dakota", OH: "Ohio", OK: "Oklahoma", OR: "Oregon", PA: "Pennsylvania", RI: "Rhode Island", SC: "South Carolina", SD: "South Dakota", TN: "Tennessee", TX: "Texas", UT: "Utah", VT: "Vermont", VA: "Virginia", WA: "Washington", WV: "West Virginia", WI: "Wisconsin", WY: "Wyoming", DC: "District of Columbia"
 };
@@ -39,6 +41,20 @@ function normalizeState(value?: string) {
 
 function schoolNameFromDetail(detail: string) {
   return detail.split(" - ")[0]?.trim() || "School not set";
+}
+
+function mergeGroups(groups: Array<{ group: PublicDirectoryResult["group"]; results: PublicDirectoryResult[] }>) {
+  const buckets = new Map<PublicDirectoryResult["group"], PublicDirectoryResult[]>();
+  const seen = new Set<string>();
+  for (const group of groups) {
+    for (const result of group.results) {
+      const key = `${result.group}-${result.id}-${result.href}-${result.sourceUrl ?? ""}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      buckets.set(result.group, [...(buckets.get(result.group) ?? []), result]);
+    }
+  }
+  return groupOrder.map((group) => ({ group, results: buckets.get(group) ?? [] })).filter((group) => group.results.length > 0);
 }
 
 function groupByState(results: PublicDirectoryResult[]) {
@@ -95,11 +111,23 @@ function groupByState(results: PublicDirectoryResult[]) {
 }
 
 export function searchPublicData(query: string) {
-  return searchPublicDirectory(query);
+  return mergeGroups([...searchPublicDirectory(query), ...searchOperationsIntakeDirectory(query)]);
 }
 
 export function getPublicDataCounters() {
-  return getPublicDirectoryCounters();
+  const base = getPublicDirectoryCounters();
+  const intake = getOperationsIntakeDirectoryResults();
+  const count = (group: PublicDirectoryResult["group"]) => intake.filter((result) => result.group === group).length;
+  return {
+    schools: base.schools + count("Schools"),
+    teams: base.teams + count("Teams"),
+    athletes: base.athletes + count("Athletes"),
+    coaches: base.coaches + count("Coaches"),
+    games: base.games + count("Games"),
+    sources: base.sources + count("Sources"),
+    recordsImported: base.recordsImported + intake.length,
+    pendingReview: base.pendingReview + intake.length
+  };
 }
 
 export function getPublicSchoolResults(limit = 12) {
@@ -107,9 +135,9 @@ export function getPublicSchoolResults(limit = 12) {
 }
 
 export function getPublicSchoolHierarchy() {
-  const all = searchPublicDirectory("").flatMap((group) => group.results);
-  const fallback = ["school", "athlete", "team", "coach", "game"].flatMap((query) => searchPublicDirectory(query).flatMap((group) => group.results));
+  const base = ["", "school", "athlete", "team", "coach", "game"].flatMap((query) => searchPublicDirectory(query).flatMap((group) => group.results));
+  const intake = getOperationsIntakeDirectoryResults();
   const unique = new Map<string, PublicDirectoryResult>();
-  for (const result of [...all, ...fallback]) unique.set(`${result.group}-${result.id}-${result.href}`, result);
+  for (const result of [...base, ...intake]) unique.set(`${result.group}-${result.id}-${result.href}-${result.sourceUrl ?? ""}`, result);
   return groupByState([...unique.values()]);
 }
