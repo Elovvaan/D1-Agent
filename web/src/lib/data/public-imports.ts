@@ -1,5 +1,5 @@
 import { readFile, readdir } from "node:fs/promises";
-import { join, resolve } from "node:path";
+import { join } from "node:path";
 import type {
   CoachImportedVerificationRequest,
   PublicImportedEntity,
@@ -7,9 +7,10 @@ import type {
   PublicImportResult,
   PublicReviewQueueItem
 } from "@d1/shared";
+import { importsPath, publicActionsPath } from "@/lib/data/platform-storage";
 
-const importsDir = resolve(process.cwd(), "..", "data", "imports");
-const publicActionsDir = resolve(process.cwd(), "..", "data", "public-actions");
+const importsDir = importsPath();
+const publicActionsDir = publicActionsPath();
 
 export interface ImportHistoryItem {
   runId: string;
@@ -195,7 +196,7 @@ export function getReviewActions(entityType: string): ReviewAction[] {
 }
 
 export function getField(entity: PublicImportedEntity, name: string) {
-  return entity.fields.find((field) => field.name === name)?.value;
+  return entity.fields.find((field) => field.name)?.value;
 }
 
 export function formatImportDate(value: string) {
