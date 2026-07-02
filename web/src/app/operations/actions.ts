@@ -64,8 +64,9 @@ export async function saveSchoolProfile(formData: FormData) {
   await appendUserState(SCHOOL_PROFILES_FILE, { id: `school-profile-${schoolId}-${randomUUID()}`, schoolId, logoImageUrl: value(formData, "logoImageUrl"), coverImageUrl: value(formData, "coverImageUrl"), updatedAt: new Date().toISOString() });
   await audit("school-profile-saved", { schoolId, stateCode });
   revalidatePath("/schools");
-  if (stateCode) revalidatePath(`/schools/${stateCode.toLowerCase()}`);
-  if (stateCode && schoolSlug) revalidatePath(`/schools/${stateCode.toLowerCase()}/${schoolSlug}`);
+  const publicStateSlug = stateCode.toLowerCase() === "us" ? "national" : stateCode.toLowerCase();
+  if (publicStateSlug) revalidatePath(`/schools/${publicStateSlug}`);
+  if (publicStateSlug && schoolSlug) revalidatePath(`/schools/${publicStateSlug}/${schoolSlug}`);
   revalidatePath("/operations/profile-manager");
   redirect(`/operations/profile-manager?tab=${returnTab}&state=${stateCode}&school=${schoolId}&status=school-profile-saved`);
 }
