@@ -89,7 +89,7 @@ export default async function ProfileManagerPage({ searchParams }: { searchParam
                     </div>
                     <div className="mt-5 flex flex-wrap items-center gap-3">
                       <button className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[#F2C200] px-5 text-sm font-black text-[#061331]" type="submit"><Save size={16} /> Save school image</button>
-                      <Link className="text-sm font-black text-[#F2C200] underline" href={`/schools/${selectedState.code.toLowerCase()}/${slug(selectedSchool.title)}`}>View Public <ArrowRight size={14} className="inline" /></Link>
+                      <Link className="text-sm font-black text-[#F2C200] underline" href={`/schools/${selectedState.code.toLowerCase() === "us" ? "national" : selectedState.code.toLowerCase()}/${slug(selectedSchool.title)}`}>View Public <ArrowRight size={14} className="inline" /></Link>
                     </div>
                   </form>
                 ) : null}
