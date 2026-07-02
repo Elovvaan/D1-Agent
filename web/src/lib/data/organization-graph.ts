@@ -1,6 +1,7 @@
 import { getNcesSeedSchoolResults } from "./nces-seed";
 import { getOperationsIntakeDirectoryResults, searchOperationsIntakeDirectory } from "./public-intake-search";
 import { searchPublicDirectory, type PublicDirectoryResult } from "./services";
+import { decodeHtmlEntities } from "@/lib/text";
 
 export type OrgNodeKind = "Country" | "State" | "School" | "Team" | "Person" | "AthleteRole" | "CoachRole" | "Game" | "Season";
 export type OrgEdgeKind = "CONTAINS" | "ACTIVE_IN" | "PLAYS_FOR" | "COACHES" | "PARTICIPATED_IN";
@@ -13,11 +14,10 @@ export type NavigationSchoolNode = { id: string; title: string; detail: string; 
 export type NavigationStateNode = { id: string; code: string; name: string; href: string; schools: NavigationSchoolNode[] };
 
 const stateNames: Record<string, string> = { AL: "Alabama", AK: "Alaska", AZ: "Arizona", AR: "Arkansas", CA: "California", CO: "Colorado", CT: "Connecticut", DE: "Delaware", FL: "Florida", GA: "Georgia", HI: "Hawaii", ID: "Idaho", IL: "Illinois", IN: "Indiana", IA: "Iowa", KS: "Kansas", KY: "Kentucky", LA: "Louisiana", ME: "Maine", MD: "Maryland", MA: "Massachusetts", MI: "Michigan", MN: "Minnesota", MS: "Mississippi", MO: "Missouri", MT: "Montana", NE: "Nebraska", NV: "Nevada", NH: "New Hampshire", NJ: "New Jersey", NM: "New Mexico", NY: "New York", NC: "North Carolina", ND: "North Dakota", OH: "Ohio", OK: "Oklahoma", OR: "Oregon", PA: "Pennsylvania", RI: "Rhode Island", SC: "South Carolina", SD: "South Dakota", TN: "Tennessee", TX: "Texas", UT: "Utah", VT: "Vermont", VA: "Virginia", WA: "Washington", WV: "West Virginia", WI: "Wisconsin", WY: "Wyoming", DC: "District of Columbia" };
-export function slug(value: string) { return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""); }
 function normalizeState(value?: string) { return value?.match(/\b([A-Z]{2})\b(?!.*\b[A-Z]{2}\b)/)?.[1] ?? "US"; }
 function isSafe(node: OrgNode | undefined, kind?: OrgNodeKind): node is OrgNode { return !!node && (!kind || node.kind === kind) && node.reviewState === "resolved" && node.projectionSafe; }
 function mentions(result: PublicDirectoryResult, node: { label: string; id: string }) { const text = `${result.title} ${result.detail} ${result.href}`.toLowerCase(); return text.includes(node.label.toLowerCase()) || text.includes(node.id.toLowerCase()); }
-function resultToNode(result: PublicDirectoryResult, kind: OrgNodeKind, extra: Partial<OrgNode> = {}): OrgNode { return { id: `${kind.toLowerCase()}-${result.id}`, kind, label: result.title, detail: result.detail, href: result.href, reviewState: "resolved", projectionSafe: true, sourceTypeLabel: result.typeLabel, raw: result, ...extra }; }
+function resultToNode(result: PublicDirectoryResult, kind: OrgNodeKind, extra: Partial<OrgNode> = {}): OrgNode { return { id: `${kind.toLowerCase()}-${result.id}`, kind, label: decodeHtmlEntities(result.title), detail: decodeHtmlEntities(result.detail), href: result.href, reviewState: "resolved", projectionSafe: true, sourceTypeLabel: result.typeLabel, raw: result, ...extra }; }
 function allResults() { const base = ["", "school", "team", "athlete", "coach", "game"].flatMap((query) => searchPublicDirectory(query).flatMap((group) => group.results)); const intake = getOperationsIntakeDirectoryResults(); const seeded = getNcesSeedSchoolResults(); const unique = new Map<string, PublicDirectoryResult>(); for (const item of [...seeded, ...base, ...intake]) unique.set(`${item.group}-${item.id}-${item.href}-${item.sourceUrl ?? ""}`, item); return [...unique.values()]; }
 
 export function getOrganizationGraph(): OrganizationGraph {

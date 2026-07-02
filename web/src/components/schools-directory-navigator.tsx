@@ -1,6 +1,8 @@
 import { ArrowRight, type LucideIcon } from "lucide-react";
 import { EntityMark } from "@/components/entity-mark";
 import type { PublicStateNode } from "@/lib/data/public-data-engine";
+import { getSchoolProfile } from "@/lib/data/school-profiles";
+import { decodeHtmlEntities } from "@/lib/text";
 
 type StateNode = PublicStateNode;
 type SchoolNode = StateNode["schools"][number];
@@ -12,7 +14,7 @@ export const allStates: StateIndexItem[] = [
 ];
 
 export function slug(value: string) {
-  return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  return decodeHtmlEntities(value).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 }
 
 export function stateSlug(state: StateNode) {
@@ -47,11 +49,17 @@ export function StateRail({ states, activeCode }: { states: StateNode[]; activeC
 }
 
 export function SchoolTile({ school, stateCode }: { school: SchoolNode; stateCode: string }) {
+  const profile = getSchoolProfile(school.id);
   return (
     <a href={`/schools/${stateCode}/${slug(school.title)}`} className="group rounded-[32px] border border-white/12 bg-white/[0.06] p-4 backdrop-blur transition duration-300 hover:-translate-y-1 hover:border-[#F2C200]/70 hover:bg-white/[0.09] hover:shadow-[0_26px_80px_rgba(0,0,0,0.28)]">
       <div className="relative grid aspect-square place-items-center overflow-hidden rounded-[28px] border border-white/14 bg-[radial-gradient(circle_at_74%_18%,rgba(242,194,0,0.5),transparent_20%),linear-gradient(135deg,#10224D,#1B3FA0_54%,#061331)] p-5 transition group-hover:scale-[1.03]">
         <div className="absolute inset-0 opacity-[0.16] [background-image:radial-gradient(circle_at_1px_1px,white_1px,transparent_0)] [background-size:16px_16px]" />
-        <EntityMark entity={{ ref_type: "School", ref_id: school.id, display_name: school.title }} kind="logo" size={86} />
+        {profile?.logoImageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={profile.logoImageUrl} alt={school.title} width={86} height={86} style={{ width: 86, height: 86, borderRadius: 18, objectFit: "contain", background: "#FAFBFD", padding: 10 }} />
+        ) : (
+          <EntityMark entity={{ ref_type: "School", ref_id: school.id, display_name: school.title }} kind="logo" size={86} />
+        )}
         <div className="pointer-events-none absolute inset-y-0 -left-1/2 w-1/2 skew-x-[-18deg] bg-white/20 opacity-0 transition duration-500 group-hover:left-full group-hover:opacity-100" />
       </div>
       <div className="mt-4 flex items-start justify-between gap-3">

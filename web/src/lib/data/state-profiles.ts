@@ -17,7 +17,9 @@ export function getStateProfiles() {
   const latest = new Map<string, StateProfile>();
   for (const profile of stored) {
     if (!profile.stateCode) continue;
-    latest.set(profile.stateCode.toUpperCase(), { ...profile, stateCode: profile.stateCode.toUpperCase() });
+    const stateCode = profile.stateCode.toUpperCase();
+    if (latest.has(stateCode)) continue;
+    latest.set(stateCode, { ...profile, stateCode });
   }
   return latest;
 }

@@ -1,21 +1,24 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { ArrowRight, ImageIcon, Save, Video } from "lucide-react";
-import { StateRail } from "@/components/schools-directory-navigator";
+import { slug, StateRail, stateSlug } from "@/components/schools-directory-navigator";
 import { getPublicSchoolHierarchy } from "@/lib/data/public-data-engine";
 import { getStateProfile } from "@/lib/data/state-profiles";
-import { saveStateProfile } from "../actions";
+import { getSchoolProfile } from "@/lib/data/school-profiles";
+import { saveSchoolProfile, saveStateProfile } from "../actions";
 
 const OPERATOR_COOKIE = "myd1_operator_access";
 const OPERATOR_COOKIE_VALUE = "granted";
 
-export default async function ProfileManagerPage({ searchParams }: { searchParams?: Promise<{ state?: string; status?: string }> }) {
+export default async function ProfileManagerPage({ searchParams }: { searchParams?: Promise<{ state?: string; school?: string; status?: string }> }) {
   const params = searchParams ? await searchParams : {};
   const cookieStore = await cookies();
   const isOperator = cookieStore.get(OPERATOR_COOKIE)?.value === OPERATOR_COOKIE_VALUE;
   const states = getPublicSchoolHierarchy();
   const selectedState = states.find((state) => state.code.toLowerCase() === (params.state ?? "").toLowerCase()) ?? states[0];
   const profile = selectedState ? getStateProfile(selectedState.code) : undefined;
+  const selectedSchool = selectedState?.schools.find((school) => school.id === params.school) ?? selectedState?.schools[0];
+  const schoolProfile = selectedSchool ? getSchoolProfile(selectedSchool.id) : undefined;
   if (!isOperator) return <main className="min-h-screen bg-[#061331] p-8 text-white"><Link className="rounded-2xl bg-[#F2C200] px-5 py-3 text-sm font-black text-[#061331]" href="/operations">Unlock Operations</Link></main>;
   return (
     <main className="min-h-screen bg-[#061331] px-4 py-8 text-white sm:px-6 lg:px-8">
@@ -26,7 +29,7 @@ export default async function ProfileManagerPage({ searchParams }: { searchParam
             <h1 className="mt-2 text-4xl font-black tracking-tight">State profile editor</h1>
             <p className="mt-2 text-sm font-semibold text-[#CAD7FF]">Edit the public-facing state layer: cover media, badge/logo, headline, bio, and featured sport.</p>
           </div>
-          <div className="flex gap-2"><Link className="rounded-2xl border border-white/10 bg-white/[0.08] px-4 py-3 text-sm font-black" href="/operations/directory">Directory Graph</Link><Link className="rounded-2xl bg-[#F2C200] px-4 py-3 text-sm font-black text-[#061331]" href={`/schools/${selectedState?.code.toLowerCase() ?? ""}`}>View Public</Link></div>
+          <div className="flex gap-2"><Link className="rounded-2xl border border-white/10 bg-white/[0.08] px-4 py-3 text-sm font-black" href="/operations/directory">Directory Graph</Link><Link className="rounded-2xl bg-[#F2C200] px-4 py-3 text-sm font-black text-[#061331]" href={`/schools/${selectedState ? stateSlug(selectedState) : ""}`}>View Public</Link></div>
         </div>
         <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
           <StateRail states={states} activeCode={selectedState?.code} />
@@ -62,6 +65,38 @@ export default async function ProfileManagerPage({ searchParams }: { searchParam
             ) : <div className="rounded-2xl bg-[#071A43] p-5 text-sm font-black text-[#CAD7FF]">No state selected.</div>}
           </section>
         </div>
+        {selectedState ? (
+          <section className="mt-6 rounded-[34px] border border-white/10 bg-white/[0.07] p-6">
+            {params.status === "school-profile-saved" ? <div className="mb-5 rounded-2xl border border-[#F2C200]/30 bg-[#F2C200]/10 p-3 text-sm font-black text-[#FFE27A]">School profile saved. Public school pages can now project this image.</div> : null}
+            <p className="text-xs font-black uppercase tracking-[0.22em] text-[#F2C200]">School image cards</p>
+            <h2 className="mt-2 text-2xl font-black">Pick a {selectedState.code} school to edit its logo / cover image</h2>
+            {selectedState.schools.length ? (
+              <div className="mt-4 grid gap-6 lg:grid-cols-[280px_1fr]">
+                <div className="flex max-h-96 flex-col gap-1.5 overflow-y-auto rounded-2xl border border-white/10 bg-[#071A43] p-2">
+                  {selectedState.schools.map((school) => (
+                    <Link key={school.id} href={`/operations/profile-manager?state=${selectedState.code}&school=${encodeURIComponent(school.id)}`} className={`truncate rounded-xl px-3 py-2 text-sm font-black ${selectedSchool?.id === school.id ? "bg-[#F2C200] text-[#061331]" : "text-white hover:bg-white/[0.08]"}`}>{school.title}</Link>
+                  ))}
+                </div>
+                {selectedSchool ? (
+                  <form action={saveSchoolProfile} className="rounded-2xl border border-white/10 bg-[#071A43] p-5">
+                    <input type="hidden" name="schoolId" value={selectedSchool.id} />
+                    <input type="hidden" name="schoolSlug" value={slug(selectedSchool.title)} />
+                    <input type="hidden" name="stateCode" value={selectedState.code} />
+                    <h3 className="text-xl font-black">{selectedSchool.title}</h3>
+                    <div className="mt-4 grid gap-4">
+                      <label className="grid gap-2 text-sm font-black"><span>Logo image URL</span><input className="min-h-12 rounded-2xl bg-white px-4 text-sm font-black text-[#061331] outline-none" name="logoImageUrl" defaultValue={schoolProfile?.logoImageUrl ?? ""} /></label>
+                      <label className="grid gap-2 text-sm font-black"><span>Cover image URL</span><input className="min-h-12 rounded-2xl bg-white px-4 text-sm font-black text-[#061331] outline-none" name="coverImageUrl" defaultValue={schoolProfile?.coverImageUrl ?? ""} /></label>
+                    </div>
+                    <div className="mt-5 flex flex-wrap items-center gap-3">
+                      <button className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[#F2C200] px-5 text-sm font-black text-[#061331]" type="submit"><Save size={16} /> Save school image</button>
+                      <Link className="text-sm font-black text-[#F2C200] underline" href={`/schools/${selectedState.code.toLowerCase() === "us" ? "national" : selectedState.code.toLowerCase()}/${slug(selectedSchool.title)}`}>View Public <ArrowRight size={14} className="inline" /></Link>
+                    </div>
+                  </form>
+                ) : null}
+              </div>
+            ) : <p className="mt-3 text-sm font-semibold text-[#CAD7FF]">No reviewed schools in this state yet.</p>}
+          </section>
+        ) : null}
       </div>
     </main>
   );
