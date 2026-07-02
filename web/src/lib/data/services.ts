@@ -70,11 +70,12 @@ const stateCodeByFullName = new Map(usStates.map((state) => [state.name.toLowerC
 export function searchPublicDirectory(query: string) {
   const normalized = query.trim().toLowerCase();
   const stateCodeSynonym = stateCodeByFullName.get(normalized);
-  const stateCodePattern = stateCodeSynonym ? new RegExp(`\\b${stateCodeSynonym}\\b`) : undefined;
+  const stateCodePattern = stateCodeSynonym ? new RegExp(`\\b${stateCodeSynonym.toUpperCase()}\\b`) : undefined;
   const all = buildPublicDirectoryIndex().filter((item) => {
     if (!normalized) return true;
-    const haystack = [item.title, item.detail, item.group, item.typeLabel, item.sourceUrl ?? ""].join(" ").toLowerCase();
-    return haystack.includes(normalized) || (stateCodePattern ? stateCodePattern.test(haystack) : false);
+    const rawHaystack = [item.title, item.detail, item.group, item.typeLabel, item.sourceUrl ?? ""].join(" ");
+    const haystack = rawHaystack.toLowerCase();
+    return haystack.includes(normalized) || (stateCodePattern ? stateCodePattern.test(rawHaystack) : false);
   });
   return publicDirectoryGroupOrder.map((group) => ({ group, results: all.filter((item) => item.group === group) })).filter((group) => group.results.length);
 }
