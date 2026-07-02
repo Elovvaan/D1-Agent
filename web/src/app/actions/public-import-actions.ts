@@ -4,6 +4,7 @@ import { randomUUID } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 function value(formData: FormData, key: string) {
   return String(formData.get(key) ?? "");
@@ -25,7 +26,9 @@ export async function recordPublicReviewAction(formData: FormData) {
     entityType: value(formData, "entityType"),
     sourceUrl: value(formData, "sourceUrl")
   });
+  revalidatePath("/operations");
   revalidatePath("/admin/public-data");
+  redirect("/operations?status=review-recorded&tab=reviews");
 }
 
 export async function recordAthleteClaimRequest(formData: FormData) {
