@@ -3,8 +3,11 @@
 import { randomUUID } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { ncesCcdAdapter } from "@/lib/data/adapters/nces-ccd-adapter";
+import type { RawInput } from "@/lib/data/adapters/types";
 
 const OPERATOR_COOKIE = "myd1_operator_access";
 const OPERATOR_COOKIE_VALUE = "granted";
@@ -12,6 +15,7 @@ const OPERATOR_AUDIT_FILE = "operator-audit.json";
 const OPERATOR_ISSUES_FILE = "operator-issues.json";
 const OPERATOR_INBOX_FILE = "operator-inbox.json";
 const OPERATOR_DATA_INTAKE_FILE = "operator-data-intake.json";
+const OPERATOR_NCES_RUNS_FILE = "operator-nces-runs.json";
 
 type ExtractedAthlete = { name: string; school: string; city?: string; state?: string };
 type ExtractedCoach = { name: string; roles: string[]; school?: string; sport?: string; state?: string };
@@ -59,4 +63,23 @@ export async function recordDataIntake(formData: FormData) {
   await appendUserState(OPERATOR_DATA_INTAKE_FILE, { id: `intake-${randomUUID()}`, sourceType, state, district, school, sport, classYear, sourceUrl, sourceName, notes, athleteText: athleteText.slice(0, 200000), sourceFetchStatus: sourceUrl ? (fetchedText ? "fetched" : pastedAthleteText ? "pasted_text_used" : "fetch_failed_or_blocked") : "manual", extractedAthletes, extractedCoaches, extractedCount: extractedAthletes.length, extractedCoachCount: extractedCoaches.length, pdf: pdfMeta, status: "queued_for_review", createdAt: new Date().toISOString() });
   await audit("data-intake-recorded", { sourceType, state, district, school, sport, sourceUrl, pdfName: pdfMeta?.name, extractedCount: extractedAthletes.length, extractedCoachCount: extractedCoaches.length });
   redirect("/operations?status=data-intake-recorded&tab=data-intake");
+}
+
+export async function ingestNcesCcdCsv(formData: FormData) {
+  const uploaded = formData.get("ncesFile");
+  const sourceName = value(formData, "sourceName") || "NCES CCD CSV";
+  if (!(uploaded instanceof File) || uploaded.size === 0) redirect("/operations/nces?status=nces-file-missing");
+  const text = Buffer.from(await uploaded.arrayBuffer()).toString("utf8");
+  const runId = `nces-${randomUUID()}`;
+  const input: RawInput = { medium: "csv", uri: `upload://operations/${uploaded.name}`, fetchedAt: new Date().toISOString(), body: text, headers: { "content-type": uploaded.type || "text/csv" } };
+  const detection = ncesCcdAdapter.detect(input);
+  const extraction = ncesCcdAdapter.extract(input, { rawArchiveRef: `operations:nces:${runId}` });
+  const autoSeeded = extraction.proposals.filter((proposal) => proposal.kind === "SchoolProposal" && proposal.confidence >= 0.75).length;
+  await appendUserState(OPERATOR_NCES_RUNS_FILE, { id: runId, sourceName, fileName: uploaded.name, fileSize: uploaded.size, detection, envelope: extraction.envelope, diagnostics: extraction.diagnostics, proposalCount: extraction.proposals.length, autoSeeded, status: detection.handled ? "extracted_for_resolution" : "unclassified", createdAt: new Date().toISOString() });
+  await appendUserState(OPERATOR_DATA_INTAKE_FILE, { id: `intake-${runId}`, sourceType: "nces-ccd", sourceName, sourceUrl: extraction.envelope.uri, notes: "NCES CCD adapter run. T0 canonical school proposals routed through Operations.", extractedCount: autoSeeded, status: detection.handled ? "extracted_for_resolution" : "unclassified_input", createdAt: new Date().toISOString() });
+  await audit("nces-ccd-ingested", { runId, sourceName, fileName: uploaded.name, proposalCount: extraction.proposals.length, autoSeeded, handled: detection.handled, confidence: detection.confidence });
+  revalidatePath("/operations");
+  revalidatePath("/operations/nces");
+  revalidatePath("/schools");
+  redirect("/operations/nces?status=nces-ingested");
 }
