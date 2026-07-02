@@ -2,6 +2,7 @@ import { ArrowLeft, ArrowRight, Building2, CalendarDays, Trophy, UserRound, User
 import { EntityMark } from "@/components/entity-mark";
 import { PublicSiteShell } from "@/components/public-site-shell";
 import { getPublicSchoolHierarchy, type PublicDirectoryResult } from "@/lib/data/public-data-engine";
+import { getSchoolProfile } from "@/lib/data/school-profiles";
 
 type StateNode = ReturnType<typeof getPublicSchoolHierarchy>[number];
 type SchoolNode = StateNode["schools"][number];
@@ -65,16 +66,26 @@ export default async function SchoolDetailPage({ params }: { params: Promise<{ s
     return <PublicSiteShell variant="dark"><section className="min-h-screen bg-[#061331] px-4 py-16 text-white"><div className="mx-auto max-w-4xl rounded-[28px] border border-white/12 bg-white/[0.06] p-8 text-center"><h1 className="text-3xl font-black">School not found</h1><a className="mt-5 inline-flex rounded-xl bg-[#F2C200] px-5 py-3 text-sm font-black text-[#061331]" href="/schools">Back to Schools</a></div></section></PublicSiteShell>;
   }
   const statePath = `/schools/${state.code.toLowerCase() === "us" ? "national" : state.code.toLowerCase()}`;
+  const schoolProfile = getSchoolProfile(school.id);
   return (
     <PublicSiteShell variant="dark">
       <section className="relative min-h-screen overflow-hidden bg-[#061331] text-white">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(27,63,160,0.55),transparent_34%),linear-gradient(135deg,#061331,#08245B_55%,#061331)]" />
         <div className="absolute inset-0 opacity-[0.16] [background-image:radial-gradient(circle_at_1px_1px,white_1px,transparent_0)] [background-size:22px_22px]" />
+        {schoolProfile?.coverImageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={schoolProfile.coverImageUrl} alt="" className="absolute inset-0 h-[420px] w-full object-cover opacity-30" />
+        ) : null}
         <div className="relative mx-auto max-w-[1440px] px-4 py-14 sm:px-6 lg:px-8">
           <a href={statePath} className="mb-6 inline-flex items-center gap-2 rounded-xl border border-white/14 bg-white/[0.08] px-4 py-2 text-sm font-black text-white"><ArrowLeft size={16} /> {state.name} Schools</a>
           <div className="mb-8 grid gap-6 lg:grid-cols-[180px_1fr_auto] lg:items-end">
             <div className="relative grid aspect-square place-items-center overflow-hidden rounded-[32px] border border-white/14 bg-[radial-gradient(circle_at_74%_18%,rgba(242,194,0,0.5),transparent_20%),linear-gradient(135deg,#10224D,#1B3FA0_54%,#061331)] p-6">
-              <EntityMark entity={{ ref_type: "School", ref_id: school.id, display_name: school.title }} kind="logo" size={104} />
+              {schoolProfile?.logoImageUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={schoolProfile.logoImageUrl} alt={school.title} width={104} height={104} style={{ width: 104, height: 104, borderRadius: 18, objectFit: "contain", background: "#FAFBFD", padding: 12 }} />
+              ) : (
+                <EntityMark entity={{ ref_type: "School", ref_id: school.id, display_name: school.title }} kind="logo" size={104} />
+              )}
             </div>
             <div>
               <div className="text-xs font-black uppercase tracking-[0.28em] text-[#F2C200]">School Hub</div>

@@ -2,6 +2,7 @@ import { ArrowRight, Building2, Search, Trophy, UserRound, Users } from "lucide-
 import { PublicSiteShell } from "@/components/public-site-shell";
 import { MiniChannel, SchoolTile, StateRail, slug, stateSlug } from "@/components/schools-directory-navigator";
 import { getPublicSchoolHierarchy } from "@/lib/data/public-data-engine";
+import { getStateProfile } from "@/lib/data/state-profiles";
 
 function findState(value: string) {
   const normalized = value.toLowerCase();
@@ -19,20 +20,32 @@ export default async function StateSchoolsPage({ params }: { params: Promise<{ s
   const teamCount = state.schools.reduce((total, school) => total + school.teams.length, 0);
   const athleteCount = state.schools.reduce((total, school) => total + school.athletes.length, 0);
   const coachCount = state.schools.reduce((total, school) => total + school.coaches.length, 0);
+  const profile = getStateProfile(state.code);
+  const displayName = profile?.displayName || state.name;
   return (
     <PublicSiteShell variant="dark">
       <section className="relative min-h-screen overflow-hidden bg-[#061331] text-white">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(27,63,160,0.55),transparent_34%),linear-gradient(135deg,#061331,#08245B_55%,#061331)]" />
         <div className="absolute inset-0 opacity-[0.16] [background-image:radial-gradient(circle_at_1px_1px,white_1px,transparent_0)] [background-size:22px_22px]" />
+        {profile?.coverImageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={profile.coverImageUrl} alt="" className="absolute inset-0 h-[420px] w-full object-cover opacity-30" />
+        ) : null}
         <div className="relative mx-auto max-w-[1560px] px-4 py-10 sm:px-6 lg:px-8">
           <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
             <StateRail states={states} activeCode={state.code} />
             <div className="min-w-0">
               <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
                 <div>
-                  <div className="text-xs font-black uppercase tracking-[0.28em] text-[#F2C200]">{state.code} School Folder</div>
-                  <h1 className="mt-4 max-w-5xl text-4xl font-black tracking-tight sm:text-5xl">{state.name} schools</h1>
-                  <p className="mt-3 max-w-3xl text-sm font-semibold leading-6 text-[#C8D6FF]">This center panel only shows schools for the selected state. Pick a school to open teams, coaches, athletes, and games.</p>
+                  <div className="flex items-center gap-3">
+                    {profile?.badgeImageUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={profile.badgeImageUrl} alt={`${displayName} badge`} width={44} height={44} style={{ width: 44, height: 44, borderRadius: 12, objectFit: "contain", background: "#FAFBFD", padding: 4 }} />
+                    ) : null}
+                    <div className="text-xs font-black uppercase tracking-[0.28em] text-[#F2C200]">{state.code} School Folder</div>
+                  </div>
+                  <h1 className="mt-4 max-w-5xl text-4xl font-black tracking-tight sm:text-5xl">{profile?.tagline || `${displayName} schools`}</h1>
+                  <p className="mt-3 max-w-3xl text-sm font-semibold leading-6 text-[#C8D6FF]">{profile?.bio || "This center panel only shows schools for the selected state. Pick a school to open teams, coaches, athletes, and games."}</p>
                 </div>
                 <a href="/get-started" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#F2C200] px-5 text-sm font-black text-[#0A1A3F]">Add / Claim School <ArrowRight size={16} /></a>
               </div>

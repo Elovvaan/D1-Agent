@@ -16,6 +16,7 @@ const OPERATOR_INBOX_FILE = "operator-inbox.json";
 const OPERATOR_DATA_INTAKE_FILE = "operator-data-intake.json";
 const OPERATOR_NCES_RUNS_FILE = "operator-nces-runs.json";
 const STATE_PROFILES_FILE = "state-profiles.json";
+const SCHOOL_PROFILES_FILE = "school-profiles.json";
 const PAGE_PROFILES_FILE = "page-profiles.json";
 
 type ExtractedAthlete = { name: string; school: string; city?: string; state?: string };
@@ -52,6 +53,21 @@ export async function saveStateProfile(formData: FormData) {
   revalidatePath("/operations");
   revalidatePath("/operations/profile-manager");
   redirect(`/operations?tab=${returnTab}&state=${stateCode}&status=state-profile-saved`);
+}
+
+export async function saveSchoolProfile(formData: FormData) {
+  const schoolId = value(formData, "schoolId");
+  const schoolSlug = value(formData, "schoolSlug");
+  const stateCode = value(formData, "stateCode").toUpperCase();
+  const returnTab = value(formData, "returnTab") || "schools";
+  if (!schoolId) redirect("/operations/profile-manager?status=missing-school");
+  await appendUserState(SCHOOL_PROFILES_FILE, { id: `school-profile-${schoolId}-${randomUUID()}`, schoolId, logoImageUrl: value(formData, "logoImageUrl"), coverImageUrl: value(formData, "coverImageUrl"), updatedAt: new Date().toISOString() });
+  await audit("school-profile-saved", { schoolId, stateCode });
+  revalidatePath("/schools");
+  if (stateCode) revalidatePath(`/schools/${stateCode.toLowerCase()}`);
+  if (stateCode && schoolSlug) revalidatePath(`/schools/${stateCode.toLowerCase()}/${schoolSlug}`);
+  revalidatePath("/operations/profile-manager");
+  redirect(`/operations/profile-manager?tab=${returnTab}&state=${stateCode}&school=${schoolId}&status=school-profile-saved`);
 }
 
 export async function savePageProfile(formData: FormData) {
