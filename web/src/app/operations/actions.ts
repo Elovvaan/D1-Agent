@@ -1,13 +1,12 @@
 "use server";
 
 import { randomUUID } from "node:crypto";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { resolve } from "node:path";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { ncesCcdAdapter } from "@/lib/data/adapters/nces-ccd-adapter";
 import type { RawInput } from "@/lib/data/adapters/types";
+import { appendUserState } from "@/lib/data/platform-storage";
 
 const OPERATOR_COOKIE = "myd1_operator_access";
 const OPERATOR_COOKIE_VALUE = "granted";
@@ -21,9 +20,6 @@ type ExtractedAthlete = { name: string; school: string; city?: string; state?: s
 type ExtractedCoach = { name: string; roles: string[]; school?: string; sport?: string; state?: string };
 
 function value(formData: FormData, key: string) { return String(formData.get(key) ?? "").trim(); }
-function userStatePath(fileName: string) { return resolve(process.cwd(), "..", "data", "user-state", fileName); }
-async function readJsonFile<T>(filePath: string, fallback: T): Promise<T> { try { return JSON.parse(await readFile(filePath, "utf8")) as T; } catch { return fallback; } }
-async function appendUserState(fileName: string, entry: Record<string, unknown>) { const dir = resolve(process.cwd(), "..", "data", "user-state"); const filePath = userStatePath(fileName); await mkdir(dir, { recursive: true }); const existing = await readJsonFile<{ items?: Array<Record<string, unknown>> }>(filePath, { items: [] }); const items = Array.isArray(existing.items) ? existing.items : []; await writeFile(filePath, `${JSON.stringify({ items: [entry, ...items].slice(0, 300) }, null, 2)}\n`, "utf8"); }
 async function audit(action: string, payload: Record<string, unknown>) { await appendUserState(OPERATOR_AUDIT_FILE, { id: `operator-${randomUUID()}`, action, occurredAt: new Date().toISOString(), ...payload }); }
 
 function stripHtml(html: string) { return html.replace(/<script[\s\S]*?<\/script>/gi, "\n").replace(/<style[\s\S]*?<\/style>/gi, "\n").replace(/<[^>]+>/g, "\n").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&nbsp;/g, " ").replace(/\s+\n/g, "\n").replace(/\n\s+/g, "\n"); }
