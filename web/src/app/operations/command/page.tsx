@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { Bot, Camera, Database, FileSpreadsheet, Home, ImageIcon, Save, Search, ShieldCheck, Trophy, UserRound, Users, type LucideIcon } from "lucide-react";
+import { AssetInput } from "@/components/operations/asset-input";
 import { allStates, stateSlug } from "@/components/schools-directory-navigator";
 import { getPublicSchoolHierarchy } from "@/lib/data/public-data-engine";
 import { readJsonSync, userStatePath } from "@/lib/data/platform-storage";
@@ -56,8 +57,8 @@ function ColorInput({ label, name, defaultValue }: { label: string; name: string
 }
 
 function AssetPicker({ label, name, currentUrl, accept, helper }: { label: string; name: string; currentUrl?: string; accept: string; helper: string }) {
-  const urlName = name === "coverImageFile" ? "coverImageUrl" : name === "badgeImageFile" ? "badgeImageUrl" : "featureVideoUrl";
-  return <div className="rounded-[24px] border border-white/10 bg-white/[0.06] p-4"><input type="hidden" name={urlName} value={currentUrl ?? ""} /><div className="flex gap-4"><div className="grid h-20 w-28 shrink-0 place-items-center overflow-hidden rounded-2xl border border-white/10 bg-[#061331]">{currentUrl && accept.startsWith("image") ? <img src={currentUrl} alt="Current asset" className="h-full w-full object-cover" /> : <ImageIcon className="text-[#F2C200]" />}</div><div className="min-w-0 flex-1"><p className="text-sm font-black text-white">{label}</p><p className="mt-1 text-xs font-semibold leading-5 text-[#AFC1F7]">{helper}</p><label className="mt-3 inline-flex cursor-pointer rounded-2xl bg-[#F2C200] px-4 py-2 text-xs font-black text-[#061331]">Choose file<input className="hidden" type="file" name={name} accept={accept} /></label>{currentUrl ? <p className="mt-2 truncate text-[11px] font-semibold text-[#9DB5FF]">Current: {currentUrl}</p> : <p className="mt-2 text-[11px] font-semibold text-[#9DB5FF]">No asset selected yet.</p>}</div></div></div>;
+  const fieldName = name === "coverImageFile" ? "coverImageUrl" : name === "badgeImageFile" ? "badgeImageUrl" : "featureVideoUrl";
+  return <AssetInput label={label} fieldName={fieldName} currentUrl={currentUrl} accept={accept} helper={helper} />;
 }
 
 function PreviewLink({ href, back }: { href: string; back: string }) {
