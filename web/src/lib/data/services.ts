@@ -60,3 +60,19 @@ export function searchPublicDirectory(query: string) { const normalized = query.
 export function getPublicDirectoryCounters(): PublicDirectoryCounters { const results = buildPublicDirectoryIndex(); const count = (group: PublicDirectoryGroupName) => results.filter((item) => item.group === group).length; return { schools: count("Schools"), teams: count("Teams"), athletes: count("Athletes"), coaches: count("Coaches"), games: count("Games"), sources: count("Sources"), recordsImported: results.length, pendingReview: getDirectoryGraph().nodes.filter((node) => node.reviewStatus === "pending_review").length }; }
 export function getPublicDirectoryDiscoverySections(): PublicDirectorySection[] { return searchPublicDirectory("").map((group) => ({ title: group.group, caption: `${group.results.length} public records`, results: group.results.slice(0, 8) })); }
 export function getPublicDirectoryRecord(id: string) { const graphNode = getDirectoryGraphNode("", id) ?? getDirectoryGraph().nodes.find((node) => node.id === id); const result = buildPublicDirectoryIndex().find((item) => item.id === id); if (!result) return null; return { ...result, entity: result, title: result.title, fields: graphNode?.fields ?? [{ name: "name", value: result.title }, { name: "detail", value: result.detail }], graphNode, typeLabel: result.typeLabel }; }
+
+export type PublicProfileIntake = {
+  measurables?: Record<string, string>;
+  academics?: Record<string, string>;
+  athletics?: Record<string, string>;
+  sources?: Record<string, string>;
+  updatedAt?: string;
+};
+
+export function getPublicProfileIntake(): PublicProfileIntake {
+  return readUserState<PublicProfileIntake>("profile-intake.json", {});
+}
+
+export function getPublicStatsReviewQueue(athleteId = defaultAthleteId): StatLine[] {
+  return getStats(athleteId).filter((stat) => stat.source !== "self");
+}
