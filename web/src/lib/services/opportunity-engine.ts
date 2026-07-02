@@ -6,6 +6,13 @@ export interface OpportunityInputs {
   daysSinceFilm: number;
 }
 
+type OpportunityScoreContext = {
+  matches?: unknown[];
+  opportunities?: Array<{ type?: string }>;
+  films?: unknown[];
+  [key: string]: unknown;
+};
+
 export class OpportunityEngine {
   computeScore(inputs: OpportunityInputs) {
     const freshness = Math.max(0, 20 - inputs.daysSinceFilm * 2);
@@ -24,7 +31,7 @@ export class OpportunityEngine {
     };
   }
 
-  score(input: { matches?: unknown[]; opportunities?: Array<{ type?: string }>; films?: unknown[] }) {
+  score(input: OpportunityScoreContext) {
     const opportunities = input.opportunities ?? [];
     return this.computeScore({
       recentProfileViews: 0,
