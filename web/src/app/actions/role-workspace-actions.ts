@@ -1,6 +1,6 @@
 "use server";
 
-import { put } from "@vercel/blob";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { revalidatePath } from "next/cache";
@@ -17,7 +17,7 @@ type SavedUpload = {
   size: number;
   type: string;
   uploadedAt: string;
-  storage: "vercel-blob" | "local-public";
+  storage: "railway-r2" | "local-public";
 };
 
 const ROLE_PROFILE_PHOTO_MAX_BYTES = 5 * 1024 * 1024;
@@ -39,6 +39,33 @@ async function readJsonFile<T>(filePath: string, fallback: T): Promise<T> {
   }
 }
 
+function hasRailwayR2Config() {
+  return Boolean(
+    process.env.RAILWAY_R2_ENDPOINT &&
+    process.env.RAILWAY_R2_ACCESS_KEY_ID &&
+    process.env.RAILWAY_R2_SECRET_ACCESS_KEY &&
+    process.env.RAILWAY_R2_BUCKET &&
+    process.env.RAILWAY_R2_PUBLIC_URL
+  );
+}
+
+function r2Client() {
+  return new S3Client({
+    region: process.env.RAILWAY_R2_REGION || "auto",
+    endpoint: process.env.RAILWAY_R2_ENDPOINT,
+    forcePathStyle: true,
+    credentials: {
+      accessKeyId: process.env.RAILWAY_R2_ACCESS_KEY_ID || "",
+      secretAccessKey: process.env.RAILWAY_R2_SECRET_ACCESS_KEY || ""
+    }
+  });
+}
+
+function publicR2Url(key: string) {
+  const base = String(process.env.RAILWAY_R2_PUBLIC_URL || "").replace(/\/$/, "");
+  return `${base}/${key}`;
+}
+
 async function saveLocalPublicImage(file: File, safeName: string, uploadedAt: string): Promise<SavedUpload> {
   const uploadsDir = resolve(process.cwd(), "public", "uploads", "role-profiles");
   await mkdir(uploadsDir, { recursive: true });
@@ -54,19 +81,27 @@ async function saveLocalPublicImage(file: File, safeName: string, uploadedAt: st
   };
 }
 
-async function saveDurableBlobImage(file: File, safeName: string, uploadedAt: string): Promise<SavedUpload> {
-  const blob = await put(`role-profiles/${safeName}`, file, {
-    access: "public",
-    addRandomSuffix: false
-  });
+async function saveRailwayR2Image(file: File, safeName: string, uploadedAt: string): Promise<SavedUpload> {
+  const key = `role-profiles/${safeName}`;
+  const body = Buffer.from(await file.arrayBuffer());
+
+  await r2Client().send(
+    new PutObjectCommand({
+      Bucket: process.env.RAILWAY_R2_BUCKET,
+      Key: key,
+      Body: body,
+      ContentType: file.type || "application/octet-stream",
+      CacheControl: "public, max-age=31536000, immutable"
+    })
+  );
 
   return {
     name: file.name,
-    url: blob.url,
+    url: publicR2Url(key),
     size: file.size,
     type: file.type,
     uploadedAt,
-    storage: "vercel-blob"
+    storage: "railway-r2"
   };
 }
 
@@ -78,8 +113,8 @@ async function saveUploadedImage(file: File, role: string): Promise<SavedUpload>
   const uploadedAt = new Date().toISOString();
   const safeName = `${role}-profile-${Date.now()}-${cleanFileName(file.name)}`;
 
-  if (process.env.BLOB_READ_WRITE_TOKEN) {
-    return saveDurableBlobImage(file, safeName, uploadedAt);
+  if (hasRailwayR2Config()) {
+    return saveRailwayR2Image(file, safeName, uploadedAt);
   }
 
   return saveLocalPublicImage(file, safeName, uploadedAt);
@@ -123,7 +158,7 @@ export async function saveRoleWorkspaceProfilePicture(_prevState: RoleProfilePho
 
     return {
       status: "success",
-      message: upload.storage === "vercel-blob" ? "Profile picture saved to durable Blob storage." : "Profile picture saved locally. Add BLOB_READ_WRITE_TOKEN for durable storage.",
+      message: upload.storage === "railway-r2" ? "Profile picture saved to Railway durable storage." : "Profile picture saved locally. Add Railway R2 variables for durable storage.",
       photoUrl: upload.url
     };
   } catch (error) {
