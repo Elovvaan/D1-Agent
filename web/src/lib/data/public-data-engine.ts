@@ -6,7 +6,7 @@ export type { PublicDirectoryResult };
 
 export type PublicStateNode = NavigationStateNode;
 
-const groupOrder: PublicDirectoryResult["group"][] = ["Athletes", "Schools", "Teams", "Rankings", "Games", "Coaches", "Sources", "Organizations"];
+const groupOrder: PublicDirectoryResult["group"][] = ["States", "Athletes", "Schools", "Teams", "Rankings", "Games", "Coaches", "Sources", "Organizations"];
 
 function mergeGroups(groups: Array<{ group: PublicDirectoryResult["group"]; results: PublicDirectoryResult[] }>) {
   const buckets = new Map<PublicDirectoryResult["group"], PublicDirectoryResult[]>();

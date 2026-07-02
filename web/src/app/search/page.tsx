@@ -5,7 +5,7 @@ import { PublicSiteShell } from "@/components/public-site-shell";
 import { searchPublicData, type PublicDirectoryResult } from "@/lib/data/public-data-engine";
 import type { IdentityRefType } from "@/lib/asset-identity/types";
 
-const quickTypes = ["Schools", "Teams", "Athletes", "Coaches", "Games"];
+const quickTypes = ["States", "Schools", "Teams", "Athletes", "Coaches", "Games"];
 const browseSports = ["Football", "Basketball", "Baseball", "Soccer", "Track & Field", "Volleyball", "Wrestling", "Softball", "Tennis", "Golf", "Lacrosse", "Swimming"];
 
 function refTypeForGroup(group: string): IdentityRefType {
@@ -16,6 +16,7 @@ function refTypeForGroup(group: string): IdentityRefType {
 }
 
 function toneForGroup(group: string) {
+  if (group === "States") return "navy" as const;
   if (group === "Schools") return "green" as const;
   if (group === "Athletes") return "yellow" as const;
   if (group === "Teams") return "blue" as const;

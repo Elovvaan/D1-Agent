@@ -7,7 +7,7 @@ import { getStateProfile } from "@/lib/data/state-profiles";
 export default function SchoolsPage() {
   const counters = getPublicDataCounters();
   const states = getPublicSchoolHierarchy();
-  const selectedState = states[0];
+  const selectedState = states.find((state) => state.schools.length > 0) ?? states[0];
   const selectedStateProfile = selectedState ? getStateProfile(selectedState.code) : undefined;
   const selectedStateSlug = selectedState ? stateSlug(selectedState) : "";
   const teamCount = selectedState?.schools.reduce((total, school) => total + school.teams.length, 0) ?? 0;
