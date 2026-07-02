@@ -11,8 +11,9 @@ const statusCopy: Record<string, string> = {
   "progression-error": "Athlete progression could not be saved. Please try again."
 };
 
-function confidenceLabel(stat: { confidence?: number }) {
-  return typeof stat.confidence === "number" ? `Public Record - ${Math.round(stat.confidence * 100)}% match` : "Public Record";
+function confidenceLabel(stat: unknown) {
+  const confidence = typeof stat === "object" && stat !== null && "confidence" in stat ? (stat as { confidence?: unknown }).confidence : undefined;
+  return typeof confidence === "number" ? `Public Record - ${Math.round(confidence * 100)}% match` : "Public Record";
 }
 
 export default async function PerformancePage({ searchParams }: { searchParams?: Promise<{ status?: string }> }) {
