@@ -39,10 +39,6 @@ function normalizeState(value?: string) {
   return stateMatch?.[1] ?? "US";
 }
 
-function schoolNameFromDetail(detail: string) {
-  return detail.split(" - ")[0]?.trim() || "School not set";
-}
-
 function mergeGroups(groups: Array<{ group: PublicDirectoryResult["group"]; results: PublicDirectoryResult[] }>) {
   const buckets = new Map<PublicDirectoryResult["group"], PublicDirectoryResult[]>();
   const seen = new Set<string>();
@@ -57,6 +53,11 @@ function mergeGroups(groups: Array<{ group: PublicDirectoryResult["group"]; resu
   return groupOrder.map((group) => ({ group, results: buckets.get(group) ?? [] })).filter((group) => group.results.length > 0);
 }
 
+function resultMentionsSchool(result: PublicDirectoryResult, schoolTitle: string) {
+  const haystack = `${result.title} ${result.detail} ${result.href}`.toLowerCase();
+  return haystack.includes(schoolTitle.toLowerCase());
+}
+
 function groupByState(results: PublicDirectoryResult[]) {
   const stateMap = new Map<string, PublicStateNode>();
   const schools = results.filter((result) => result.group === "Schools");
@@ -68,46 +69,30 @@ function groupByState(results: PublicDirectoryResult[]) {
     if (!stateMap.has(code)) stateMap.set(code, { code, name: stateNames[code] ?? (code === "US" ? "National / Unsorted" : code), schools: [] });
     return stateMap.get(code)!;
   };
+
   const schoolNodes = new Map<string, PublicStateNode["schools"][number]>();
   for (const school of schools) {
     const code = normalizeState(`${school.title} ${school.detail}`);
     const state = ensureState(code);
     const node = { id: school.id, title: school.title, detail: school.detail, href: school.href, typeLabel: school.typeLabel, teams: [], coaches: [], athletes: [], games: [] };
     state.schools.push(node);
+    schoolNodes.set(school.id, node);
     schoolNodes.set(school.title.toLowerCase(), node);
   }
-  const ensureSchool = (name: string, detail: string, fallbackCode: string) => {
-    const key = name.toLowerCase();
-    const existing = schoolNodes.get(key);
-    if (existing) return existing;
-    const state = ensureState(fallbackCode);
-    const node = { id: `derived-school-${name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`, title: name, detail, href: `/directory/school/${name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`, typeLabel: "School", teams: [], coaches: [], athletes: [], games: [] };
-    state.schools.push(node);
-    schoolNodes.set(key, node);
-    return node;
-  };
-  for (const athlete of athletes) {
-    const code = normalizeState(athlete.detail);
-    const schoolName = schoolNameFromDetail(athlete.detail);
-    ensureSchool(schoolName, athlete.detail, code).athletes.push(athlete);
+
+  for (const school of schoolNodes.values()) {
+    for (const team of teams.filter((item) => resultMentionsSchool(item, school.title))) {
+      school.teams.push({ id: team.id, title: team.title, detail: team.detail, href: team.href, typeLabel: team.typeLabel, coaches: [], athletes: [], games: [] });
+    }
+    school.athletes.push(...athletes.filter((item) => resultMentionsSchool(item, school.title)));
+    school.coaches.push(...coaches.filter((item) => resultMentionsSchool(item, school.title)));
+    school.games.push(...games.filter((item) => resultMentionsSchool(item, school.title)));
   }
-  for (const coach of coaches) {
-    const code = normalizeState(coach.detail);
-    const schoolName = schoolNameFromDetail(coach.detail);
-    ensureSchool(schoolName, coach.detail, code).coaches.push(coach);
-  }
-  for (const game of games) {
-    const code = normalizeState(game.detail);
-    const schoolName = schoolNameFromDetail(game.detail);
-    ensureSchool(schoolName, game.detail, code).games.push(game);
-  }
-  for (const team of teams) {
-    const code = normalizeState(team.detail);
-    const schoolName = schoolNameFromDetail(team.detail);
-    const school = ensureSchool(schoolName, team.detail, code);
-    school.teams.push({ id: team.id, title: team.title, detail: team.detail, href: team.href, typeLabel: team.typeLabel, coaches: [], athletes: [], games: [] });
-  }
-  return [...stateMap.values()].sort((a, b) => a.name.localeCompare(b.name)).map((state) => ({ ...state, schools: state.schools.sort((a, b) => a.title.localeCompare(b.title)) }));
+
+  return [...stateMap.values()]
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((state) => ({ ...state, schools: state.schools.sort((a, b) => a.title.localeCompare(b.title)) }))
+    .filter((state) => state.schools.length > 0);
 }
 
 export function searchPublicData(query: string) {
@@ -135,8 +120,8 @@ export function getPublicSchoolResults(limit = 12) {
 }
 
 export function getPublicSchoolHierarchy() {
-  const base = ["", "school", "athlete", "team", "coach", "game"].flatMap((query) => searchPublicDirectory(query).flatMap((group) => group.results));
-  const intake = getOperationsIntakeDirectoryResults();
+  const base = ["", "school"].flatMap((query) => searchPublicDirectory(query).flatMap((group) => group.results));
+  const intake = getOperationsIntakeDirectoryResults().filter((result) => result.group === "Schools");
   const unique = new Map<string, PublicDirectoryResult>();
   for (const result of [...base, ...intake]) unique.set(`${result.group}-${result.id}-${result.href}-${result.sourceUrl ?? ""}`, result);
   return groupByState([...unique.values()]);
