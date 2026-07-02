@@ -1,8 +1,7 @@
 import Link from "next/link";
-import { existsSync, readFileSync } from "node:fs";
-import { resolve } from "node:path";
 import { cookies } from "next/headers";
 import { ArrowLeft, Database, Upload } from "lucide-react";
+import { readJsonSync, userStatePath } from "@/lib/data/platform-storage";
 import { ingestNcesCcdCsv } from "../actions";
 
 const OPERATOR_COOKIE = "myd1_operator_access";
@@ -11,14 +10,7 @@ const OPERATOR_COOKIE_VALUE = "granted";
 type NcesRun = { id: string; fileName?: string; proposalCount?: number; autoSeeded?: number; status?: string; detection?: { confidence?: number } };
 
 function readRuns() {
-  try {
-    const filePath = resolve(process.cwd(), "..", "data", "user-state", "operator-nces-runs.json");
-    if (!existsSync(filePath)) return [] as NcesRun[];
-    const parsed = JSON.parse(readFileSync(filePath, "utf8")) as { items?: NcesRun[] };
-    return parsed.items ?? [];
-  } catch {
-    return [] as NcesRun[];
-  }
+  return readJsonSync<{ items?: NcesRun[] }>(userStatePath("operator-nces-runs.json"), { items: [] }).items ?? [];
 }
 
 export default async function NcesOperationsPage({ searchParams }: { searchParams?: Promise<{ status?: string }> }) {
