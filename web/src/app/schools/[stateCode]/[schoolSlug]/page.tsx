@@ -1,15 +1,12 @@
 import { ArrowLeft, ArrowRight, Building2, CalendarDays, Trophy, UserRound, Users } from "lucide-react";
 import { EntityMark } from "@/components/entity-mark";
 import { PublicSiteShell } from "@/components/public-site-shell";
+import { slug } from "@/components/schools-directory-navigator";
 import { getPublicSchoolHierarchy, type PublicDirectoryResult } from "@/lib/data/public-data-engine";
 import { getSchoolProfile } from "@/lib/data/school-profiles";
 
 type StateNode = ReturnType<typeof getPublicSchoolHierarchy>[number];
 type SchoolNode = StateNode["schools"][number];
-
-function slug(value: string) {
-  return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-}
 
 function findState(value: string) {
   const normalized = value.toLowerCase();

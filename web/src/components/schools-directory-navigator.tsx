@@ -2,6 +2,7 @@ import { ArrowRight, type LucideIcon } from "lucide-react";
 import { EntityMark } from "@/components/entity-mark";
 import type { PublicStateNode } from "@/lib/data/public-data-engine";
 import { getSchoolProfile } from "@/lib/data/school-profiles";
+import { decodeHtmlEntities } from "@/lib/text";
 
 type StateNode = PublicStateNode;
 type SchoolNode = StateNode["schools"][number];
@@ -13,7 +14,7 @@ export const allStates: StateIndexItem[] = [
 ];
 
 export function slug(value: string) {
-  return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  return decodeHtmlEntities(value).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 }
 
 export function stateSlug(state: StateNode) {
