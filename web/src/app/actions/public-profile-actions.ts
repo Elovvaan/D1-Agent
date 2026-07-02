@@ -172,7 +172,7 @@ export async function saveProfileDetails(formData: FormData) {
 
     revalidatePath("/");
     revalidatePath("/profile");
-    revalidatePath("/athletes/athlete-jayden-lewis");
+    revalidatePath("/athletes/athlete-current");
   } catch {
     status = "profile-error";
   }
@@ -196,6 +196,7 @@ export async function saveProfilePicture(_prevState: ProfilePictureActionState, 
     await writeFile(filePath, `${JSON.stringify({ ...existing, avatarUrl: upload.url, avatarUpdatedAt: upload.uploadedAt }, null, 2)}\n`, "utf8");
     revalidatePath("/");
     revalidatePath("/profile");
+    revalidatePath("/athletes/athlete-current");
     return {
       status: "success",
       message: "Profile picture saved and updated across the app.",
@@ -223,7 +224,7 @@ export async function saveTranscriptUpload(formData: FormData) {
     revalidatePath("/");
     revalidatePath("/profile");
     revalidatePath("/trust");
-    revalidatePath("/athletes/athlete-jayden-lewis");
+    revalidatePath("/athletes/athlete-current");
   } catch {
     status = "transcript-error";
   }
@@ -281,7 +282,7 @@ export async function savePublicProfileIntake(formData: FormData) {
     revalidatePath("/");
     revalidatePath("/profile");
     revalidatePath("/trust");
-    revalidatePath("/athletes/athlete-jayden-lewis");
+    revalidatePath("/athletes/athlete-current");
   } catch {
     status = "public-profile-intake-error";
   }
@@ -331,7 +332,7 @@ export async function saveAthleticPerformanceIntake(formData: FormData) {
     revalidatePath("/");
     revalidatePath("/profile");
     revalidatePath("/performance");
-    revalidatePath("/athletes/athlete-jayden-lewis");
+    revalidatePath("/athletes/athlete-current");
   } catch {
     status = "performance-error";
   }
@@ -365,7 +366,7 @@ export async function saveAthleteProgression(formData: FormData) {
     revalidatePath("/");
     revalidatePath("/profile");
     revalidatePath("/performance");
-    revalidatePath("/athletes/athlete-jayden-lewis");
+    revalidatePath("/athletes/athlete-current");
   } catch {
     status = "progression-error";
   }
@@ -406,7 +407,7 @@ export async function saveSupportingDocument(formData: FormData) {
     revalidatePath("/");
     revalidatePath("/profile");
     revalidatePath("/trust");
-    revalidatePath("/athletes/athlete-jayden-lewis");
+    revalidatePath("/athletes/athlete-current");
   } catch {
     status = "supporting-document-error";
   }
@@ -431,7 +432,7 @@ export async function saveBrandLinks(formData: FormData) {
     await mkdir(dir, { recursive: true });
     await writeFile(filePath, `${JSON.stringify({ ...links, updatedAt: new Date().toISOString() }, null, 2)}\n`, "utf8");
     revalidatePath("/profile");
-    revalidatePath("/athletes/athlete-jayden-lewis");
+    revalidatePath("/athletes/athlete-current");
   } catch {
     status = "brand-links-error";
   }
@@ -482,7 +483,7 @@ export async function saveHeroPlayerPhoto(formData: FormData) {
     await writeFile(filePath, `${JSON.stringify({ ...existing, playerCutoutUrl: upload.url, playerCutoutUpdatedAt: upload.uploadedAt }, null, 2)}\n`, "utf8");
     revalidatePath("/");
     revalidatePath("/profile");
-    revalidatePath("/athletes/athlete-jayden-lewis");
+    revalidatePath("/athletes/athlete-current");
   } catch {
     status = "hero-player-photo-error";
   }
@@ -516,7 +517,7 @@ export async function saveHeroBackgroundVideo(formData: FormData) {
     );
     revalidatePath("/");
     revalidatePath("/profile");
-    revalidatePath("/athletes/athlete-jayden-lewis");
+    revalidatePath("/athletes/athlete-current");
   } catch {
     status = "hero-background-video-error";
   }
