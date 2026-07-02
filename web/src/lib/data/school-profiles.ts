@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { readJsonSync, userStatePath } from "@/lib/data/platform-storage";
 
 export type SchoolProfile = {
@@ -7,7 +8,7 @@ export type SchoolProfile = {
   updatedAt?: string;
 };
 
-export function getSchoolProfiles() {
+export const getSchoolProfiles = cache(() => {
   const stored = readJsonSync<{ items?: SchoolProfile[] }>(userStatePath("school-profiles.json"), { items: [] }).items ?? [];
   const latest = new Map<string, SchoolProfile>();
   for (const profile of stored) {
@@ -16,7 +17,7 @@ export function getSchoolProfiles() {
     latest.set(profile.schoolId, profile);
   }
   return latest;
-}
+});
 
 export function getSchoolProfile(schoolId: string) {
   return getSchoolProfiles().get(schoolId);
