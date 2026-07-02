@@ -24,6 +24,17 @@ export class OpportunityEngine {
     };
   }
 
+  score(input: { matches?: unknown[]; opportunities?: Array<{ type?: string }>; films?: unknown[] }) {
+    const opportunities = input.opportunities ?? [];
+    return this.computeScore({
+      recentProfileViews: 0,
+      activeMatches: input.matches?.length ?? 0,
+      coachOpens: opportunities.filter((item) => item.type === "coach_open").length,
+      recruiterReplies: opportunities.filter((item) => item.type === "new_match").length,
+      daysSinceFilm: input.films?.length ? 1 : 30
+    });
+  }
+
   rankFeed<T extends { relevance: number }>(opportunities: T[]) {
     return [...opportunities].sort((a, b) => b.relevance - a.relevance);
   }
