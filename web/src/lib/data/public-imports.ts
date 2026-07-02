@@ -196,7 +196,7 @@ export function getReviewActions(entityType: string): ReviewAction[] {
 }
 
 export function getField(entity: PublicImportedEntity, name: string) {
-  return entity.fields.find((field) => field.name)?.value;
+  return entity.fields.find((field) => field.name === name)?.value;
 }
 
 export function formatImportDate(value: string) {
