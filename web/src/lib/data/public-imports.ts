@@ -53,6 +53,10 @@ type StoredPublicReviewAction = {
   occurredAt?: string;
 };
 
+function isStoredPublicReviewAction(action: StoredPublicReviewAction | null): action is StoredPublicReviewAction {
+  return action !== null && action.kind === "public-review" && Boolean(action.entityId);
+}
+
 async function getStoredReviewActions() {
   let files: string[] = [];
   try {
@@ -69,7 +73,7 @@ async function getStoredReviewActions() {
       }
     })
   );
-  return actions.filter((action): action is StoredPublicReviewAction => Boolean(action) && action.kind === "public-review" && Boolean(action.entityId));
+  return actions.filter(isStoredPublicReviewAction);
 }
 
 export async function getPublicImportRuns(): Promise<PublicImportResult[]> {
