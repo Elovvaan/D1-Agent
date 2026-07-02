@@ -1,10 +1,9 @@
 "use server";
 
 import { randomUUID } from "node:crypto";
-import { mkdir, writeFile } from "node:fs/promises";
-import { resolve } from "node:path";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { writePublicAction } from "@/lib/data/platform-storage";
 
 function value(formData: FormData, key: string) {
   return String(formData.get(key) ?? "");
@@ -13,9 +12,7 @@ function value(formData: FormData, key: string) {
 async function writeAction(kind: string, payload: Record<string, string>) {
   const now = new Date().toISOString();
   const id = `${kind}-${randomUUID()}`;
-  const dir = resolve(process.cwd(), "..", "data", "public-actions");
-  await mkdir(dir, { recursive: true });
-  await writeFile(resolve(dir, `${id}.json`), `${JSON.stringify({ id, kind, occurredAt: now, ...payload }, null, 2)}\n`, "utf8");
+  await writePublicAction(id, { id, kind, occurredAt: now, ...payload });
   return id;
 }
 
