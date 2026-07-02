@@ -9,6 +9,7 @@ import type {
 } from "@d1/shared";
 
 const importsDir = resolve(process.cwd(), "..", "data", "imports");
+const publicActionsDir = resolve(process.cwd(), "..", "data", "public-actions");
 
 export interface ImportHistoryItem {
   runId: string;
@@ -40,6 +41,35 @@ export interface ImportedPlayerSummary {
   profileUrl?: string;
   sourceUrl: string;
   fields: PublicImportedField[];
+}
+
+type StoredPublicReviewAction = {
+  id?: string;
+  kind?: string;
+  action?: string;
+  entityId?: string;
+  entityType?: string;
+  sourceUrl?: string;
+  occurredAt?: string;
+};
+
+async function getStoredReviewActions() {
+  let files: string[] = [];
+  try {
+    files = await readdir(publicActionsDir);
+  } catch {
+    return [] as StoredPublicReviewAction[];
+  }
+  const actions = await Promise.all(
+    files.filter((file) => file.endsWith(".json")).map(async (file) => {
+      try {
+        return JSON.parse(await readFile(join(publicActionsDir, file), "utf8")) as StoredPublicReviewAction;
+      } catch {
+        return null;
+      }
+    })
+  );
+  return actions.filter((action): action is StoredPublicReviewAction => Boolean(action) && action.kind === "public-review" && Boolean(action.entityId));
 }
 
 export async function getPublicImportRuns(): Promise<PublicImportResult[]> {
@@ -82,10 +112,16 @@ export async function getPublicDataReviewQueue() {
   const run = await getLatestPublicImportRun();
   if (!run) return { run: null, items: [] as Array<PublicReviewQueueItem & { entity?: PublicImportedEntity }> };
 
-  const items = run.reviewQueue.map((item) => ({
-    ...item,
-    entity: run.entities.find((entity) => entity.id === item.importedEntityId)
-  }));
+  const actions = await getStoredReviewActions();
+  const reviewedEntityIds = new Set(actions.map((action) => action.entityId).filter(Boolean));
+  const reviewedQueueIds = new Set(actions.map((action) => action.id?.replace(/^public-review-/, "")).filter(Boolean));
+
+  const items = run.reviewQueue
+    .filter((item) => !reviewedEntityIds.has(item.importedEntityId) && !reviewedQueueIds.has(item.id))
+    .map((item) => ({
+      ...item,
+      entity: run.entities.find((entity) => entity.id === item.importedEntityId)
+    }));
 
   return { run, items };
 }
