@@ -68,7 +68,7 @@ export async function saveSchoolProfile(formData: FormData) {
   if (publicStateSlug) revalidatePath(`/schools/${publicStateSlug}`);
   if (publicStateSlug && schoolSlug) revalidatePath(`/schools/${publicStateSlug}/${schoolSlug}`);
   revalidatePath("/operations/profile-manager");
-  redirect(`/operations/profile-manager?tab=${returnTab}&state=${stateCode}&school=${schoolId}&status=school-profile-saved`);
+  redirect(`/operations/profile-manager?tab=${returnTab}&state=${stateCode}&school=${encodeURIComponent(schoolId)}&status=school-profile-saved`);
 }
 
 export async function savePageProfile(formData: FormData) {
