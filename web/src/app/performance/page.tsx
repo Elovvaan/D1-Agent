@@ -11,6 +11,10 @@ const statusCopy: Record<string, string> = {
   "progression-error": "Athlete progression could not be saved. Please try again."
 };
 
+function confidenceLabel(stat: { confidence?: number }) {
+  return typeof stat.confidence === "number" ? `Public Record - ${Math.round(stat.confidence * 100)}% match` : "Public Record";
+}
+
 export default async function PerformancePage({ searchParams }: { searchParams?: Promise<{ status?: string }> }) {
   const params = searchParams ? await searchParams : {};
   const athlete = getAthleteProfile();
@@ -122,7 +126,7 @@ export default async function PerformancePage({ searchParams }: { searchParams?:
           <Card>
             <SectionTitle title="Imported Public Stats" caption="Only high-confidence public-record matches display as profile stats." />
             {publicStats.length ? (
-              <ObjectList items={publicStats.map((stat) => ({ title: stat.metric, detail: `Public Record - ${Math.round(stat.confidence * 100)}% match`, value: stat.displayValue, icon: ShieldCheck, tone: "green" }))} />
+              <ObjectList items={publicStats.map((stat) => ({ title: stat.metric, detail: confidenceLabel(stat), value: stat.displayValue, icon: ShieldCheck, tone: "green" }))} />
             ) : (
               <p className="rounded-2xl border border-[#E4E9F1] bg-[#FAFBFD] p-4 text-sm font-semibold text-[#66718F]">No public stats found yet.</p>
             )}
