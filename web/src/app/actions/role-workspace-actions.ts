@@ -11,6 +11,11 @@ export type RoleProfilePhotoState = {
   photoUrl?: string;
 };
 
+export type RoleProfileDetailsState = {
+  status: "idle" | "success" | "error";
+  message: string;
+};
+
 type SavedUpload = {
   name: string;
   url: string;
@@ -23,12 +28,26 @@ type SavedUpload = {
 const ROLE_PROFILE_PHOTO_MAX_BYTES = 5 * 1024 * 1024;
 const allowedRoles = new Set(["athlete", "family", "coach", "recruiter", "media", "organization", "admin"]);
 
+const roleProfileFields: Record<string, string[]> = {
+  athlete: ["displayName", "nickname", "city", "sport", "position", "schoolName", "classYear", "bio", "skills"],
+  family: ["displayName", "relationship", "linkedAthlete", "city", "phone", "contactPreference", "bio"],
+  coach: ["displayName", "title", "organizationName", "sport", "city", "teamLevel", "bio"],
+  recruiter: ["displayName", "organizationName", "region", "sportsCovered", "contactEmail", "bio"],
+  media: ["brandName", "contactName", "coverageArea", "services", "website", "bio"],
+  organization: ["organizationName", "schoolType", "city", "state", "sportsOffered", "mainContact", "website", "bio"],
+  admin: ["displayName", "adminRole", "department", "coverageArea", "contactEmail", "bio"]
+};
+
 function cleanFileName(fileName: string) {
   return fileName.replace(/[^a-zA-Z0-9._-]/g, "-").replace(/-+/g, "-");
 }
 
 function userStatePath(fileName: string) {
   return resolve(process.cwd(), "..", "data", "user-state", fileName);
+}
+
+function value(formData: FormData, key: string) {
+  return String(formData.get(key) ?? "").trim();
 }
 
 async function readJsonFile<T>(filePath: string, fallback: T): Promise<T> {
@@ -158,37 +177,78 @@ async function saveUploadedImage(file: File, role: string): Promise<SavedUpload>
   return saveLocalPublicImage(file, safeName, uploadedAt);
 }
 
+function rolePath(role: string) {
+  return role === "organization" ? "/organization" : role === "admin" ? "/operations" : `/${role}`;
+}
+
+async function readRoleWorkspaceFile() {
+  const filePath = userStatePath("role-workspaces.json");
+  const existing = await readJsonFile<Record<string, Record<string, unknown>>>(filePath, {});
+  return { filePath, existing };
+}
+
+async function writeRoleWorkspace(role: string, updates: Record<string, unknown>) {
+  const dir = resolve(process.cwd(), "..", "data", "user-state");
+  await mkdir(dir, { recursive: true });
+  const { filePath, existing } = await readRoleWorkspaceFile();
+  const currentRoleState = existing[role] ?? {};
+  const next = {
+    ...existing,
+    [role]: {
+      ...currentRoleState,
+      ...updates
+    }
+  };
+  await writeFile(filePath, `${JSON.stringify(next, null, 2)}\n`, "utf8");
+}
+
+export async function saveRoleWorkspaceProfile(_prevState: RoleProfileDetailsState, formData: FormData): Promise<RoleProfileDetailsState> {
+  try {
+    const role = value(formData, "role");
+    if (!allowedRoles.has(role)) throw new Error("Unknown workspace role.");
+
+    const allowedFields = roleProfileFields[role] ?? [];
+    const profile = allowedFields.reduce<Record<string, string | string[]>>((payload, field) => {
+      if (field === "skills") {
+        payload[field] = formData.getAll(field).map(String);
+      } else {
+        payload[field] = value(formData, field);
+      }
+      return payload;
+    }, {});
+
+    await writeRoleWorkspace(role, {
+      profile,
+      profileUpdatedAt: new Date().toISOString()
+    });
+
+    revalidatePath(rolePath(role));
+    revalidatePath("/search");
+    return { status: "success", message: "Profile details saved." };
+  } catch (error) {
+    return { status: "error", message: error instanceof Error ? error.message : "Profile details could not be saved." };
+  }
+}
+
 export async function saveRoleWorkspaceProfilePicture(_prevState: RoleProfilePhotoState, formData: FormData): Promise<RoleProfilePhotoState> {
   try {
-    const role = String(formData.get("role") ?? "").trim();
+    const role = value(formData, "role");
     if (!allowedRoles.has(role)) throw new Error("Unknown workspace role.");
 
     const file = formData.get("profilePicture");
     if (!(file instanceof File)) throw new Error("Choose an image before saving.");
 
     const upload = await saveUploadedImage(file, role);
-    const dir = resolve(process.cwd(), "..", "data", "user-state");
-    const filePath = userStatePath("role-workspaces.json");
-    await mkdir(dir, { recursive: true });
+    await writeRoleWorkspace(role, {
+      profilePhotoUrl: upload.url,
+      profilePhotoName: upload.name,
+      profilePhotoType: upload.type,
+      profilePhotoSize: upload.size,
+      profilePhotoStorage: upload.storage,
+      profilePhotoUpdatedAt: upload.uploadedAt
+    });
 
-    const existing = await readJsonFile<Record<string, Record<string, unknown>>>(filePath, {});
-    const currentRoleState = existing[role] ?? {};
-    const next = {
-      ...existing,
-      [role]: {
-        ...currentRoleState,
-        profilePhotoUrl: upload.url,
-        profilePhotoName: upload.name,
-        profilePhotoType: upload.type,
-        profilePhotoSize: upload.size,
-        profilePhotoStorage: upload.storage,
-        profilePhotoUpdatedAt: upload.uploadedAt
-      }
-    };
-
-    await writeFile(filePath, `${JSON.stringify(next, null, 2)}\n`, "utf8");
-
-    revalidatePath(`/${role === "organization" ? "organization" : role}`);
+    revalidatePath(rolePath(role));
     revalidatePath("/search");
     revalidatePath("/media");
     revalidatePath("/coach");
