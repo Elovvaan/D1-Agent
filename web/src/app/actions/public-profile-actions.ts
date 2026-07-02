@@ -162,6 +162,7 @@ export async function saveProfileDetails(formData: FormData) {
           classYear: Number(value(formData, "classYear")) || existing.classYear,
           hometown: value(formData, "hometown"),
           bio: value(formData, "bio"),
+          skills: formData.getAll("skills").map(String),
           updatedAt: new Date().toISOString()
         },
         null,
