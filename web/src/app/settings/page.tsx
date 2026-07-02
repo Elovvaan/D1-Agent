@@ -2,6 +2,7 @@ import { Bell, LockKeyhole, LogOut, Mail, ShieldCheck } from "lucide-react";
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { recordUnavailableAction, saveAccountPreferences } from "@/app/actions/public-profile-actions";
+import { signOutUser } from "@/app/actions/auth-actions";
 import { AppShell } from "@/components/app-shell";
 import { Badge, Button, Card, ObjectList, PageHeader, SectionTitle, StatCard } from "@/components/design-system";
 
@@ -103,7 +104,9 @@ export default async function SettingsPage({ searchParams }: { searchParams?: Pr
             />
             <div className="mt-5 grid gap-3">
               <GatedSettingsAction action="password-security"><LockKeyhole size={16} /> Password / Security</GatedSettingsAction>
-              <GatedSettingsAction action="logout"><LogOut size={16} /> Logout</GatedSettingsAction>
+              <form action={signOutUser}>
+                <Button variant="secondary"><LogOut size={16} /> Logout</Button>
+              </form>
             </div>
           </Card>
         </div>

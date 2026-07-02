@@ -49,6 +49,13 @@ async function persistSession(user: DevUser) {
   cookieStore.set("d1_user", user.id, { path: "/", sameSite: "lax" });
 }
 
+export async function signOutUser() {
+  const cookieStore = await cookies();
+  cookieStore.delete("d1_role");
+  cookieStore.delete("d1_user");
+  redirect("/sign-in");
+}
+
 export async function submitDevAuth(formData: FormData) {
   const intent = value(formData, "intent");
   const firstName = value(formData, "firstName");
