@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { ArrowRight, ImageIcon, Save, Video } from "lucide-react";
-import { slug, StateRail } from "@/components/schools-directory-navigator";
+import { slug, StateRail, stateSlug } from "@/components/schools-directory-navigator";
 import { getPublicSchoolHierarchy } from "@/lib/data/public-data-engine";
 import { getStateProfile } from "@/lib/data/state-profiles";
 import { getSchoolProfile } from "@/lib/data/school-profiles";
@@ -29,7 +29,7 @@ export default async function ProfileManagerPage({ searchParams }: { searchParam
             <h1 className="mt-2 text-4xl font-black tracking-tight">State profile editor</h1>
             <p className="mt-2 text-sm font-semibold text-[#CAD7FF]">Edit the public-facing state layer: cover media, badge/logo, headline, bio, and featured sport.</p>
           </div>
-          <div className="flex gap-2"><Link className="rounded-2xl border border-white/10 bg-white/[0.08] px-4 py-3 text-sm font-black" href="/operations/directory">Directory Graph</Link><Link className="rounded-2xl bg-[#F2C200] px-4 py-3 text-sm font-black text-[#061331]" href={`/schools/${selectedState?.code.toLowerCase() ?? ""}`}>View Public</Link></div>
+          <div className="flex gap-2"><Link className="rounded-2xl border border-white/10 bg-white/[0.08] px-4 py-3 text-sm font-black" href="/operations/directory">Directory Graph</Link><Link className="rounded-2xl bg-[#F2C200] px-4 py-3 text-sm font-black text-[#061331]" href={`/schools/${selectedState ? stateSlug(selectedState) : ""}`}>View Public</Link></div>
         </div>
         <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
           <StateRail states={states} activeCode={selectedState?.code} />
