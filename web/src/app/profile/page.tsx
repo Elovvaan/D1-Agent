@@ -20,6 +20,7 @@ function Blank({ title, detail }: { title: string; detail: string }) { return <d
 function StatusBanner({ status }: { status?: string }) {
   if (!status) return null;
   const isError = status.endsWith("error");
+  const verb = status.endsWith("uploaded") ? "uploaded" : "saved";
   const label = toTitle(status.replace(/-(saved|uploaded|error)$/, ""));
   return (
     <div
@@ -30,7 +31,7 @@ function StatusBanner({ status }: { status?: string }) {
       }
       role={isError ? "alert" : "status"}
     >
-      {isError ? `${label} could not be saved. Please try again.` : `${label} saved.`}
+      {isError ? `${label} could not be ${verb}. Please try again.` : `${label} ${verb}.`}
     </div>
   );
 }
