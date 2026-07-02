@@ -1,5 +1,6 @@
 "use server";
 
+import { put } from "@vercel/blob";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { revalidatePath } from "next/cache";
@@ -8,6 +9,15 @@ export type RoleProfilePhotoState = {
   status: "idle" | "success" | "error";
   message: string;
   photoUrl?: string;
+};
+
+type SavedUpload = {
+  name: string;
+  url: string;
+  size: number;
+  type: string;
+  uploadedAt: string;
+  storage: "vercel-blob" | "local-public";
 };
 
 const ROLE_PROFILE_PHOTO_MAX_BYTES = 5 * 1024 * 1024;
@@ -29,12 +39,7 @@ async function readJsonFile<T>(filePath: string, fallback: T): Promise<T> {
   }
 }
 
-async function saveUploadedImage(file: File, role: string) {
-  if (!file || file.size === 0) throw new Error("Choose an image before saving.");
-  if (!file.type.startsWith("image/")) throw new Error("Choose a PNG, JPG, WEBP, or GIF image.");
-  if (file.size > ROLE_PROFILE_PHOTO_MAX_BYTES) throw new Error("Choose an image under 5 MB.");
-
-  const safeName = `${role}-profile-${Date.now()}-${cleanFileName(file.name)}`;
+async function saveLocalPublicImage(file: File, safeName: string, uploadedAt: string): Promise<SavedUpload> {
   const uploadsDir = resolve(process.cwd(), "public", "uploads", "role-profiles");
   await mkdir(uploadsDir, { recursive: true });
   await writeFile(resolve(uploadsDir, safeName), Buffer.from(await file.arrayBuffer()));
@@ -44,8 +49,40 @@ async function saveUploadedImage(file: File, role: string) {
     url: `/uploads/role-profiles/${safeName}`,
     size: file.size,
     type: file.type,
-    uploadedAt: new Date().toISOString()
+    uploadedAt,
+    storage: "local-public"
   };
+}
+
+async function saveDurableBlobImage(file: File, safeName: string, uploadedAt: string): Promise<SavedUpload> {
+  const blob = await put(`role-profiles/${safeName}`, file, {
+    access: "public",
+    addRandomSuffix: false
+  });
+
+  return {
+    name: file.name,
+    url: blob.url,
+    size: file.size,
+    type: file.type,
+    uploadedAt,
+    storage: "vercel-blob"
+  };
+}
+
+async function saveUploadedImage(file: File, role: string): Promise<SavedUpload> {
+  if (!file || file.size === 0) throw new Error("Choose an image before saving.");
+  if (!file.type.startsWith("image/")) throw new Error("Choose a PNG, JPG, WEBP, or GIF image.");
+  if (file.size > ROLE_PROFILE_PHOTO_MAX_BYTES) throw new Error("Choose an image under 5 MB.");
+
+  const uploadedAt = new Date().toISOString();
+  const safeName = `${role}-profile-${Date.now()}-${cleanFileName(file.name)}`;
+
+  if (process.env.BLOB_READ_WRITE_TOKEN) {
+    return saveDurableBlobImage(file, safeName, uploadedAt);
+  }
+
+  return saveLocalPublicImage(file, safeName, uploadedAt);
 }
 
 export async function saveRoleWorkspaceProfilePicture(_prevState: RoleProfilePhotoState, formData: FormData): Promise<RoleProfilePhotoState> {
@@ -71,6 +108,7 @@ export async function saveRoleWorkspaceProfilePicture(_prevState: RoleProfilePho
         profilePhotoName: upload.name,
         profilePhotoType: upload.type,
         profilePhotoSize: upload.size,
+        profilePhotoStorage: upload.storage,
         profilePhotoUpdatedAt: upload.uploadedAt
       }
     };
@@ -83,7 +121,11 @@ export async function saveRoleWorkspaceProfilePicture(_prevState: RoleProfilePho
     revalidatePath("/coach");
     revalidatePath("/organization");
 
-    return { status: "success", message: "Profile picture saved to the workspace backend.", photoUrl: upload.url };
+    return {
+      status: "success",
+      message: upload.storage === "vercel-blob" ? "Profile picture saved to durable Blob storage." : "Profile picture saved locally. Add BLOB_READ_WRITE_TOKEN for durable storage.",
+      photoUrl: upload.url
+    };
   } catch (error) {
     return { status: "error", message: error instanceof Error ? error.message : "Profile picture could not be saved." };
   }
