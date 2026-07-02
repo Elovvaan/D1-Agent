@@ -69,6 +69,14 @@ export function slug(value: string) {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 }
 
+function isOrgNode(node: OrgNode | undefined): node is OrgNode {
+  return node !== undefined;
+}
+
+function isProjectionSafeNode(node: OrgNode | undefined, kind?: OrgNodeKind): node is OrgNode {
+  return node !== undefined && (!kind || node.kind === kind) && node.reviewState === "resolved" && node.projectionSafe;
+}
+
 function normalizeState(value?: string) {
   if (!value) return "US";
   const stateMatch = value.match(/\b([A-Z]{2})\b(?!.*\b[A-Z]{2}\b)/);
@@ -183,15 +191,15 @@ export function getOrganizationGraph(): OrganizationGraph {
 export function getNavigationGraph(): NavigationStateNode[] {
   const graph = getOrganizationGraph();
   const byId = new Map(graph.nodes.map((node) => [node.id, node]));
-  const childrenOf = (id: string, kind?: OrgNodeKind) => graph.edges.filter((edge) => edge.from === id && edge.kind === "CONTAINS").map((edge) => byId.get(edge.to)).filter((node): node is OrgNode => Boolean(node) && (!kind || node.kind === kind) && node.reviewState === "resolved" && node.projectionSafe);
-  const activeChildrenOf = (id: string, kind: OrgNodeKind) => graph.edges.filter((edge) => edge.from === id && edge.kind === "ACTIVE_IN").map((edge) => byId.get(edge.to)).filter((node): node is OrgNode => Boolean(node) && node.kind === kind && node.reviewState === "resolved" && node.projectionSafe);
-  const incomingTo = (id: string, edgeKind: OrgEdgeKind, roleKind: OrgNodeKind) => graph.edges.filter((edge) => edge.to === id && edge.kind === edgeKind).map((edge) => byId.get(edge.from)).filter((node): node is OrgNode => Boolean(node) && node.kind === roleKind && node.reviewState === "resolved" && node.projectionSafe);
+  const childrenOf = (id: string, kind?: OrgNodeKind) => graph.edges.filter((edge) => edge.from === id && edge.kind === "CONTAINS").map((edge) => byId.get(edge.to)).filter((node): node is OrgNode => isProjectionSafeNode(node, kind));
+  const activeChildrenOf = (id: string, kind: OrgNodeKind) => graph.edges.filter((edge) => edge.from === id && edge.kind === "ACTIVE_IN").map((edge) => byId.get(edge.to)).filter((node): node is OrgNode => isProjectionSafeNode(node, kind));
+  const incomingTo = (id: string, edgeKind: OrgEdgeKind, roleKind: OrgNodeKind) => graph.edges.filter((edge) => edge.to === id && edge.kind === edgeKind).map((edge) => byId.get(edge.from)).filter((node): node is OrgNode => isProjectionSafeNode(node, roleKind));
   const toResult = (node: OrgNode): PublicDirectoryResult => node.raw ?? { id: node.id, title: node.label, detail: node.detail, href: node.href, group: node.kind === "Game" ? "Games" : node.kind === "CoachRole" ? "Coaches" : node.kind === "AthleteRole" ? "Athletes" : "Organizations", typeLabel: node.sourceTypeLabel ?? node.kind, sourceLabel: "Public Record" };
 
   return childrenOf("country-us", "State").map((state) => {
     const schools = childrenOf(state.id, "School").map((school) => {
       const teamNodes = activeChildrenOf(school.id, "Team");
-      const teams = teamNodes.map((team) => ({ id: team.raw?.id ?? team.id, title: team.label, detail: team.detail, href: team.href, athletes: incomingTo(team.id, "PLAYS_FOR", "AthleteRole").map(toResult), coaches: incomingTo(team.id, "COACHES", "CoachRole").map(toResult), games: graph.edges.filter((edge) => edge.from === team.id && edge.kind === "PARTICIPATED_IN").map((edge) => byId.get(edge.to)).filter((node): node is OrgNode => Boolean(node) && node.kind === "Game").map(toResult) }));
+      const teams = teamNodes.map((team) => ({ id: team.raw?.id ?? team.id, title: team.label, detail: team.detail, href: team.href, athletes: incomingTo(team.id, "PLAYS_FOR", "AthleteRole").map(toResult), coaches: incomingTo(team.id, "COACHES", "CoachRole").map(toResult), games: graph.edges.filter((edge) => edge.from === team.id && edge.kind === "PARTICIPATED_IN").map((edge) => byId.get(edge.to)).filter((node): node is OrgNode => isOrgNode(node) && node.kind === "Game").map(toResult) }));
       return {
         id: school.raw?.id ?? school.id,
         title: school.label,
