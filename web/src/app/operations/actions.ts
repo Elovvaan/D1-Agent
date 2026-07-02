@@ -15,6 +15,7 @@ const OPERATOR_ISSUES_FILE = "operator-issues.json";
 const OPERATOR_INBOX_FILE = "operator-inbox.json";
 const OPERATOR_DATA_INTAKE_FILE = "operator-data-intake.json";
 const OPERATOR_NCES_RUNS_FILE = "operator-nces-runs.json";
+const STATE_PROFILES_FILE = "state-profiles.json";
 
 type ExtractedAthlete = { name: string; school: string; city?: string; state?: string };
 type ExtractedCoach = { name: string; roles: string[]; school?: string; sport?: string; state?: string };
@@ -38,6 +39,17 @@ export async function recordSupportIssue(formData: FormData) { const subject = v
 export async function recordInboundMessage(formData: FormData) { const senderName = value(formData, "senderName"); const senderContact = value(formData, "senderContact"); const source = value(formData, "source") || "email"; const subject = value(formData, "subject"); const body = value(formData, "body"); await appendUserState(OPERATOR_INBOX_FILE, { id: `inbound-${randomUUID()}`, senderName, senderContact, source, subject, body, status: "open", receivedAt: new Date().toISOString() }); await audit("inbound-message-captured", { source, subject, senderName }); redirect("/operations?status=inbound-message-recorded#communications"); }
 export async function recordViewAsUser(formData: FormData) { const userId = value(formData, "userId") || "athlete-current"; const returnTo = value(formData, "returnTo") || `/athletes/${userId}`; await audit("view-as-user", { userId, returnTo }); redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}operatorView=1`); }
 export async function recordBuildRoomRequest(formData: FormData) { const request = value(formData, "request"); const area = value(formData, "area"); await appendUserState(OPERATOR_ISSUES_FILE, { id: `build-${randomUUID()}`, subject: area || "Build request", affectedArea: area, accountType: "platform", detail: request, severity: "build-room", status: "open", createdAt: new Date().toISOString() }); await audit("build-room-requested", { area }); redirect("/operations?status=build-request-recorded#build-room"); }
+
+export async function saveStateProfile(formData: FormData) {
+  const stateCode = value(formData, "stateCode").toUpperCase();
+  if (!stateCode) redirect("/operations/profile-manager?status=missing-state");
+  await appendUserState(STATE_PROFILES_FILE, { id: `state-profile-${stateCode}-${randomUUID()}`, stateCode, displayName: value(formData, "displayName"), tagline: value(formData, "tagline"), bio: value(formData, "bio"), coverImageUrl: value(formData, "coverImageUrl"), badgeImageUrl: value(formData, "badgeImageUrl"), featureVideoUrl: value(formData, "featureVideoUrl"), primarySport: value(formData, "primarySport"), updatedAt: new Date().toISOString() });
+  await audit("state-profile-saved", { stateCode });
+  revalidatePath("/schools");
+  revalidatePath(`/schools/${stateCode.toLowerCase()}`);
+  revalidatePath("/operations/profile-manager");
+  redirect(`/operations/profile-manager?state=${stateCode}&status=state-profile-saved`);
+}
 
 export async function recordDataIntake(formData: FormData) {
   const sourceType = value(formData, "sourceType") || "manual";
