@@ -1,6 +1,8 @@
 "use server";
 
 import { randomUUID } from "node:crypto";
+import { mkdir, writeFile } from "node:fs/promises";
+import { resolve } from "node:path";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -17,12 +19,29 @@ const OPERATOR_DATA_INTAKE_FILE = "operator-data-intake.json";
 const OPERATOR_NCES_RUNS_FILE = "operator-nces-runs.json";
 const STATE_PROFILES_FILE = "state-profiles.json";
 const PAGE_PROFILES_FILE = "page-profiles.json";
+const PAGE_ASSET_MAX_BYTES = 25 * 1024 * 1024;
 
 type ExtractedAthlete = { name: string; school: string; city?: string; state?: string };
 type ExtractedCoach = { name: string; roles: string[]; school?: string; sport?: string; state?: string };
 
 function value(formData: FormData, key: string) { return String(formData.get(key) ?? "").trim(); }
 async function audit(action: string, payload: Record<string, unknown>) { await appendUserState(OPERATOR_AUDIT_FILE, { id: `operator-${randomUUID()}`, action, occurredAt: new Date().toISOString(), ...payload }); }
+function cleanFileName(fileName: string) { return fileName.replace(/[^a-zA-Z0-9._-]/g, "-").replace(/-+/g, "-"); }
+
+async function savePageAsset(formData: FormData, fileKey: string, fallbackKey: string, ownerKey: string, kind: "cover" | "badge" | "video") {
+  const uploaded = formData.get(fileKey);
+  const fallback = value(formData, fallbackKey);
+  if (!(uploaded instanceof File) || uploaded.size === 0) return fallback;
+  if (uploaded.size > PAGE_ASSET_MAX_BYTES) return fallback;
+  const isVideo = kind === "video";
+  if (isVideo && !uploaded.type.startsWith("video/")) return fallback;
+  if (!isVideo && !uploaded.type.startsWith("image/")) return fallback;
+  const dir = resolve(process.cwd(), "public", "uploads", "operator-pages");
+  await mkdir(dir, { recursive: true });
+  const safeName = `${ownerKey}-${kind}-${Date.now()}-${cleanFileName(uploaded.name)}`;
+  await writeFile(resolve(dir, safeName), Buffer.from(await uploaded.arrayBuffer()));
+  return `/uploads/operator-pages/${safeName}`;
+}
 
 function stripHtml(html: string) { return html.replace(/<script[\s\S]*?<\/script>/gi, "\n").replace(/<style[\s\S]*?<\/style>/gi, "\n").replace(/<[^>]+>/g, "\n").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&nbsp;/g, " ").replace(/\s+\n/g, "\n").replace(/\n\s+/g, "\n"); }
 function titleCaseName(name: string) { return name.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase()).replace(/\bJr\b/g, "Jr").replace(/\bIi\b/g, "II").replace(/\bIii\b/g, "III").replace(/\bIv\b/g, "IV"); }
@@ -43,22 +62,28 @@ export async function recordBuildRoomRequest(formData: FormData) { const request
 
 export async function saveStateProfile(formData: FormData) {
   const stateCode = value(formData, "stateCode").toUpperCase();
-  const returnTab = value(formData, "returnTab") || "schools";
   if (!stateCode) redirect("/operations?status=missing-state");
-  await appendUserState(STATE_PROFILES_FILE, { id: `state-profile-${stateCode}-${randomUUID()}`, stateCode, displayName: value(formData, "displayName"), tagline: value(formData, "tagline"), bio: value(formData, "bio"), coverImageUrl: value(formData, "coverImageUrl"), badgeImageUrl: value(formData, "badgeImageUrl"), featureVideoUrl: value(formData, "featureVideoUrl"), primarySport: value(formData, "primarySport"), updatedAt: new Date().toISOString() });
-  await audit("state-profile-saved", { stateCode, returnTab });
+  const ownerKey = `state-${stateCode.toLowerCase()}`;
+  const coverImageUrl = await savePageAsset(formData, "coverImageFile", "coverImageUrl", ownerKey, "cover");
+  const badgeImageUrl = await savePageAsset(formData, "badgeImageFile", "badgeImageUrl", ownerKey, "badge");
+  const featureVideoUrl = await savePageAsset(formData, "featureVideoFile", "featureVideoUrl", ownerKey, "video");
+  await appendUserState(STATE_PROFILES_FILE, { id: `state-profile-${stateCode}-${randomUUID()}`, stateCode, displayName: value(formData, "displayName"), tagline: value(formData, "tagline"), bio: value(formData, "bio"), coverImageUrl, badgeImageUrl, featureVideoUrl, primarySport: value(formData, "primarySport"), updatedAt: new Date().toISOString() });
+  await audit("state-profile-saved", { stateCode, coverImageUrl, badgeImageUrl, featureVideoUrl });
   revalidatePath("/schools");
   revalidatePath(`/schools/${stateCode.toLowerCase()}`);
   revalidatePath("/operations");
   revalidatePath("/operations/profile-manager");
-  redirect(`/operations?tab=${returnTab}&state=${stateCode}&status=state-profile-saved`);
+  redirect(`/operations?state=${stateCode}&status=state-profile-saved`);
 }
 
 export async function savePageProfile(formData: FormData) {
   const pageKey = value(formData, "pageKey") || "home";
   const stateCode = value(formData, "stateCode").toUpperCase();
-  await appendUserState(PAGE_PROFILES_FILE, { id: `page-profile-${pageKey}-${stateCode || "global"}-${randomUUID()}`, pageKey, stateCode, headline: value(formData, "headline"), subheadline: value(formData, "subheadline"), body: value(formData, "body"), coverImageUrl: value(formData, "coverImageUrl"), badgeImageUrl: value(formData, "badgeImageUrl"), featureVideoUrl: value(formData, "featureVideoUrl"), ctaLabel: value(formData, "ctaLabel"), ctaHref: value(formData, "ctaHref"), updatedAt: new Date().toISOString() });
-  await audit("page-profile-saved", { pageKey, stateCode });
+  const coverImageUrl = await savePageAsset(formData, "coverImageFile", "coverImageUrl", pageKey, "cover");
+  const badgeImageUrl = await savePageAsset(formData, "badgeImageFile", "badgeImageUrl", pageKey, "badge");
+  const featureVideoUrl = await savePageAsset(formData, "featureVideoFile", "featureVideoUrl", pageKey, "video");
+  await appendUserState(PAGE_PROFILES_FILE, { id: `page-profile-${pageKey}-${stateCode || "global"}-${randomUUID()}`, pageKey, stateCode, headline: value(formData, "headline"), subheadline: value(formData, "subheadline"), body: value(formData, "body"), coverImageUrl, badgeImageUrl, featureVideoUrl, ctaLabel: value(formData, "ctaLabel"), ctaHref: value(formData, "ctaHref"), updatedAt: new Date().toISOString() });
+  await audit("page-profile-saved", { pageKey, stateCode, coverImageUrl, badgeImageUrl, featureVideoUrl });
   revalidatePath("/");
   revalidatePath(`/${pageKey === "home" ? "" : pageKey}`);
   revalidatePath("/operations");
