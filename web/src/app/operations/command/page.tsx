@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
-import { Bot, Camera, CircleCheck, FileSpreadsheet, Home, ImageIcon, Search, ShieldCheck, Trophy, UserRound, Users } from "lucide-react";
+import { Bot, Camera, CircleCheck, Database, FileSpreadsheet, Home, ImageIcon, Search, ShieldCheck, Trophy, UserRound, Users } from "lucide-react";
 import { MiniChannel, SchoolTile, StateRail, stateSlug } from "@/components/schools-directory-navigator";
 import { getPublicSchoolHierarchy } from "@/lib/data/public-data-engine";
 import { readJsonSync, userStatePath } from "@/lib/data/platform-storage";
