@@ -10,7 +10,8 @@ const navItems = [
   { href: "/about", label: "About" },
   { href: "/schools", label: "Schools" },
   { href: "/sports", label: "Sports" },
-  { href: "/games", label: "Games" }
+  { href: "/games", label: "Games" },
+  { href: "/locked-in", label: "Locked In", lockedIn: true }
 ] as const;
 
 const socialIcons = {
@@ -29,7 +30,7 @@ export function PublicSiteShell({ children, variant = "light" }: { children: Rea
       <header className={`sticky top-0 z-30 border-b backdrop-blur ${isDark ? "border-white/12 bg-[#061331]/92" : "border-[#DDE3EC] bg-white/92"}`}>
         <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
           <Link href="/" className="flex items-center gap-3"><span className="grid h-10 w-10 place-items-center overflow-hidden rounded-2xl bg-white shadow-[0_10px_30px_rgba(10,26,63,0.18)]"><img src="/brand/MYD1 LOGO.png" alt="MyD1" className="h-full w-full object-contain p-1.5" /></span><span><span className="block text-xl font-black tracking-tight">{brandConfig.primaryBrand}</span><span className={`block text-xs font-semibold ${isDark ? "text-[#C8D6FF]" : "text-[#66718F]"}`}>{brandConfig.agentProductName} Platform</span></span></Link>
-          <nav className="hidden items-center gap-1 md:flex">{navItems.map((item) => <Link className={`rounded-xl px-3 py-2 text-sm font-black transition ${isDark ? "text-white hover:bg-white/10" : "text-[#0A1A3F] hover:bg-[#EAF0FF]"}`} href={item.href} key={item.href}>{item.label}</Link>)}</nav>
+          <nav className="hidden items-center gap-1 md:flex">{navItems.map((item) => <Link className={`rounded-xl px-3 py-2 text-sm font-black transition ${item.lockedIn ? "text-[#8CFF00] hover:bg-[#8CFF00]/10" : isDark ? "text-white hover:bg-white/10" : "text-[#0A1A3F] hover:bg-[#EAF0FF]"}`} href={item.href} key={item.href}>{item.label}</Link>)}</nav>
           <div className="flex items-center gap-2"><Link className={`hidden rounded-xl px-3 py-2 text-sm font-black sm:inline-flex ${isDark ? "text-[#AFC3FF] hover:bg-white/10" : "text-[#1B3FA0] hover:bg-[#EAF0FF]"}`} href="/sign-in">Sign In</Link><Link className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-[#F2C200] px-4 py-2 text-sm font-black text-[#0A1A3F] shadow-[0_14px_28px_rgba(242,194,0,0.25)]" href="/get-started">Get Started <ArrowRight size={16} /></Link></div>
         </div>
       </header>
