@@ -12,7 +12,7 @@ import { savePageProfile, saveStateProfile, signInOperator } from "../actions";
 const OPERATOR_COOKIE = "myd1_operator_access";
 const OPERATOR_COOKIE_VALUE = "granted";
 
-type CommandTab = "home" | "discover" | "search" | "about" | "schools" | "sports" | "games" | "athletes" | "parents" | "coaches" | "recruiters" | "media-partners" | "organizations";
+type CommandTab = "home" | "discover" | "search" | "about" | "schools" | "sports" | "games" | "locked-in" | "athletes" | "parents" | "coaches" | "recruiters" | "media-partners" | "organizations";
 type IntakeItem = { state?: string; school?: string; extractedCount?: number; extractedCoachCount?: number };
 
 const tabs: Array<{ id: CommandTab; label: string }> = [
@@ -23,6 +23,7 @@ const tabs: Array<{ id: CommandTab; label: string }> = [
   { id: "schools", label: "Schools" },
   { id: "sports", label: "Sports" },
   { id: "games", label: "Games" },
+  { id: "locked-in", label: "Locked In" },
   { id: "athletes", label: "Athletes" },
   { id: "parents", label: "Parents / Guardian" },
   { id: "coaches", label: "Coaches" },
