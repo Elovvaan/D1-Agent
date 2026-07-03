@@ -16,6 +16,7 @@ export type PageProfile = {
 
 export function getPageProfile(pageKey: string, stateCode?: string) {
   const stored = readJsonSync<{ items?: PageProfile[] }>(userStatePath("page-profiles.json"), { items: [] }).items ?? [];
+  const latestFirst = [...stored].reverse();
   const normalizedState = (stateCode ?? "").toUpperCase();
-  return stored.find((item) => item.pageKey === pageKey && (item.stateCode ?? "").toUpperCase() === normalizedState) ?? stored.find((item) => item.pageKey === pageKey && !item.stateCode);
+  return latestFirst.find((item) => item.pageKey === pageKey && (item.stateCode ?? "").toUpperCase() === normalizedState) ?? latestFirst.find((item) => item.pageKey === pageKey && !item.stateCode);
 }
