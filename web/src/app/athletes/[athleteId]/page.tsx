@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { Bookmark, Camera, ExternalLink, Film, Mail, PlayCircle, Search, Share2, ShieldCheck, Star, Trophy, UserRound } from "lucide-react";
+import { Bookmark, Film, Mail, PlayCircle, Search, Share2, ShieldCheck, Star, UserRound } from "lucide-react";
 import { recordRecruiterInterest } from "@/app/actions/public-profile-actions";
 import { brandConfig, publicProfileUrl } from "@/lib/domain-config";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 type SavedProfile = {
   fullName?: string;
@@ -16,6 +19,7 @@ type SavedProfile = {
   hometown?: string;
   bio?: string;
   avatarUrl?: string;
+  avatarUpdatedAt?: string;
   visibility?: string;
 };
 
@@ -38,6 +42,11 @@ function readJson<T>(fileName: string, fallback: T): T {
 
 function text(value?: string | number) {
   return value === undefined || value === null ? "" : String(value).trim();
+}
+
+function cacheSafeUrl(url?: string, version?: string) {
+  if (!url) return "";
+  return `${url}${url.includes("?") ? "&" : "?"}v=${encodeURIComponent(version || "current")}`;
 }
 
 function initials(name: string) {
@@ -78,10 +87,10 @@ export default async function PublicAthletePage({ params }: { params: Promise<{ 
   const profile = readJson<SavedProfile>("profile.json", {});
   const hero = readJson<HeroMedia>("hero-media.json", {});
   const name = text(profile.fullName);
+  const avatarSrc = cacheSafeUrl(profile.avatarUrl, profile.avatarUpdatedAt);
   const positionLine = [text(profile.primaryPosition), text(profile.secondaryPosition)].filter(Boolean).join(" / ");
   const identity = [positionLine, text(profile.sport), text(profile.schoolName), profile.classYear ? `Class of ${profile.classYear}` : "", text(profile.hometown)].filter(Boolean);
-  const hasProfile = Boolean(name || identity.length || profile.avatarUrl || hero.playerCutoutUrl || hero.videoUrl || hero.thumbnailUrl);
-  const avatarInitials = name ? initials(name) : "";
+  const hasProfile = Boolean(name || identity.length || avatarSrc || hero.playerCutoutUrl || hero.videoUrl || hero.thumbnailUrl);
   const highlightHref = hero.videoUrl || "";
 
   return (
@@ -112,7 +121,7 @@ export default async function PublicAthletePage({ params }: { params: Promise<{ 
             <div className="grid gap-6 lg:grid-cols-[220px_1fr_360px]">
               <div className="-mt-20">
                 <div className="grid h-44 w-44 place-items-center overflow-hidden rounded-full border-4 border-white bg-[#0A1A3F] shadow-[0_20px_50px_rgba(0,0,0,0.32)]">
-                  {profile.avatarUrl ? <img src={profile.avatarUrl} alt="Profile photo" className="h-full w-full object-cover" /> : <UserRound size={56} className="text-white/40" />}
+                  {avatarSrc ? <img src={avatarSrc} alt="Profile photo" className="h-full w-full object-cover" /> : <UserRound size={56} className="text-white/40" />}
                 </div>
                 <form action={recordRecruiterInterest} className="mt-5 grid gap-3">
                   <input name="athleteId" type="hidden" value={athleteId} />
