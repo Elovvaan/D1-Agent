@@ -1,5 +1,6 @@
+import { RoleProfileForm } from "@/components/role-profile-form";
 import { RoleWorkspace } from "@/components/role-workspace";
 
 export default function FamilyWorkspacePage() {
-  return <RoleWorkspace role="family" />;
+  return <div><RoleWorkspace role="family" /><div className="bg-[#061331] px-4 pb-10 lg:pl-[292px]"><div className="mx-auto max-w-[1680px]"><RoleProfileForm role="family" /></div></div></div>;
 }
