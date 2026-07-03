@@ -7,7 +7,7 @@ const formatItems = [
   { icon: Users, label: "3v3 Basketball" },
   { icon: Play, label: "Best of 3" },
   { icon: Trophy, label: "8 Team Max" },
-  { icon: Clock3, label: "Check-in 30 min before tipoff" }
+  { icon: Clock3, label: "Check-in 30 min Before Tipoff" }
 ];
 
 const waitlistRules = [
@@ -31,33 +31,32 @@ export default function LockedInPage() {
   return (
     <PublicSiteShell variant="dark">
       <section className="relative overflow-hidden bg-black text-white">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(140,255,0,0.12),transparent_28%),radial-gradient(circle_at_80%_10%,rgba(242,194,0,0.12),transparent_26%),linear-gradient(135deg,#000,#061331_55%,#020402)]" />
-        {coverImageUrl ? <img src={coverImageUrl} alt="Locked In cover" className="absolute inset-0 h-full w-full object-cover opacity-80" /> : null}
-        {coverImageUrl ? <div className="absolute inset-0 bg-gradient-to-r from-black/78 via-black/42 to-black/16" /> : null}
-        {!coverImageUrl ? <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "linear-gradient(rgba(140,255,0,.18) 1px, transparent 1px), linear-gradient(90deg, rgba(242,194,0,.16) 1px, transparent 1px)", backgroundSize: "32px 32px" }} /> : null}
-        <div className="relative mx-auto grid max-w-[1440px] gap-8 px-4 py-14 sm:px-6 lg:grid-cols-[1fr_360px] lg:px-8 lg:py-20">
-          <div className="max-w-4xl">
-            <p className="text-xs font-black uppercase tracking-[0.34em] text-[#8CFF00]">MyD1 Sports</p>
-            {headline ? <h1 className="mt-5 text-5xl font-black uppercase italic leading-[0.92] tracking-tight text-[#F2C200] sm:text-6xl lg:text-7xl">{headline}</h1> : <h1 className="mt-5 text-6xl font-black uppercase italic leading-[0.88] tracking-tight text-[#F2C200] sm:text-7xl lg:text-8xl">Locked <span className="block text-white">In</span></h1>}
-            <p className="mt-5 text-2xl font-black uppercase tracking-[0.12em] text-[#8CFF00]">{subheadline || "Compete. Win. Return."}</p>
-            <p className="mt-5 max-w-2xl text-lg font-semibold leading-8 text-[#DCE7FF]">{body || "Community 3v3 competition for teams that want the smoke. Separate from public athlete profiles. Built for parks, gyms, cash prizes, brackets, highlights, and local bragging rights."}</p>
-            <div className="mt-9 flex flex-col gap-3 sm:flex-row"><Link href={ctaHref} className="inline-flex min-h-12 items-center justify-center rounded-xl bg-[#F2C200] px-6 text-sm font-black uppercase text-black shadow-[0_20px_40px_rgba(242,194,0,0.28)]">{ctaLabel}</Link><Link href="#events" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-[#8CFF00] px-6 text-sm font-black uppercase text-[#8CFF00]">Upcoming Events</Link></div>
-            <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{formatItems.map((item) => <div key={item.label} className="rounded-2xl border border-white/10 bg-black/45 p-4 backdrop-blur-sm"><item.icon className="text-[#8CFF00]" /><p className="mt-3 text-sm font-black uppercase text-white">{item.label}</p></div>)}</div>
+        {coverImageUrl ? <img src={coverImageUrl} alt="Locked In cover" className="absolute inset-0 h-full w-full object-cover" /> : <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(140,255,0,0.18),transparent_28%),radial-gradient(circle_at_80%_10%,rgba(242,194,0,0.18),transparent_26%),linear-gradient(135deg,#000,#061331_55%,#020402)]" />}
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.72)_0%,rgba(0,0,0,0.42)_42%,rgba(0,0,0,0.18)_68%,rgba(0,0,0,0.44)_100%)]" />
+        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black to-transparent" />
+        <div className="relative mx-auto grid min-h-[760px] max-w-[1440px] items-center gap-8 px-4 py-14 sm:px-6 lg:grid-cols-[1fr_360px] lg:px-8 lg:py-16">
+          <div className="max-w-[760px] text-center lg:pl-12">
+            <p className="text-xs font-black uppercase tracking-[0.36em] text-[#8CFF00]">MyD1 Sports</p>
+            {headline ? <h1 className="mt-5 text-5xl font-black uppercase italic leading-[0.9] tracking-tight text-white drop-shadow-[0_8px_28px_rgba(0,0,0,0.9)] sm:text-6xl lg:text-7xl">{headline}</h1> : <h1 className="mt-5 text-6xl font-black uppercase italic leading-[0.86] tracking-tight text-white drop-shadow-[0_8px_28px_rgba(0,0,0,0.9)] sm:text-7xl lg:text-8xl"><span className="block">Locked</span><span className="block text-[#8CFF00]">In</span><span className="mt-2 block text-3xl text-[#F2C200] sm:text-4xl lg:text-5xl">Mode</span></h1>}
+            <p className="mt-5 text-2xl font-black uppercase tracking-[0.08em] text-[#8CFF00] drop-shadow-[0_5px_16px_rgba(0,0,0,0.85)]">{subheadline || "Compete. Win. Return."}</p>
+            <p className="mx-auto mt-5 max-w-xl text-base font-black leading-8 text-white drop-shadow-[0_4px_14px_rgba(0,0,0,0.95)]">{body || "Community 3v3 competition for teams that want the smoke. Separate from public athlete profiles. Built for parks, gyms, cash prizes, brackets, highlights, and local bragging rights."}</p>
+            <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row"><Link href={ctaHref} className="inline-flex min-h-12 items-center justify-center rounded-xl bg-[#F2C200] px-7 text-sm font-black uppercase text-black shadow-[0_20px_40px_rgba(242,194,0,0.28)]">{ctaLabel}</Link><Link href="#events" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-[#8CFF00] bg-black/45 px-7 text-sm font-black uppercase text-white shadow-[0_18px_35px_rgba(0,0,0,0.35)] backdrop-blur">Upcoming Events</Link></div>
+            <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{formatItems.map((item) => <div key={item.label} className="rounded-2xl border border-white/10 bg-black/58 p-4 text-left shadow-[0_18px_35px_rgba(0,0,0,0.4)] backdrop-blur-sm"><item.icon className="text-[#8CFF00]" /><p className="mt-3 text-sm font-black uppercase text-white">{item.label}</p></div>)}</div>
           </div>
-          <aside id="events" className="rounded-[30px] border border-[#8CFF00]/35 bg-black/72 p-5 shadow-[0_0_40px_rgba(140,255,0,0.12)]">
+          <aside id="events" className="mx-auto w-full max-w-[360px] rounded-[30px] border border-[#8CFF00]/55 bg-black/82 p-6 shadow-[0_0_45px_rgba(140,255,0,0.18)] backdrop-blur-sm">
             <p className="text-xs font-black uppercase tracking-[0.24em] text-[#8CFF00]">Next Event</p>
-            <div className="mt-5 grid gap-4 text-sm font-black text-white"><div className="flex items-center gap-3"><CalendarDays className="text-[#F2C200]" /> Saturday, May 24</div><div className="flex items-center gap-3"><Clock3 className="text-[#F2C200]" /> 2:00 PM</div><div className="flex items-center gap-3"><MapPin className="text-[#F2C200]" /> Riverside Park · Court 1</div></div>
-            <div className="my-6 border-t border-white/12" />
+            <div className="mt-6 grid gap-5 text-sm font-black text-white"><div className="flex items-center gap-3"><CalendarDays className="text-white" /> Saturday, May 24</div><div className="flex items-center gap-3"><Clock3 className="text-white" /> 2:00 PM</div><div className="flex items-center gap-3"><MapPin className="text-white" /> Riverside Park · Court 1</div></div>
+            <div className="my-7 border-t border-white/16" />
             <p className="text-xs font-black uppercase tracking-[0.24em] text-[#8CFF00]">Prize Pool</p>
             <div className="mt-2 text-6xl font-black text-[#F2C200]">$300</div><p className="mt-1 text-sm font-black uppercase text-white">Cash</p>
-            <Link href="/locked-in/register" className="mt-6 inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-[#8CFF00] px-5 text-sm font-black uppercase text-black">Register Team</Link>
+            <Link href="/locked-in/register" className="mt-7 inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-[#8CFF00] px-5 text-sm font-black uppercase text-black shadow-[0_16px_35px_rgba(140,255,0,0.25)]">Register Team</Link>
           </aside>
         </div>
       </section>
 
       <section className="bg-black px-4 py-10 text-white sm:px-6 lg:px-8">
         <div className="mx-auto grid max-w-[1440px] gap-6 lg:grid-cols-[420px_1fr]">
-          <div className="rounded-[28px] border border-white/12 bg-[#070707] p-5"><p className="text-xs font-black uppercase tracking-[0.24em] text-[#8CFF00]">Event Format & Payout</p><div className="mt-5 grid gap-3">{formatItems.map((item) => <div key={item.label} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.05] p-3"><item.icon className="text-[#F2C200]" /><span className="text-sm font-black uppercase">{item.label}</span></div>)}</div><div className="mt-5 rounded-2xl border border-[#F2C200]/35 bg-[#F2C200]/10 p-4"><div className="flex justify-between text-sm font-black"><span>8 teams × $30</span><span>$240</span></div><div className="mt-2 flex justify-between text-sm font-black"><span>Added by MyD1</span><span>$60</span></div><div className="mt-3 border-t border-white/15 pt-3 flex justify-between text-lg font-black text-[#8CFF00]"><span>Total Prize Pool</span><span>$300</span></div></div></div>
+          <div className="rounded-[28px] border border-white/12 bg-[#070707] p-5"><p className="text-xs font-black uppercase tracking-[0.24em] text-[#8CFF00]">Event Format & Payout</p><div className="mt-5 grid gap-3">{formatItems.map((item) => <div key={item.label} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.05] p-3"><item.icon className="text-[#F2C200]" /><span className="text-sm font-black uppercase">{item.label}</span></div>)}</div><div className="mt-5 rounded-2xl border border-[#F2C200]/35 bg-[#F2C200]/10 p-4"><div className="flex justify-between text-sm font-black"><span>8 teams × $30</span><span>$240</span></div><div className="mt-2 flex justify-between text-sm font-black"><span>Added by MyD1</span><span>$60</span></div><div className="mt-3 flex justify-between border-t border-white/15 pt-3 text-lg font-black text-[#8CFF00]"><span>Total Prize Pool</span><span>$300</span></div></div></div>
           <div className="rounded-[28px] border border-white/12 bg-[#070707] p-5"><p className="text-xs font-black uppercase tracking-[0.24em] text-[#8CFF00]">Bracket View Example</p><div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">{teams.map((team, index) => <div key={team} className="rounded-2xl border border-white/10 bg-black p-4"><p className="text-xs font-black text-[#8CFF00]">Seed {index + 1}</p><p className="mt-2 text-sm font-black uppercase text-white">{team}</p></div>)}</div><div className="mt-5 rounded-2xl border border-[#8CFF00]/35 bg-[#8CFF00]/10 p-4 text-center text-xl font-black uppercase text-[#8CFF00]">Winner advances · Best of 3</div></div>
         </div>
       </section>
