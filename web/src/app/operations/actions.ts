@@ -37,11 +37,11 @@ async function savePageAsset(formData: FormData, fileKey: string, fallbackKey: s
   const isVideo = kind === "video";
   if (isVideo && !uploaded.type.startsWith("video/")) return fallback;
   if (!isVideo && !uploaded.type.startsWith("image/")) return fallback;
-  const dir = resolve(process.cwd(), "public", "uploads", "operator-pages");
+  const dir = resolve(process.cwd(), "..", "data", "user-state", "uploads");
   await mkdir(dir, { recursive: true });
   const safeName = `${ownerKey}-${kind}-${Date.now()}-${cleanFileName(uploaded.name)}`;
   await writeFile(resolve(dir, safeName), Buffer.from(await uploaded.arrayBuffer()));
-  return `/uploads/operator-pages/${safeName}`;
+  return `/api/uploads/${safeName}`;
 }
 
 function stripHtml(html: string) { return html.replace(/<script[\s\S]*?<\/script>/gi, "\n").replace(/<style[\s\S]*?<\/style>/gi, "\n").replace(/<[^>]+>/g, "\n").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&nbsp;/g, " ").replace(/\s+\n/g, "\n").replace(/\n\s+/g, "\n"); }
@@ -61,89 +61,9 @@ export async function recordInboundMessage(formData: FormData) { const senderNam
 export async function recordViewAsUser(formData: FormData) { const userId = value(formData, "userId") || "athlete-current"; const returnTo = value(formData, "returnTo") || `/athletes/${userId}`; await audit("view-as-user", { userId, returnTo }); redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}operatorView=1`); }
 export async function recordBuildRoomRequest(formData: FormData) { const request = value(formData, "request"); const area = value(formData, "area"); await appendUserState(OPERATOR_ISSUES_FILE, { id: `build-${randomUUID()}`, subject: area || "Build request", affectedArea: area, accountType: "platform", detail: request, severity: "build-room", status: "open", createdAt: new Date().toISOString() }); await audit("build-room-requested", { area }); redirect("/operations?status=build-request-recorded#build-room"); }
 
-export async function saveStateProfile(formData: FormData) {
-  const stateCode = value(formData, "stateCode").toUpperCase();
-  if (!stateCode) redirect("/operations?status=missing-state");
-  const ownerKey = `state-${stateCode.toLowerCase()}`;
-  const coverImageUrl = await savePageAsset(formData, "coverImageFile", "coverImageUrl", ownerKey, "cover");
-  const badgeImageUrl = await savePageAsset(formData, "badgeImageFile", "badgeImageUrl", ownerKey, "badge");
-  const featureVideoUrl = await savePageAsset(formData, "featureVideoFile", "featureVideoUrl", ownerKey, "video");
-  await appendUserState(STATE_PROFILES_FILE, { id: `state-profile-${stateCode}-${randomUUID()}`, stateCode, displayName: value(formData, "displayName"), tagline: value(formData, "tagline"), bio: value(formData, "bio"), coverImageUrl, badgeImageUrl, featureVideoUrl, primarySport: value(formData, "primarySport"), updatedAt: new Date().toISOString() });
-  await audit("state-profile-saved", { stateCode, coverImageUrl, badgeImageUrl, featureVideoUrl });
-  revalidatePath("/schools");
-  revalidatePath(`/schools/${stateCode.toLowerCase()}`);
-  revalidatePath("/operations");
-  revalidatePath("/operations/profile-manager");
-  redirect(`/operations?state=${stateCode}&status=state-profile-saved`);
-}
+export async function saveStateProfile(formData: FormData) { const stateCode = value(formData, "stateCode").toUpperCase(); if (!stateCode) redirect("/operations?status=missing-state"); const ownerKey = `state-${stateCode.toLowerCase()}`; const coverImageUrl = await savePageAsset(formData, "coverImageFile", "coverImageUrl", ownerKey, "cover"); const badgeImageUrl = await savePageAsset(formData, "badgeImageFile", "badgeImageUrl", ownerKey, "badge"); const featureVideoUrl = await savePageAsset(formData, "featureVideoFile", "featureVideoUrl", ownerKey, "video"); await appendUserState(STATE_PROFILES_FILE, { id: `state-profile-${stateCode}-${randomUUID()}`, stateCode, displayName: value(formData, "displayName"), tagline: value(formData, "tagline"), bio: value(formData, "bio"), coverImageUrl, badgeImageUrl, featureVideoUrl, primarySport: value(formData, "primarySport"), updatedAt: new Date().toISOString() }); await audit("state-profile-saved", { stateCode, coverImageUrl, badgeImageUrl, featureVideoUrl }); revalidatePath("/schools"); revalidatePath(`/schools/${stateCode.toLowerCase()}`); revalidatePath("/operations"); revalidatePath("/operations/profile-manager"); redirect(`/operations?state=${stateCode}&status=state-profile-saved`); }
+export async function saveSchoolProfile(formData: FormData) { const schoolId = value(formData, "schoolId"); const schoolSlug = value(formData, "schoolSlug"); const stateCode = value(formData, "stateCode").toUpperCase(); const returnTab = value(formData, "returnTab") || "schools"; if (!schoolId) redirect("/operations/profile-manager?status=missing-school"); await appendUserState(SCHOOL_PROFILES_FILE, { id: `school-profile-${schoolId}-${randomUUID()}`, schoolId, logoImageUrl: value(formData, "logoImageUrl"), coverImageUrl: value(formData, "coverImageUrl"), updatedAt: new Date().toISOString() }); await audit("school-profile-saved", { schoolId, stateCode }); revalidatePath("/schools"); const publicStateSlug = stateCode.toLowerCase() === "us" ? "national" : stateCode.toLowerCase(); if (publicStateSlug) revalidatePath(`/schools/${publicStateSlug}`); if (publicStateSlug && schoolSlug) revalidatePath(`/schools/${publicStateSlug}/${schoolSlug}`); revalidatePath("/operations/profile-manager"); redirect(`/operations/profile-manager?tab=${returnTab}&state=${stateCode}&school=${encodeURIComponent(schoolId)}&status=school-profile-saved`); }
+export async function savePageProfile(formData: FormData) { const pageKey = value(formData, "pageKey") || "home"; const stateCode = value(formData, "stateCode").toUpperCase(); const coverImageUrl = await savePageAsset(formData, "coverImageFile", "coverImageUrl", pageKey, "cover"); const badgeImageUrl = await savePageAsset(formData, "badgeImageFile", "badgeImageUrl", pageKey, "badge"); const featureVideoUrl = await savePageAsset(formData, "featureVideoFile", "featureVideoUrl", pageKey, "video"); await appendUserState(PAGE_PROFILES_FILE, { id: `page-profile-${pageKey}-${stateCode || "global"}-${randomUUID()}`, pageKey, stateCode, headline: value(formData, "headline"), subheadline: value(formData, "subheadline"), body: value(formData, "body"), coverImageUrl, badgeImageUrl, featureVideoUrl, ctaLabel: value(formData, "ctaLabel"), ctaHref: value(formData, "ctaHref"), updatedAt: new Date().toISOString() }); await audit("page-profile-saved", { pageKey, stateCode, coverImageUrl, badgeImageUrl, featureVideoUrl }); revalidatePath("/"); revalidatePath(`/${pageKey === "home" ? "" : pageKey}`); revalidatePath("/operations"); redirect(`/operations?tab=${pageKey}&state=${stateCode}&status=page-profile-saved`); }
 
-export async function saveSchoolProfile(formData: FormData) {
-  const schoolId = value(formData, "schoolId");
-  const schoolSlug = value(formData, "schoolSlug");
-  const stateCode = value(formData, "stateCode").toUpperCase();
-  const returnTab = value(formData, "returnTab") || "schools";
-  if (!schoolId) redirect("/operations/profile-manager?status=missing-school");
-  await appendUserState(SCHOOL_PROFILES_FILE, { id: `school-profile-${schoolId}-${randomUUID()}`, schoolId, logoImageUrl: value(formData, "logoImageUrl"), coverImageUrl: value(formData, "coverImageUrl"), updatedAt: new Date().toISOString() });
-  await audit("school-profile-saved", { schoolId, stateCode });
-  revalidatePath("/schools");
-  const publicStateSlug = stateCode.toLowerCase() === "us" ? "national" : stateCode.toLowerCase();
-  if (publicStateSlug) revalidatePath(`/schools/${publicStateSlug}`);
-  if (publicStateSlug && schoolSlug) revalidatePath(`/schools/${publicStateSlug}/${schoolSlug}`);
-  revalidatePath("/operations/profile-manager");
-  redirect(`/operations/profile-manager?tab=${returnTab}&state=${stateCode}&school=${encodeURIComponent(schoolId)}&status=school-profile-saved`);
-}
-
-export async function savePageProfile(formData: FormData) {
-  const pageKey = value(formData, "pageKey") || "home";
-  const stateCode = value(formData, "stateCode").toUpperCase();
-  const coverImageUrl = await savePageAsset(formData, "coverImageFile", "coverImageUrl", pageKey, "cover");
-  const badgeImageUrl = await savePageAsset(formData, "badgeImageFile", "badgeImageUrl", pageKey, "badge");
-  const featureVideoUrl = await savePageAsset(formData, "featureVideoFile", "featureVideoUrl", pageKey, "video");
-  await appendUserState(PAGE_PROFILES_FILE, { id: `page-profile-${pageKey}-${stateCode || "global"}-${randomUUID()}`, pageKey, stateCode, headline: value(formData, "headline"), subheadline: value(formData, "subheadline"), body: value(formData, "body"), coverImageUrl, badgeImageUrl, featureVideoUrl, ctaLabel: value(formData, "ctaLabel"), ctaHref: value(formData, "ctaHref"), updatedAt: new Date().toISOString() });
-  await audit("page-profile-saved", { pageKey, stateCode, coverImageUrl, badgeImageUrl, featureVideoUrl });
-  revalidatePath("/");
-  revalidatePath(`/${pageKey === "home" ? "" : pageKey}`);
-  revalidatePath("/operations");
-  redirect(`/operations?tab=${pageKey}&state=${stateCode}&status=page-profile-saved`);
-}
-
-export async function recordDataIntake(formData: FormData) {
-  const sourceType = value(formData, "sourceType") || "manual";
-  const state = value(formData, "state");
-  const district = value(formData, "district");
-  const school = value(formData, "school");
-  const sport = value(formData, "sport");
-  const classYear = value(formData, "classYear");
-  const sourceUrl = value(formData, "sourceUrl");
-  const sourceName = value(formData, "sourceName");
-  const notes = value(formData, "notes");
-  const pastedAthleteText = value(formData, "athleteText");
-  const fetchedText = pastedAthleteText ? "" : await fetchSourceText(sourceUrl);
-  const athleteText = pastedAthleteText || fetchedText;
-  const extractedAthletes = extractAthletesFromText(athleteText);
-  const extractedCoaches = extractCoachesFromText(athleteText, { school, sport, state });
-  const pdf = formData.get("pdfFile");
-  const pdfMeta = pdf instanceof File && pdf.size > 0 ? { name: pdf.name, size: pdf.size, type: pdf.type || "application/pdf" } : undefined;
-  await appendUserState(OPERATOR_DATA_INTAKE_FILE, { id: `intake-${randomUUID()}`, sourceType, state, district, school, sport, classYear, sourceUrl, sourceName, notes, athleteText: athleteText.slice(0, 200000), sourceFetchStatus: sourceUrl ? (fetchedText ? "fetched" : pastedAthleteText ? "pasted_text_used" : "fetch_failed_or_blocked") : "manual", extractedAthletes, extractedCoaches, extractedCount: extractedAthletes.length, extractedCoachCount: extractedCoaches.length, pdf: pdfMeta, status: "queued_for_review", createdAt: new Date().toISOString() });
-  await audit("data-intake-recorded", { sourceType, state, district, school, sport, sourceUrl, pdfName: pdfMeta?.name, extractedCount: extractedAthletes.length, extractedCoachCount: extractedCoaches.length });
-  redirect("/operations?status=data-intake-recorded&tab=schools");
-}
-
-export async function ingestNcesCcdCsv(formData: FormData) {
-  const uploaded = formData.get("ncesFile");
-  const sourceName = value(formData, "sourceName") || "NCES CCD CSV";
-  if (!(uploaded instanceof File) || uploaded.size === 0) redirect("/operations/nces?status=nces-file-missing");
-  const text = Buffer.from(await uploaded.arrayBuffer()).toString("utf8");
-  const runId = `nces-${randomUUID()}`;
-  const input: RawInput = { medium: "csv", uri: `upload://operations/${uploaded.name}`, fetchedAt: new Date().toISOString(), body: text, headers: { "content-type": uploaded.type || "text/csv" } };
-  const detection = ncesCcdAdapter.detect(input);
-  const extraction = ncesCcdAdapter.extract(input, { rawArchiveRef: `operations:nces:${runId}` });
-  const autoSeeded = extraction.proposals.filter((proposal) => proposal.kind === "SchoolProposal" && proposal.confidence >= 0.75).length;
-  await appendUserState(OPERATOR_NCES_RUNS_FILE, { id: runId, sourceName, fileName: uploaded.name, fileSize: uploaded.size, detection, envelope: extraction.envelope, diagnostics: extraction.diagnostics, proposalCount: extraction.proposals.length, autoSeeded, status: detection.handled ? "extracted_for_resolution" : "unclassified", createdAt: new Date().toISOString() });
-  await appendUserState(OPERATOR_DATA_INTAKE_FILE, { id: `intake-${runId}`, sourceType: "nces-ccd", sourceName, sourceUrl: extraction.envelope.uri, notes: "NCES CCD adapter run. T0 canonical school proposals routed through Operations.", extractedCount: autoSeeded, status: detection.handled ? "extracted_for_resolution" : "unclassified_input", createdAt: new Date().toISOString() });
-  await audit("nces-ccd-ingested", { runId, sourceName, fileName: uploaded.name, proposalCount: extraction.proposals.length, autoSeeded, handled: detection.handled, confidence: detection.confidence });
-  revalidatePath("/operations");
-  revalidatePath("/operations/nces");
-  revalidatePath("/schools");
-  redirect("/operations/nces?status=nces-ingested");
-}
+export async function recordDataIntake(formData: FormData) { const sourceType = value(formData, "sourceType") || "manual"; const state = value(formData, "state"); const district = value(formData, "district"); const school = value(formData, "school"); const sport = value(formData, "sport"); const classYear = value(formData, "classYear"); const sourceUrl = value(formData, "sourceUrl"); const sourceName = value(formData, "sourceName"); const notes = value(formData, "notes"); const pastedAthleteText = value(formData, "athleteText"); const fetchedText = pastedAthleteText ? "" : await fetchSourceText(sourceUrl); const athleteText = pastedAthleteText || fetchedText; const extractedAthletes = extractAthletesFromText(athleteText); const extractedCoaches = extractCoachesFromText(athleteText, { school, sport, state }); const pdf = formData.get("pdfFile"); const pdfMeta = pdf instanceof File && pdf.size > 0 ? { name: pdf.name, size: pdf.size, type: pdf.type || "application/pdf" } : undefined; await appendUserState(OPERATOR_DATA_INTAKE_FILE, { id: `intake-${randomUUID()}`, sourceType, state, district, school, sport, classYear, sourceUrl, sourceName, notes, athleteText: athleteText.slice(0, 200000), sourceFetchStatus: sourceUrl ? (fetchedText ? "fetched" : pastedAthleteText ? "pasted_text_used" : "fetch_failed_or_blocked") : "manual", extractedAthletes, extractedCoaches, extractedCount: extractedAthletes.length, extractedCoachCount: extractedCoaches.length, pdf: pdfMeta, status: "queued_for_review", createdAt: new Date().toISOString() }); await audit("data-intake-recorded", { sourceType, state, district, school, sport, sourceUrl, pdfName: pdfMeta?.name, extractedCount: extractedAthletes.length, extractedCoachCount: extractedCoaches.length }); redirect("/operations?status=data-intake-recorded&tab=schools"); }
+export async function ingestNcesCcdCsv(formData: FormData) { const uploaded = formData.get("ncesFile"); const sourceName = value(formData, "sourceName") || "NCES CCD CSV"; if (!(uploaded instanceof File) || uploaded.size === 0) redirect("/operations/nces?status=nces-file-missing"); const text = Buffer.from(await uploaded.arrayBuffer()).toString("utf8"); const runId = `nces-${randomUUID()}`; const input: RawInput = { medium: "csv", uri: `upload://operations/${uploaded.name}`, fetchedAt: new Date().toISOString(), body: text, headers: { "content-type": uploaded.type || "text/csv" } }; const detection = ncesCcdAdapter.detect(input); const extraction = ncesCcdAdapter.extract(input, { rawArchiveRef: `operations:nces:${runId}` }); const autoSeeded = extraction.proposals.filter((proposal) => proposal.kind === "SchoolProposal" && proposal.confidence >= 0.75).length; await appendUserState(OPERATOR_NCES_RUNS_FILE, { id: runId, sourceName, fileName: uploaded.name, fileSize: uploaded.size, detection, envelope: extraction.envelope, diagnostics: extraction.diagnostics, proposalCount: extraction.proposals.length, autoSeeded, status: detection.handled ? "extracted_for_resolution" : "unclassified", createdAt: new Date().toISOString() }); await appendUserState(OPERATOR_DATA_INTAKE_FILE, { id: `intake-${runId}`, sourceType: "nces-ccd", sourceName, sourceUrl: extraction.envelope.uri, notes: "NCES CCD adapter run. T0 canonical school proposals routed through Operations.", extractedCount: autoSeeded, status: detection.handled ? "extracted_for_resolution" : "unclassified_input", createdAt: new Date().toISOString() }); await audit("nces-ccd-ingested", { runId, sourceName, fileName: uploaded.name, proposalCount: extraction.proposals.length, autoSeeded, handled: detection.handled, confidence: detection.confidence }); revalidatePath("/operations"); revalidatePath("/operations/nces"); revalidatePath("/schools"); redirect("/operations/nces?status=nces-ingested"); }
