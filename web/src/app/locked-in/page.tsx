@@ -31,10 +31,10 @@ export default function LockedInPage() {
   return (
     <PublicSiteShell variant="dark">
       <section className="relative overflow-hidden bg-black text-white">
-        {coverImageUrl ? <img src={coverImageUrl} alt="Locked In cover" className="absolute inset-0 h-full w-full object-cover opacity-45" /> : null}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(140,255,0,0.18),transparent_28%),radial-gradient(circle_at_80%_10%,rgba(242,194,0,0.18),transparent_26%),linear-gradient(135deg,#000,#061331_55%,#020402)]" />
-        {coverImageUrl ? <div className="absolute inset-0 bg-gradient-to-r from-black via-black/78 to-black/36" /> : null}
-        <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "linear-gradient(rgba(140,255,0,.18) 1px, transparent 1px), linear-gradient(90deg, rgba(242,194,0,.16) 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(140,255,0,0.12),transparent_28%),radial-gradient(circle_at_80%_10%,rgba(242,194,0,0.12),transparent_26%),linear-gradient(135deg,#000,#061331_55%,#020402)]" />
+        {coverImageUrl ? <img src={coverImageUrl} alt="Locked In cover" className="absolute inset-0 h-full w-full object-cover opacity-80" /> : null}
+        {coverImageUrl ? <div className="absolute inset-0 bg-gradient-to-r from-black/78 via-black/42 to-black/16" /> : null}
+        {!coverImageUrl ? <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "linear-gradient(rgba(140,255,0,.18) 1px, transparent 1px), linear-gradient(90deg, rgba(242,194,0,.16) 1px, transparent 1px)", backgroundSize: "32px 32px" }} /> : null}
         <div className="relative mx-auto grid max-w-[1440px] gap-8 px-4 py-14 sm:px-6 lg:grid-cols-[1fr_360px] lg:px-8 lg:py-20">
           <div className="max-w-4xl">
             <p className="text-xs font-black uppercase tracking-[0.34em] text-[#8CFF00]">MyD1 Sports</p>
@@ -42,7 +42,7 @@ export default function LockedInPage() {
             <p className="mt-5 text-2xl font-black uppercase tracking-[0.12em] text-[#8CFF00]">{subheadline || "Compete. Win. Return."}</p>
             <p className="mt-5 max-w-2xl text-lg font-semibold leading-8 text-[#DCE7FF]">{body || "Community 3v3 competition for teams that want the smoke. Separate from public athlete profiles. Built for parks, gyms, cash prizes, brackets, highlights, and local bragging rights."}</p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row"><Link href={ctaHref} className="inline-flex min-h-12 items-center justify-center rounded-xl bg-[#F2C200] px-6 text-sm font-black uppercase text-black shadow-[0_20px_40px_rgba(242,194,0,0.28)]">{ctaLabel}</Link><Link href="#events" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-[#8CFF00] px-6 text-sm font-black uppercase text-[#8CFF00]">Upcoming Events</Link></div>
-            <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{formatItems.map((item) => <div key={item.label} className="rounded-2xl border border-white/10 bg-white/[0.06] p-4"><item.icon className="text-[#8CFF00]" /><p className="mt-3 text-sm font-black uppercase text-white">{item.label}</p></div>)}</div>
+            <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{formatItems.map((item) => <div key={item.label} className="rounded-2xl border border-white/10 bg-black/45 p-4 backdrop-blur-sm"><item.icon className="text-[#8CFF00]" /><p className="mt-3 text-sm font-black uppercase text-white">{item.label}</p></div>)}</div>
           </div>
           <aside id="events" className="rounded-[30px] border border-[#8CFF00]/35 bg-black/72 p-5 shadow-[0_0_40px_rgba(140,255,0,0.12)]">
             <p className="text-xs font-black uppercase tracking-[0.24em] text-[#8CFF00]">Next Event</p>
