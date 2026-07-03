@@ -9,7 +9,8 @@ const navItems = [
   { href: "/search", label: "Search" },
   { href: "/about", label: "About" },
   { href: "/schools", label: "Schools" },
-  { href: "/sports", label: "Sports" }
+  { href: "/sports", label: "Sports" },
+  { href: "/games", label: "Games" }
 ] as const;
 
 const socialIcons = {
