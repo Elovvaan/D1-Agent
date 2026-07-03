@@ -39,6 +39,14 @@ select {
   font: inherit;
 }
 
+main > div > div[class*="300px"] {
+  grid-template-columns: 260px minmax(0, 1fr) !important;
+}
+
+main > div > div[class*="300px"] > aside:last-child {
+  display: none;
+}
+
 ::selection {
   background: #F2C200;
   color: #061331;
