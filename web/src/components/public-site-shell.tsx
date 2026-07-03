@@ -3,7 +3,13 @@ import { ArrowRight, Facebook, Instagram, Youtube } from "lucide-react";
 import { brandConfig } from "@/lib/domain-config";
 import { myd1SocialChannels } from "@/lib/social-channels";
 
-const navItems = [
+type PublicNavItem = {
+  href: string;
+  label: string;
+  lockedIn?: boolean;
+};
+
+const navItems: PublicNavItem[] = [
   { href: "/", label: "Home" },
   { href: "/discover", label: "Discover" },
   { href: "/search", label: "Search" },
@@ -12,7 +18,7 @@ const navItems = [
   { href: "/sports", label: "Sports" },
   { href: "/games", label: "Games" },
   { href: "/locked-in", label: "Locked In", lockedIn: true }
-] as const;
+];
 
 const socialIcons = {
   facebook: Facebook,
