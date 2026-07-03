@@ -18,6 +18,7 @@ export function ProfilePictureForm({ athleteName, currentAvatarUrl, initials }: 
 
   useEffect(() => {
     if (state.status !== "success" || !state.avatarUrl) return;
+    setPreviewUrl(state.avatarUrl);
     window.localStorage.setItem(LOCAL_AVATAR_KEY, state.avatarUrl);
     window.dispatchEvent(new Event("myd1-avatar-updated"));
   }, [state.status, state.avatarUrl]);
