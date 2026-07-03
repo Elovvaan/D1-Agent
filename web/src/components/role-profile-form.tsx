@@ -5,6 +5,8 @@ import { saveRoleWorkspaceProfile, type RoleProfileDetailsState } from "@/app/ac
 
 type Role = "athlete" | "family" | "coach" | "recruiter" | "media" | "organization" | "admin";
 type Field = { name: string; label: string; textarea?: boolean };
+type SavedProfile = Record<string, string | string[]>;
+type ProfileResponse = { profile?: SavedProfile };
 
 const forms: Record<Role, { title: string; fields: Field[] }> = {
   athlete: { title: "Athlete profile", fields: [{ name: "displayName", label: "Display name" }, { name: "city", label: "City" }, { name: "sport", label: "Sport" }, { name: "position", label: "Position" }, { name: "schoolName", label: "School / team" }, { name: "classYear", label: "Class year" }, { name: "bio", label: "Bio", textarea: true }] },
@@ -18,21 +20,21 @@ const forms: Record<Role, { title: string; fields: Field[] }> = {
 
 const initialState: RoleProfileDetailsState = { status: "idle", message: "" };
 
-function read(profile: Record<string, string | string[]> | undefined, name: string) {
+function read(profile: SavedProfile | undefined, name: string) {
   const value = profile?.[name];
   return Array.isArray(value) ? value.join(", ") : String(value ?? "");
 }
 
 export function RoleProfileForm({ role }: { role: Role }) {
   const [state, formAction, isPending] = useActionState(saveRoleWorkspaceProfile, initialState);
-  const [profile, setProfile] = useState<Record<string, string | string[]> | undefined>();
+  const [profile, setProfile] = useState<SavedProfile | undefined>();
   const [loaded, setLoaded] = useState(false);
   const config = forms[role];
 
   useEffect(() => {
     let active = true;
     fetch(`/api/role-workspaces/${role}`, { cache: "no-store" })
-      .then((response) => (response.ok ? response.json() : {}))
+      .then(async (response): Promise<ProfileResponse> => response.ok ? (await response.json()) as ProfileResponse : {})
       .then((data) => { if (active) setProfile(data.profile ?? {}); })
       .catch(() => { if (active) setProfile({}); })
       .finally(() => { if (active) setLoaded(true); });
