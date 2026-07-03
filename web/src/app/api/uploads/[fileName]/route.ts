@@ -7,7 +7,10 @@ const allowedExtensions: Record<string, string> = {
   ".gif": "image/gif",
   ".jpg": "image/jpeg",
   ".jpeg": "image/jpeg",
+  ".mov": "video/quicktime",
+  ".mp4": "video/mp4",
   ".png": "image/png",
+  ".webm": "video/webm",
   ".webp": "image/webp"
 };
 
