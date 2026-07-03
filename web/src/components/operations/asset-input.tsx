@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ImageIcon, X } from "lucide-react";
 
 type AssetInputProps = {
@@ -18,12 +18,24 @@ function fileFieldName(fieldName: string) {
   return `${fieldName}File`;
 }
 
+function previewUrl(url: string) {
+  if (!url || url.startsWith("data:")) return url;
+  return `${url}${url.includes("?") ? "&" : "?"}v=${encodeURIComponent(url)}`;
+}
+
 export function AssetInput({ label, fieldName, currentUrl, accept, helper }: AssetInputProps) {
   const [assetValue, setAssetValue] = useState(currentUrl ?? "");
   const [fallbackValue, setFallbackValue] = useState(currentUrl ?? "");
   const [fileName, setFileName] = useState("");
   const inputRef = useRef<HTMLInputElement | null>(null);
   const isImage = assetValue.startsWith("data:image/") || Boolean(assetValue && !assetValue.match(/\.(mp4|mov|webm|m4v)$/i));
+
+  useEffect(() => {
+    setAssetValue(currentUrl ?? "");
+    setFallbackValue(currentUrl ?? "");
+    setFileName("");
+    if (inputRef.current) inputRef.current.value = "";
+  }, [currentUrl]);
 
   function handleFile(file?: File) {
     if (!file) return;
@@ -48,7 +60,7 @@ export function AssetInput({ label, fieldName, currentUrl, accept, helper }: Ass
       <input type="hidden" name={fieldName} value={fallbackValue} />
       <div className="flex gap-4">
         <div className="grid h-20 w-28 shrink-0 place-items-center overflow-hidden rounded-2xl border border-white/10 bg-[#061331]">
-          {isImage ? <img src={assetValue} alt="Selected asset" className="h-full w-full object-cover" /> : <ImageIcon className="text-[#F2C200]" />}
+          {isImage ? <img src={previewUrl(assetValue)} alt="Selected asset" className="h-full w-full object-cover" /> : <ImageIcon className="text-[#F2C200]" />}
         </div>
         <div className="min-w-0 flex-1">
           <p className="text-sm font-black text-white">{label}</p>
