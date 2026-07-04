@@ -20,6 +20,14 @@ type LockedInEvent = {
   court?: string;
   teamLimit?: number;
   entryFee?: number;
+  entryFeePerPlayer?: number;
+  minPlayersPerTeam?: number;
+  maxPlayersPerTeam?: number;
+  myd1Bonus?: number;
+  playerPoolMin?: number;
+  playerPoolMax?: number;
+  prizeMin?: number;
+  prizeMax?: number;
   eventPassPrice?: number;
   prizePool?: number;
   registrationStatus?: string;
@@ -46,11 +54,22 @@ function money(value?: number) {
   return typeof value === "number" && !Number.isNaN(value) ? `$${value}` : "TBA";
 }
 
+function prizeRange(event: LockedInEvent) {
+  const teamLimit = event.teamLimit ?? 8;
+  const minPlayers = event.minPlayersPerTeam ?? 3;
+  const maxPlayers = event.maxPlayersPerTeam ?? 4;
+  const entryFee = event.entryFeePerPlayer ?? event.entryFee ?? 10;
+  const bonus = event.myd1Bonus ?? 30;
+  const min = event.prizeMin ?? teamLimit * minPlayers * entryFee + bonus;
+  const max = event.prizeMax ?? teamLimit * maxPlayers * entryFee + bonus;
+  return { min, max, entryFee, maxPlayers, teamLimit, bonus };
+}
+
 export default function EventsPage() {
   const pageProfile = getPageProfile("events");
   const events = publishedEvents();
-  const headline = pageProfile?.headline?.trim() || "MYD1 Events";
-  const subheadline = pageProfile?.subheadline?.trim() || "Find upcoming MYD1 competitions, register your team, create an athlete profile, or pick up an Event Pass.";
+  const headline = pageProfile?.headline?.trim() || "MYD1 Locked In";
+  const subheadline = pageProfile?.subheadline?.trim() || "3-on-3 basketball tournaments. $10 per player, up to 4 players per team, 8 teams only, and a dynamic championship prize.";
   const coverImageUrl = pageProfile?.coverImageUrl;
 
   return (
@@ -69,10 +88,10 @@ export default function EventsPage() {
 
         <section className="px-4 py-10 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-[1200px]">
-            <div className="grid gap-4 md:grid-cols-3"><div className="rounded-[24px] border border-[#8CFF00]/25 bg-[#8CFF00]/10 p-5"><Users className="text-[#8CFF00]" /><h2 className="mt-3 text-xl font-black uppercase">Free Spectator</h2><p className="mt-2 text-sm font-semibold leading-6 text-[#C8D6FF]">Show up and watch. No shirt or player wristband required.</p></div><div className="rounded-[24px] border border-[#F2C200]/25 bg-[#F2C200]/10 p-5"><Trophy className="text-[#F2C200]" /><h2 className="mt-3 text-xl font-black uppercase">Athlete Registration</h2><p className="mt-2 text-sm font-semibold leading-6 text-[#C8D6FF]">Create a profile, join a team, check in, receive player wristband, and compete.</p></div><div className="rounded-[24px] border border-white/10 bg-white/[0.07] p-5"><Ticket className="text-[#F2C200]" /><h2 className="mt-3 text-xl font-black uppercase">Event Pass</h2><p className="mt-2 text-sm font-semibold leading-6 text-[#C8D6FF]">Optional pass with shirt pickup, event wristband, and event-day perks when configured.</p></div></div>
+            <div className="grid gap-4 md:grid-cols-3"><div className="rounded-[24px] border border-[#8CFF00]/25 bg-[#8CFF00]/10 p-5"><Users className="text-[#8CFF00]" /><h2 className="mt-3 text-xl font-black uppercase">Free Spectator</h2><p className="mt-2 text-sm font-semibold leading-6 text-[#C8D6FF]">Show up and watch. No shirt or player wristband required.</p></div><div className="rounded-[24px] border border-[#F2C200]/25 bg-[#F2C200]/10 p-5"><Trophy className="text-[#F2C200]" /><h2 className="mt-3 text-xl font-black uppercase">Athlete Registration</h2><p className="mt-2 text-sm font-semibold leading-6 text-[#C8D6FF]">$10 per player. Build a 3–4 player roster, check in, receive a player wristband, and compete.</p></div><div className="rounded-[24px] border border-white/10 bg-white/[0.07] p-5"><Ticket className="text-[#F2C200]" /><h2 className="mt-3 text-xl font-black uppercase">Event Pass</h2><p className="mt-2 text-sm font-semibold leading-6 text-[#C8D6FF]">Optional pass with shirt pickup, event wristband, and event-day perks when configured.</p></div></div>
 
             <div className="mt-8 grid gap-4">
-              {events.length ? events.map((event) => <article key={event.id} className="rounded-[28px] border border-white/10 bg-[#071A43] p-5"><div className="grid gap-5 lg:grid-cols-[1fr_auto]"><div><p className="text-xs font-black uppercase tracking-[0.24em] text-[#8CFF00]">{event.sport || "MYD1"} · {event.format || "Event"}</p><h2 className="mt-2 text-3xl font-black uppercase text-white">{event.title || "MYD1 Event"}</h2><p className="mt-3 max-w-3xl text-sm font-semibold leading-6 text-[#C8D6FF]">{event.description || "Published MYD1 event."}</p><div className="mt-5 grid gap-3 text-sm font-black text-white md:grid-cols-3"><div className="flex items-center gap-2"><CalendarDays className="text-[#F2C200]" size={18} />{event.dateLabel || "Date TBA"}</div><div className="flex items-center gap-2"><Clock3 className="text-[#F2C200]" size={18} />{event.startTime || event.timeLabel || "Time TBA"}</div><div className="flex items-center gap-2"><MapPin className="text-[#F2C200]" size={18} />{[event.venue || event.location, event.court].filter(Boolean).join(" · ") || "Location TBA"}</div></div></div><div className="grid min-w-[240px] gap-3 rounded-2xl border border-white/10 bg-black p-4"><div><p className="text-xs font-black uppercase text-[#8CFF00]">Prize</p><p className="text-3xl font-black text-[#F2C200]">{money(event.prizePool)}</p></div><div className="grid grid-cols-2 gap-2 text-xs font-black uppercase text-white"><div className="rounded-xl bg-white/[0.08] p-3">Teams<br /><span className="text-[#8CFF00]">{event.teamLimit || "TBA"}</span></div><div className="rounded-xl bg-white/[0.08] p-3">Entry<br /><span className="text-[#8CFF00]">{money(event.entryFee)}</span></div></div><Link href="/locked-in/register" className="rounded-2xl bg-[#8CFF00] px-4 py-3 text-center text-sm font-black uppercase text-black">Register</Link></div></div></article>) : <div className="rounded-[28px] border border-white/10 bg-[#071A43] p-6 text-sm font-semibold leading-6 text-[#C8D6FF]">No published events yet. Publish an event from Platform Management → Locked In Events.</div>}
+              {events.length ? events.map((event) => { const prize = prizeRange(event); return <article key={event.id} className="rounded-[28px] border border-white/10 bg-[#071A43] p-5"><div className="grid gap-5 lg:grid-cols-[1fr_auto]"><div><p className="text-xs font-black uppercase tracking-[0.24em] text-[#8CFF00]">{event.sport || "Basketball"} · {event.format || "3v3"}</p><h2 className="mt-2 text-3xl font-black uppercase text-white">{event.title || "MYD1 Locked In"}</h2><p className="mt-3 max-w-3xl text-sm font-semibold leading-6 text-[#C8D6FF]">{event.description || "3-on-3 basketball tournament. $10 per player, up to 4 players per team, 8 teams only."}</p><div className="mt-5 grid gap-3 text-sm font-black text-white md:grid-cols-3"><div className="flex items-center gap-2"><CalendarDays className="text-[#F2C200]" size={18} />{event.dateLabel || "Date TBA"}</div><div className="flex items-center gap-2"><Clock3 className="text-[#F2C200]" size={18} />{event.startTime || event.timeLabel || "Time TBA"}</div><div className="flex items-center gap-2"><MapPin className="text-[#F2C200]" size={18} />{[event.venue || event.location, event.court].filter(Boolean).join(" · ") || "Ogden, Utah"}</div></div><div className="mt-5 grid gap-2 text-sm font-black uppercase text-white md:grid-cols-4"><div className="rounded-xl bg-white/[0.08] p-3">8 Teams Only</div><div className="rounded-xl bg-white/[0.08] p-3">$10 Per Player</div><div className="rounded-xl bg-white/[0.08] p-3">Up To 4 Players</div><div className="rounded-xl bg-white/[0.08] p-3">MyD1 Adds ${prize.bonus}</div></div></div><div className="grid min-w-[270px] gap-3 rounded-2xl border border-white/10 bg-black p-4"><div><p className="text-xs font-black uppercase text-[#8CFF00]">Championship Prize</p><p className="text-3xl font-black text-[#F2C200]">${prize.min}–${prize.max}</p><p className="mt-1 text-xs font-semibold leading-5 text-[#C8D6FF]">Prize depends on final roster count. MyD1 contributes an additional ${prize.bonus} to every event.</p></div><div className="grid grid-cols-2 gap-2 text-xs font-black uppercase text-white"><div className="rounded-xl bg-white/[0.08] p-3">Teams<br /><span className="text-[#8CFF00]">{prize.teamLimit}</span></div><div className="rounded-xl bg-white/[0.08] p-3">Entry<br /><span className="text-[#8CFF00]">{money(prize.entryFee)}/player</span></div></div><Link href="/locked-in/register" className="rounded-2xl bg-[#8CFF00] px-4 py-3 text-center text-sm font-black uppercase text-black">Register</Link></div></div></article>; }) : <div className="rounded-[28px] border border-white/10 bg-[#071A43] p-6 text-sm font-semibold leading-6 text-[#C8D6FF]">No published events yet. Publish an event from Platform Management → Locked In Events.</div>}
             </div>
           </div>
         </section>
