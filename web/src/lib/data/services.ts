@@ -10,7 +10,7 @@ import { seedAthletes, seedBrandProfiles, seedCalendarEvents, seedFilms, seedGam
 
 export const defaultAthleteId = "athlete-jayden-lewis";
 export type PublicDirectoryGroupName = "States" | "Schools" | "Teams" | "Athletes" | "Rankings" | "Games" | "Organizations" | "Sources" | "Coaches";
-export type PublicDirectoryResult = { id: string; title: string; detail: string; href: string; group: PublicDirectoryGroupName; typeLabel: string; sourceLabel: "Public Record" | "Public Profile" | "Source Registry"; sourceUrl?: string; importedAt?: string; confidence?: number };
+export type PublicDirectoryResult = { id: string; title: string; detail: string; href: string; group: PublicDirectoryGroupName; typeLabel: string; sourceLabel: "Public Record" | "Public Profile" | "Source Registry"; sourceUrl?: string; importedAt?: string; confidence?: number; stateCode?: string };
 export type PublicDirectorySection = { title: string; caption: string; results: PublicDirectoryResult[] };
 export type PublicDirectoryCounters = { schools: number; teams: number; athletes: number; coaches: number; games: number; sources: number; recordsImported: number; pendingReview: number };
 type UploadedMediaFile = { title?: string; name?: string; url?: string };
@@ -63,26 +63,24 @@ export function getPublicAthleteHomepage(athleteId = defaultAthleteId) { return 
 
 const publicDirectoryGroupOrder: PublicDirectoryGroupName[] = ["States", "Schools", "Teams", "Athletes", "Rankings", "Games", "Organizations", "Sources", "Coaches"];
 function graphNodeToDirectoryResult(node: DirectoryGraphNode): PublicDirectoryResult | null { if (node.type === "import_session" || node.type === "review_queue_item") return null; const groupByType: Record<string, PublicDirectoryGroupName> = { school: "Schools", team: "Teams", player: "Athletes", ranking: "Rankings", organization: "Organizations", source: "Sources" }; const group = groupByType[node.type]; if (!group) return null; return { id: node.id, title: node.name, detail: node.detail, href: `/directory/${node.type}/${node.id}`, group, typeLabel: node.label, sourceLabel: node.type === "source" ? "Source Registry" : "Public Record", sourceUrl: node.sourceUrl, importedAt: node.importedAt, confidence: node.confidence }; }
-function seedStateResults(): PublicDirectoryResult[] { return usStates.map((state) => { const profile = getStateProfile(state.code); const displayName = profile?.displayName || state.name; return { id: `state-${state.code.toLowerCase()}`, title: displayName, detail: [profile?.tagline, `${state.code} state directory`].filter(Boolean).join(" — "), href: stateHref(state.code), group: "States" as const, typeLabel: "State", sourceLabel: "Public Record" as const }; }); }
-function seedDirectoryResults(): PublicDirectoryResult[] { const athlete = getAthleteProfile(); return [{ id: athlete.id, title: athlete.fullName, detail: `${athlete.sport} - ${athlete.primaryPosition} - ${athlete.schoolName}`, href: `/athletes/${athlete.id}`, group: "Athletes", typeLabel: "Public Profile", sourceLabel: "Public Profile" }, ...seedOrgs.map((org) => ({ id: org.id, title: org.name, detail: [org.city, org.state, org.division].filter(Boolean).join(" - "), href: `/directory/school/${org.id}`, group: org.type === "high_school" ? "Schools" as const : "Organizations" as const, typeLabel: toTitle(org.type), sourceLabel: "Public Profile" as const }))]; }
+function seedStateResults(): PublicDirectoryResult[] { return usStates.map((state) => { const profile = getStateProfile(state.code); const displayName = profile?.displayName || state.name; return { id: `state-${state.code.toLowerCase()}`, title: displayName, detail: [profile?.tagline, `${state.code} state directory`].filter(Boolean).join(" — "), href: stateHref(state.code), group: "States" as const, typeLabel: "State", sourceLabel: "Public Record" as const, stateCode: state.code }; }); }
+function seedDirectoryResults(): PublicDirectoryResult[] { const athlete = getAthleteProfile(); return [{ id: athlete.id, title: athlete.fullName, detail: `${athlete.sport} - ${athlete.primaryPosition} - ${athlete.schoolName}`, href: `/athletes/${athlete.id}`, group: "Athletes", typeLabel: "Public Profile", sourceLabel: "Public Profile" }, ...seedOrgs.map((org) => ({ id: org.id, title: org.name, detail: [org.city, org.state, org.division].filter(Boolean).join(" - "), href: `/directory/school/${org.id}`, group: org.type === "high_school" ? "Schools" as const : "Organizations" as const, typeLabel: toTitle(org.type), sourceLabel: "Public Profile" as const, stateCode: org.state }))]; }
 function buildPublicDirectoryIndex() { const results = [...seedStateResults(), ...seedDirectoryResults(), ...(getDirectoryGraph().nodes.map(graphNodeToDirectoryResult).filter(Boolean) as PublicDirectoryResult[])]; const seen = new Set<string>(); return results.filter((item) => { const key = `${item.group}:${item.id}:${item.sourceUrl ?? ""}`; if (seen.has(key)) return false; seen.add(key); return true; }); }
 const stateCodeByFullName = new Map(usStates.map((state) => [state.name.toLowerCase(), state.code.toLowerCase()]));
 export function searchPublicDirectory(query: string) {
   const normalized = query.trim().toLowerCase();
   const stateCodeSynonym = stateCodeByFullName.get(normalized);
-  const stateCodePattern = stateCodeSynonym ? new RegExp(`\\b${stateCodeSynonym.toUpperCase()}\\b`) : undefined;
+  const stateCodePattern = stateCodeSynonym ? new RegExp(`\b${stateCodeSynonym.toUpperCase()}\b`) : undefined;
   const all = buildPublicDirectoryIndex().filter((item) => {
     if (!normalized) return true;
-    const rawHaystack = [item.title, item.detail, item.group, item.typeLabel, item.sourceUrl ?? ""].join(" ");
+    const rawHaystack = [item.title, item.detail, item.group, item.typeLabel, item.sourceUrl ?? "", item.stateCode ?? ""].join(" ");
     const haystack = rawHaystack.toLowerCase();
     return haystack.includes(normalized) || (stateCodePattern ? stateCodePattern.test(rawHaystack) : false);
   });
   return publicDirectoryGroupOrder.map((group) => ({ group, results: all.filter((item) => item.group === group) })).filter((group) => group.results.length);
 }
-export function getPublicDirectoryCounters(): PublicDirectoryCounters { const results = buildPublicDirectoryIndex(); const count = (group: PublicDirectoryGroupName) => results.filter((item) => item.group === group).length; return { schools: count("Schools"), teams: count("Teams"), athletes: count("Athletes"), coaches: count("Coaches"), games: count("Games"), sources: count("Sources"), recordsImported: results.length, pendingReview: getDirectoryGraph().nodes.filter((node) => node.reviewStatus === "pending_review").length }; }
-export function getPublicDirectoryDiscoverySections(): PublicDirectorySection[] { return searchPublicDirectory("").map((group) => ({ title: group.group, caption: `${group.results.length} public records`, results: group.results.slice(0, 8) })); }
-export function getPublicDirectoryRecord(id: string) { const graphNode = getDirectoryGraphNode("", id) ?? getDirectoryGraph().nodes.find((node) => node.id === id); const result = buildPublicDirectoryIndex().find((item) => item.id === id); if (!result) return null; return { ...result, entity: result, title: result.title, fields: graphNode?.fields ?? [{ name: "name", value: result.title }, { name: "detail", value: result.detail }], graphNode, typeLabel: result.typeLabel }; }
-
-export type PublicProfileIntake = { measurables?: Record<string, string>; academics?: Record<string, string>; athletics?: Record<string, string>; sources?: Record<string, string>; updatedAt?: string };
-export function getPublicProfileIntake(): PublicProfileIntake { return readUserState<PublicProfileIntake>("profile-intake.json", {}); }
-export function getPublicStatsReviewQueue(athleteId = defaultAthleteId): StatLine[] { return getStats(athleteId).filter((stat) => stat.source !== "self"); }
+export function getPublicDirectoryCounters(): PublicDirectoryCounters { const results = buildPublicDirectoryIndex(); const count = (group: PublicDirectoryGroupName) => results.filter((item) => item.group === group).length; return { schools: count("Schools"), teams: count("Teams"), athletes: count("Athletes"), coaches: count("Coaches"), games: count("Games"), sources: count("Sources"), recordsImported: results.length, pendingReview: 0 }; }
+export const getAthleteProfileSync = getAthleteProfile;
+export function getRecentGames(): Game[] { return seedGames; }
+export function getRecentHighlights(): Highlight[] { return seedHighlights; }
+export function getUpcomingCalendarEvents(): CalendarEvent[] { return seedCalendarEvents; }
