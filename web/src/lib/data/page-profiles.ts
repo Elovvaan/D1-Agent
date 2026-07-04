@@ -25,8 +25,7 @@ function cleanPageProfile(profile: PageProfile | undefined) {
 
 export function getPageProfile(pageKey: string, stateCode?: string) {
   const stored = readJsonSync<{ items?: PageProfile[] }>(userStatePath("page-profiles.json"), { items: [] }).items ?? [];
-  const latestFirst = [...stored].reverse();
   const normalizedState = (stateCode ?? "").toUpperCase();
-  const profile = latestFirst.find((item) => item.pageKey === pageKey && (item.stateCode ?? "").toUpperCase() === normalizedState) ?? latestFirst.find((item) => item.pageKey === pageKey && !item.stateCode);
+  const profile = stored.find((item) => item.pageKey === pageKey && (item.stateCode ?? "").toUpperCase() === normalizedState) ?? stored.find((item) => item.pageKey === pageKey && !item.stateCode);
   return cleanPageProfile(profile);
 }
