@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { brandConfig, getMarketingBaseUrl } from "@/lib/domain-config";
 import "./globals.css";
@@ -18,8 +18,22 @@ const shareTitle = "MyD1 | The Athlete Profile. The Public Sports Network.";
 const shareDescription = "Verified athletic profiles, public sports search, film, recruiting workflows, and career tools powered by the D1 Agent.";
 const shareImage = "/opengraph-image";
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  themeColor: "#061331"
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+  applicationName: "MYD1",
+  appleWebApp: {
+    capable: true,
+    title: "MYD1",
+    statusBarStyle: "black-translucent"
+  },
+  manifest: "/manifest.webmanifest",
   title: {
     default: shareTitle,
     template: `%s | ${brandConfig.primaryBrand}`
