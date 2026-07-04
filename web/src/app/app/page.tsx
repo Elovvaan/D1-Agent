@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Bell, CalendarDays, Camera, CheckCircle2, ChevronRight, QrCode, Search, Shirt, Trophy, UserRound, Users, Zap } from "lucide-react";
+import { Bell, CalendarDays, Camera, ChevronRight, QrCode, Search, Shirt, Trophy, UserRound, Users } from "lucide-react";
+import { InstallMyd1Card } from "@/components/install-myd1-card";
 
 const quickActions = [
   { label: "Scan Check-In", href: "/app/check-in", icon: QrCode },
@@ -17,6 +18,7 @@ const upcoming = [
 export default function MobileAppHomePage() {
   return (
     <main className="min-h-screen bg-[#061331] text-white">
+      <InstallMyd1Card />
       <section className="mx-auto min-h-screen max-w-md px-4 pb-24 pt-5">
         <header className="flex items-center justify-between">
           <div className="flex items-center gap-3"><span className="grid h-12 w-12 place-items-center overflow-hidden rounded-2xl bg-white"><img src="/brand/MYD1 LOGO.png" alt="MYD1" className="h-full w-full object-contain p-1.5" /></span><div><p className="text-xs font-black uppercase tracking-[0.22em] text-[#8CFF00]">MYD1 App</p><h1 className="text-xl font-black">Athlete Home</h1></div></div>
