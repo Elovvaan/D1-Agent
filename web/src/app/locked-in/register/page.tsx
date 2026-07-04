@@ -39,7 +39,7 @@ const jerseySizes = ["Youth M", "Youth L", "S", "M", "L", "XL", "2XL", "3XL"];
 const uniformOptions = ["Bring My Own", "MY D1 Basic Kit", "MY D1 Elite Kit"];
 
 export default function LockedInRegisterPage() {
-  const activeEvents = readItems<LockedInEvent>("locked-in-events.json").filter((event) => event.status !== "draft" && event.status !== "closed");
+  const activeEvents = readItems<LockedInEvent>("locked-in-events.json").filter((event) => event.status === "published");
   const entryFeeLabel = activeEvents[0]?.entryFee ? `$${activeEvents[0].entryFee.toFixed(2)} team / uniform add-ons optional` : "Set by selected event / uniform add-ons optional";
 
   return (
