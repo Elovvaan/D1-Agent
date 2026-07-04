@@ -18,14 +18,38 @@ function numberValue(formData: FormData, key: string) {
   return Number.isFinite(parsed) ? parsed : undefined;
 }
 
+function dynamicPrizeFields(formData: FormData) {
+  const teamLimit = numberValue(formData, "teamLimit") ?? 8;
+  const minPlayersPerTeam = numberValue(formData, "minPlayersPerTeam") ?? 3;
+  const maxPlayersPerTeam = numberValue(formData, "maxPlayersPerTeam") ?? 4;
+  const entryFeePerPlayer = numberValue(formData, "entryFeePerPlayer") ?? numberValue(formData, "entryFee") ?? 10;
+  const myd1Bonus = numberValue(formData, "myd1Bonus") ?? numberValue(formData, "addedMoney") ?? 30;
+  const playerPoolMin = teamLimit * minPlayersPerTeam * entryFeePerPlayer;
+  const playerPoolMax = teamLimit * maxPlayersPerTeam * entryFeePerPlayer;
+  return {
+    minPlayersPerTeam,
+    maxPlayersPerTeam,
+    entryFeePerPlayer,
+    myd1Bonus,
+    playerPoolMin,
+    playerPoolMax,
+    prizeMin: playerPoolMin + myd1Bonus,
+    prizeMax: playerPoolMax + myd1Bonus
+  };
+}
+
 function eventPayload(formData: FormData, fallbackStatus?: string) {
   const now = new Date().toISOString();
   const id = value(formData, "eventId") || `locked-event-${randomUUID()}`;
+  const teamLimit = numberValue(formData, "teamLimit") ?? 8;
+  const dynamicPrize = dynamicPrizeFields(formData);
+  const prizeBreakdown = value(formData, "prizeBreakdown") || `Player Entry Pool: $${dynamicPrize.playerPoolMin}-$${dynamicPrize.playerPoolMax}\nMyD1 Bonus: +$${dynamicPrize.myd1Bonus}\nTotal Championship Prize: $${dynamicPrize.prizeMin}-$${dynamicPrize.prizeMax}\nPrize depends on final roster count. MyD1 contributes an additional $${dynamicPrize.myd1Bonus} to every event.`;
+
   return {
     id,
     title: value(formData, "title"),
-    sport: value(formData, "sport"),
-    format: value(formData, "format"),
+    sport: value(formData, "sport") || "Basketball",
+    format: value(formData, "format") || "3v3",
     season: value(formData, "season"),
     organizer: value(formData, "organizer"),
     description: value(formData, "description"),
@@ -39,15 +63,23 @@ function eventPayload(formData: FormData, fallbackStatus?: string) {
     address: value(formData, "address"),
     mapUrl: value(formData, "mapUrl"),
     environment: value(formData, "environment"),
-    teamLimit: numberValue(formData, "teamLimit"),
+    teamLimit,
     waitlistLimit: numberValue(formData, "waitlistLimit"),
     entryFee: numberValue(formData, "entryFee"),
+    entryFeePerPlayer: dynamicPrize.entryFeePerPlayer,
+    minPlayersPerTeam: dynamicPrize.minPlayersPerTeam,
+    maxPlayersPerTeam: dynamicPrize.maxPlayersPerTeam,
+    myd1Bonus: dynamicPrize.myd1Bonus,
+    playerPoolMin: dynamicPrize.playerPoolMin,
+    playerPoolMax: dynamicPrize.playerPoolMax,
+    prizeMin: dynamicPrize.prizeMin,
+    prizeMax: dynamicPrize.prizeMax,
     registrationStatus: value(formData, "registrationStatus") || "open",
     visibility: value(formData, "visibility") || "public",
-    prizePool: numberValue(formData, "prizePool"),
-    prizeBreakdown: value(formData, "prizeBreakdown"),
+    prizePool: numberValue(formData, "prizePool") ?? dynamicPrize.prizeMax,
+    prizeBreakdown,
     sponsorContribution: numberValue(formData, "sponsorContribution"),
-    addedMoney: numberValue(formData, "addedMoney"),
+    addedMoney: numberValue(formData, "addedMoney") ?? dynamicPrize.myd1Bonus,
     awards: value(formData, "awards"),
     primaryColor: value(formData, "primaryColor") || "#000000",
     secondaryColor: value(formData, "secondaryColor") || "#8CFF00",
@@ -62,6 +94,7 @@ export async function saveLockedInEvent(formData: FormData) {
   const payload = eventPayload(formData);
   await appendUserState(LOCKED_IN_EVENTS_FILE, payload, 1000);
   revalidatePath("/operations/events");
+  revalidatePath("/events");
   revalidatePath("/locked-in");
   revalidatePath("/locked-in/register");
   redirect(`/operations/events?event=${payload.id}&status=event-saved`);
@@ -71,6 +104,7 @@ export async function publishLockedInEvent(formData: FormData) {
   const payload = eventPayload(formData, "published");
   await appendUserState(LOCKED_IN_EVENTS_FILE, { ...payload, status: "published" }, 1000);
   revalidatePath("/operations/events");
+  revalidatePath("/events");
   revalidatePath("/locked-in");
   revalidatePath("/locked-in/register");
   redirect(`/operations/events?event=${payload.id}&status=event-published`);
@@ -81,6 +115,7 @@ export async function archiveLockedInEvent(formData: FormData) {
   if (!id) redirect("/operations/events?status=missing-event");
   await appendUserState(LOCKED_IN_EVENTS_FILE, { id, status: "archived", updatedAt: new Date().toISOString() }, 1000);
   revalidatePath("/operations/events");
+  revalidatePath("/events");
   revalidatePath("/locked-in");
   revalidatePath("/locked-in/register");
   redirect("/operations/events?status=event-archived");
