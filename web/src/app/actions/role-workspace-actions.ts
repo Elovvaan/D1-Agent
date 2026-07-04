@@ -1,9 +1,10 @@
 "use server";
 
-import { createHash, createHmac } from "node:crypto";
+import { createHash, createHmac, randomUUID } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { revalidatePath } from "next/cache";
+import { deriveAthleteEligibility } from "@/lib/athlete-eligibility";
 
 export type RoleProfilePhotoState = {
   status: "idle" | "success" | "error";
@@ -29,7 +30,7 @@ const ROLE_PROFILE_PHOTO_MAX_BYTES = 5 * 1024 * 1024;
 const allowedRoles = new Set(["athlete", "family", "coach", "recruiter", "media", "organization", "admin"]);
 
 const roleProfileFields: Record<string, string[]> = {
-  athlete: ["displayName", "nickname", "city", "sport", "position", "schoolName", "classYear", "bio", "skills"],
+  athlete: ["athleteId", "displayName", "dateOfBirth", "age", "competitionDivision", "verifiedAthlete", "currentTeam", "activeWristbandId", "lastCheckIn", "eventsPlayed", "weighIns", "wins", "championships", "nickname", "city", "sport", "position", "schoolName", "classYear", "bio", "skills"],
   family: ["displayName", "relationship", "linkedAthlete", "city", "phone", "contactPreference", "bio"],
   coach: ["displayName", "title", "organizationName", "sport", "city", "teamLevel", "bio"],
   recruiter: ["displayName", "organizationName", "region", "sportsCovered", "contactEmail", "bio"],
@@ -50,6 +51,12 @@ function value(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
 }
 
+function numberText(formData: FormData, key: string) {
+  const raw = value(formData, key);
+  const parsed = Number(raw);
+  return Number.isFinite(parsed) && parsed >= 0 ? String(parsed) : "0";
+}
+
 async function readJsonFile<T>(filePath: string, fallback: T): Promise<T> {
   try {
     return JSON.parse(await readFile(filePath, "utf8")) as T;
@@ -59,13 +66,7 @@ async function readJsonFile<T>(filePath: string, fallback: T): Promise<T> {
 }
 
 function hasRailwayR2Config() {
-  return Boolean(
-    process.env.RAILWAY_R2_ENDPOINT &&
-    process.env.RAILWAY_R2_ACCESS_KEY_ID &&
-    process.env.RAILWAY_R2_SECRET_ACCESS_KEY &&
-    process.env.RAILWAY_R2_BUCKET &&
-    process.env.RAILWAY_R2_PUBLIC_URL
-  );
+  return Boolean(process.env.RAILWAY_R2_ENDPOINT && process.env.RAILWAY_R2_ACCESS_KEY_ID && process.env.RAILWAY_R2_SECRET_ACCESS_KEY && process.env.RAILWAY_R2_BUCKET && process.env.RAILWAY_R2_PUBLIC_URL);
 }
 
 function encodePathSegment(value: string) {
@@ -100,15 +101,7 @@ async function saveLocalPublicImage(file: File, safeName: string, uploadedAt: st
   const uploadsDir = resolve(process.cwd(), "public", "uploads", "role-profiles");
   await mkdir(uploadsDir, { recursive: true });
   await writeFile(resolve(uploadsDir, safeName), Buffer.from(await file.arrayBuffer()));
-
-  return {
-    name: file.name,
-    url: `/uploads/role-profiles/${safeName}`,
-    size: file.size,
-    type: file.type,
-    uploadedAt,
-    storage: "local-public"
-  };
+  return { name: file.name, url: `/uploads/role-profiles/${safeName}`, size: file.size, type: file.type, uploadedAt, storage: "local-public" };
 }
 
 async function saveRailwayR2Image(file: File, safeName: string, uploadedAt: string): Promise<SavedUpload> {
@@ -134,46 +127,18 @@ async function saveRailwayR2Image(file: File, safeName: string, uploadedAt: stri
   const stringToSign = ["AWS4-HMAC-SHA256", amzDate, credentialScope, sha256Hex(canonicalRequest)].join("\n");
   const signature = hmacHex(signingKey(secretAccessKey, dateStamp, region), stringToSign);
   const authorization = `AWS4-HMAC-SHA256 Credential=${accessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
-
-  const response = await fetch(uploadUrl, {
-    method: "PUT",
-    headers: {
-      Authorization: authorization,
-      "Content-Type": contentType,
-      "x-amz-content-sha256": payloadHash,
-      "x-amz-date": amzDate,
-      "Cache-Control": "public, max-age=31536000, immutable"
-    },
-    body
-  });
-
-  if (!response.ok) {
-    const message = await response.text().catch(() => "");
-    throw new Error(`Railway R2 upload failed (${response.status}). ${message}`.trim());
-  }
-
-  return {
-    name: file.name,
-    url: publicR2Url(key),
-    size: file.size,
-    type: file.type,
-    uploadedAt,
-    storage: "railway-r2"
-  };
+  const response = await fetch(uploadUrl, { method: "PUT", headers: { Authorization: authorization, "Content-Type": contentType, "x-amz-content-sha256": payloadHash, "x-amz-date": amzDate, "Cache-Control": "public, max-age=31536000, immutable" }, body });
+  if (!response.ok) throw new Error(`Railway R2 upload failed (${response.status}). ${await response.text().catch(() => "")}`.trim());
+  return { name: file.name, url: publicR2Url(key), size: file.size, type: file.type, uploadedAt, storage: "railway-r2" };
 }
 
 async function saveUploadedImage(file: File, role: string): Promise<SavedUpload> {
   if (!file || file.size === 0) throw new Error("Choose an image before saving.");
   if (!file.type.startsWith("image/")) throw new Error("Choose a PNG, JPG, WEBP, or GIF image.");
   if (file.size > ROLE_PROFILE_PHOTO_MAX_BYTES) throw new Error("Choose an image under 5 MB.");
-
   const uploadedAt = new Date().toISOString();
   const safeName = `${role}-profile-${Date.now()}-${cleanFileName(file.name)}`;
-
-  if (hasRailwayR2Config()) {
-    return saveRailwayR2Image(file, safeName, uploadedAt);
-  }
-
+  if (hasRailwayR2Config()) return saveRailwayR2Image(file, safeName, uploadedAt);
   return saveLocalPublicImage(file, safeName, uploadedAt);
 }
 
@@ -192,13 +157,7 @@ async function writeRoleWorkspace(role: string, updates: Record<string, unknown>
   await mkdir(dir, { recursive: true });
   const { filePath, existing } = await readRoleWorkspaceFile();
   const currentRoleState = existing[role] ?? {};
-  const next = {
-    ...existing,
-    [role]: {
-      ...currentRoleState,
-      ...updates
-    }
-  };
+  const next = { ...existing, [role]: { ...currentRoleState, ...updates } };
   await writeFile(filePath, `${JSON.stringify(next, null, 2)}\n`, "utf8");
 }
 
@@ -206,22 +165,27 @@ export async function saveRoleWorkspaceProfile(_prevState: RoleProfileDetailsSta
   try {
     const role = value(formData, "role");
     if (!allowedRoles.has(role)) throw new Error("Unknown workspace role.");
-
     const allowedFields = roleProfileFields[role] ?? [];
     const profile = allowedFields.reduce<Record<string, string | string[]>>((payload, field) => {
-      if (field === "skills") {
-        payload[field] = formData.getAll(field).map(String);
-      } else {
-        payload[field] = value(formData, field);
-      }
+      if (field === "skills") payload[field] = formData.getAll(field).map(String);
+      else if (["eventsPlayed", "weighIns", "wins", "championships"].includes(field)) payload[field] = numberText(formData, field);
+      else payload[field] = value(formData, field);
       return payload;
     }, {});
 
-    await writeRoleWorkspace(role, {
-      profile,
-      profileUpdatedAt: new Date().toISOString()
-    });
+    if (role === "athlete") {
+      const existing = (await readRoleWorkspaceFile()).existing.athlete?.profile as Record<string, string | string[]> | undefined;
+      const athleteId = String(profile.athleteId || existing?.athleteId || `MYD1-${randomUUID().slice(0, 8).toUpperCase()}`);
+      const eligibility = deriveAthleteEligibility(String(profile.dateOfBirth || ""));
+      profile.athleteId = athleteId;
+      profile.age = eligibility.age === undefined ? "" : String(eligibility.age);
+      profile.competitionDivision = eligibility.competitionDivision;
+      profile.verifiedAthlete = String(profile.verifiedAthlete || existing?.verifiedAthlete || "Pending");
+      profile.currentTeam = String(profile.currentTeam || "Unassigned");
+      profile.activeWristbandId = String(profile.activeWristbandId || "None");
+    }
 
+    await writeRoleWorkspace(role, { profile, profileUpdatedAt: new Date().toISOString() });
     revalidatePath(rolePath(role));
     revalidatePath("/search");
     return { status: "success", message: "Profile details saved." };
@@ -234,31 +198,13 @@ export async function saveRoleWorkspaceProfilePicture(_prevState: RoleProfilePho
   try {
     const role = value(formData, "role");
     if (!allowedRoles.has(role)) throw new Error("Unknown workspace role.");
-
     const file = formData.get("profilePicture");
     if (!(file instanceof File)) throw new Error("Choose an image before saving.");
-
     const upload = await saveUploadedImage(file, role);
-    await writeRoleWorkspace(role, {
-      profilePhotoUrl: upload.url,
-      profilePhotoName: upload.name,
-      profilePhotoType: upload.type,
-      profilePhotoSize: upload.size,
-      profilePhotoStorage: upload.storage,
-      profilePhotoUpdatedAt: upload.uploadedAt
-    });
-
+    await writeRoleWorkspace(role, { profilePhotoUrl: upload.url, profilePhotoUpdatedAt: upload.uploadedAt });
     revalidatePath(rolePath(role));
     revalidatePath("/search");
-    revalidatePath("/media");
-    revalidatePath("/coach");
-    revalidatePath("/organization");
-
-    return {
-      status: "success",
-      message: upload.storage === "railway-r2" ? "Profile picture saved to Railway durable storage." : "Profile picture saved locally. Add Railway R2 variables for durable storage.",
-      photoUrl: upload.url
-    };
+    return { status: "success", message: "Profile picture saved.", photoUrl: upload.url };
   } catch (error) {
     return { status: "error", message: error instanceof Error ? error.message : "Profile picture could not be saved." };
   }
