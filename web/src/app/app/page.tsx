@@ -4,15 +4,15 @@ import { InstallMyd1Card } from "@/components/install-myd1-card";
 
 const quickActions = [
   { label: "Scan Check-In", href: "/app/check-in", icon: QrCode },
-  { label: "Events", href: "/locked-in", icon: Trophy },
+  { label: "Events", href: "/app/events", icon: Trophy },
   { label: "My Team", href: "/app/team", icon: Users },
-  { label: "Search", href: "/search", icon: Search }
+  { label: "Search", href: "/app/search", icon: Search }
 ];
 
 const upcoming = [
-  { label: "Next Event", value: "Open registration from Locked In", href: "/locked-in" },
+  { label: "Next Event", value: "Open registration from Locked In", href: "/app/events" },
   { label: "Profile", value: "Complete athlete card", href: "/app/profile" },
-  { label: "Uniform", value: "Team colors + kit choice", href: "/locked-in/register" }
+  { label: "Uniform", value: "Team colors + kit choice", href: "/app/uniform" }
 ];
 
 export default function MobileAppHomePage() {
@@ -22,14 +22,14 @@ export default function MobileAppHomePage() {
       <section className="mx-auto min-h-screen max-w-md px-4 pb-24 pt-5">
         <header className="flex items-center justify-between">
           <div className="flex items-center gap-3"><span className="grid h-12 w-12 place-items-center overflow-hidden rounded-2xl bg-white"><img src="/brand/MYD1 LOGO.png" alt="MYD1" className="h-full w-full object-contain p-1.5" /></span><div><p className="text-xs font-black uppercase tracking-[0.22em] text-[#8CFF00]">MYD1 App</p><h1 className="text-xl font-black">Athlete Home</h1></div></div>
-          <Link href="/notifications" className="grid h-11 w-11 place-items-center rounded-2xl border border-white/10 bg-white/[0.08]"><Bell size={18} /></Link>
+          <Link href="/app/notifications" className="grid h-11 w-11 place-items-center rounded-2xl border border-white/10 bg-white/[0.08]"><Bell size={18} /></Link>
         </header>
 
         <div className="mt-5 overflow-hidden rounded-[30px] border border-[#8CFF00]/35 bg-black p-5 shadow-[0_24px_70px_rgba(0,0,0,0.35)]">
           <p className="text-xs font-black uppercase tracking-[0.24em] text-[#8CFF00]">Locked In</p>
           <h2 className="mt-3 text-4xl font-black uppercase italic leading-none">Your game.<br /><span className="text-[#F2C200]">Your moment.</span></h2>
           <p className="mt-3 text-sm font-semibold leading-6 text-[#C8D6FF]">Install MYD1 on your phone for events, check-ins, teams, brackets, uniforms, highlights, and athlete profiles.</p>
-          <div className="mt-5 grid grid-cols-2 gap-3"><Link href="/locked-in" className="rounded-2xl bg-[#8CFF00] px-4 py-3 text-center text-sm font-black uppercase text-[#061331]">Find Event</Link><Link href="/app/check-in" className="rounded-2xl border border-white/10 bg-white/[0.08] px-4 py-3 text-center text-sm font-black uppercase text-white">Check In</Link></div>
+          <div className="mt-5 grid grid-cols-2 gap-3"><Link href="/app/events" className="rounded-2xl bg-[#8CFF00] px-4 py-3 text-center text-sm font-black uppercase text-[#061331]">Find Event</Link><Link href="/app/check-in" className="rounded-2xl border border-white/10 bg-white/[0.08] px-4 py-3 text-center text-sm font-black uppercase text-white">Check In</Link></div>
         </div>
 
         <section className="mt-5 grid grid-cols-2 gap-3">
@@ -47,7 +47,7 @@ export default function MobileAppHomePage() {
         </section>
 
         <nav className="fixed inset-x-0 bottom-0 z-40 mx-auto max-w-md border-t border-white/10 bg-[#061331]/95 px-4 py-3 backdrop-blur">
-          <div className="grid grid-cols-5 gap-2 text-center text-[10px] font-black uppercase text-[#C8D6FF]"><Link href="/app" className="grid gap-1 text-[#8CFF00]"><UserRound className="mx-auto" size={18} />Home</Link><Link href="/locked-in" className="grid gap-1"><Trophy className="mx-auto" size={18} />Events</Link><Link href="/app/check-in" className="grid gap-1"><QrCode className="mx-auto" size={18} />Scan</Link><Link href="/app/team" className="grid gap-1"><Users className="mx-auto" size={18} />Team</Link><Link href="/app/camera" className="grid gap-1"><Camera className="mx-auto" size={18} />Film</Link></div>
+          <div className="grid grid-cols-5 gap-2 text-center text-[10px] font-black uppercase text-[#C8D6FF]"><Link href="/app" className="grid gap-1 text-[#8CFF00]"><UserRound className="mx-auto" size={18} />Home</Link><Link href="/app/events" className="grid gap-1"><Trophy className="mx-auto" size={18} />Events</Link><Link href="/app/check-in" className="grid gap-1"><QrCode className="mx-auto" size={18} />Scan</Link><Link href="/app/team" className="grid gap-1"><Users className="mx-auto" size={18} />Team</Link><Link href="/app/camera" className="grid gap-1"><Camera className="mx-auto" size={18} />Film</Link></div>
         </nav>
       </section>
     </main>
