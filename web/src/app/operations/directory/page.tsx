@@ -1,14 +1,16 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
-import { ArrowRight, Building2, Database, FileSpreadsheet, ShieldCheck, Trophy, UserRound, Users } from "lucide-react";
+import { ArrowRight, Building2, Database, FileSpreadsheet, PlusCircle, ShieldCheck, Trophy, UserRound, Users } from "lucide-react";
 import { MiniChannel, SchoolTile, StateRail, stateSlug } from "@/components/schools-directory-navigator";
 import { getPublicSchoolHierarchy } from "@/lib/data/public-data-engine";
 import { readJsonSync, userStatePath } from "@/lib/data/platform-storage";
+import { getOperatorSchoolRecords } from "@/lib/data/operator-schools";
+import { saveOperatorSchool } from "./actions";
 
 const OPERATOR_COOKIE = "myd1_operator_access";
 const OPERATOR_COOKIE_VALUE = "granted";
 
-type IntakeItem = { id?: string; sourceType?: string; state?: string; school?: string; sourceName?: string; extractedCount?: number; extractedCoachCount?: number; status?: string; createdAt?: string };
+type IntakeItem = { id?: string; sourceType?: string; state?: string; stateCode?: string; school?: string; sourceName?: string; extractedCount?: number; extractedCoachCount?: number; status?: string; createdAt?: string };
 type NcesRun = { id?: string; autoSeeded?: number; status?: string; fileName?: string; createdAt?: string };
 
 function readItems<T>(fileName: string) {
@@ -16,23 +18,29 @@ function readItems<T>(fileName: string) {
 }
 
 function stateStat(intake: IntakeItem[], code: string) {
-  const items = intake.filter((item) => (item.state ?? "").toUpperCase() === code || (item.school ?? "").toUpperCase().includes(` ${code}`));
+  const items = intake.filter((item) => (item.stateCode ?? item.state ?? "").toUpperCase() === code || (item.school ?? "").toUpperCase().includes(` ${code}`));
   return { items, athletes: items.reduce((total, item) => total + (item.extractedCount ?? 0), 0), coaches: items.reduce((total, item) => total + (item.extractedCoachCount ?? 0), 0) };
 }
 
-export default async function OperationsDirectoryPage({ searchParams }: { searchParams?: Promise<{ state?: string }> }) {
+function Field({ label, name, placeholder }: { label: string; name: string; placeholder?: string }) {
+  return <label className="grid gap-2 text-xs font-black uppercase tracking-[0.08em] text-white"><span>{label}</span><input name={name} placeholder={placeholder} className="min-h-11 rounded-xl border border-white/10 bg-[#071A43] px-3 text-sm font-semibold normal-case tracking-normal text-white outline-none" /></label>;
+}
+
+export default async function OperationsDirectoryPage({ searchParams }: { searchParams?: Promise<{ state?: string; status?: string }> }) {
   const params = searchParams ? await searchParams : {};
   const cookieStore = await cookies();
   const isOperator = cookieStore.get(OPERATOR_COOKIE)?.value === OPERATOR_COOKIE_VALUE;
   const states = getPublicSchoolHierarchy();
   const intake = readItems<IntakeItem>("operator-data-intake.json");
   const ncesRuns = readItems<NcesRun>("operator-nces-runs.json");
+  const operatorSchools = getOperatorSchoolRecords();
   const selectedState = states.find((state) => state.code.toLowerCase() === (params.state ?? "").toLowerCase()) ?? states[0];
   const selectedStateSlug = selectedState ? stateSlug(selectedState) : "";
   const teamCount = selectedState?.schools.reduce((total, school) => total + school.teams.length, 0) ?? 0;
   const athleteCount = selectedState?.schools.reduce((total, school) => total + school.athletes.length, 0) ?? 0;
   const coachCount = selectedState?.schools.reduce((total, school) => total + school.coaches.length, 0) ?? 0;
   const selectedStats = selectedState ? stateStat(intake, selectedState.code) : { items: [], athletes: 0, coaches: 0 };
+  const selectedOperatorSchools = operatorSchools.filter((school) => (school.stateCode ?? "").toUpperCase() === selectedState?.code && school.status !== "archived");
 
   if (!isOperator) return <main className="min-h-screen bg-[#061331] p-8 text-white"><Link className="rounded-2xl bg-[#F2C200] px-5 py-3 text-sm font-black text-[#061331]" href="/operations">Unlock Operations</Link></main>;
 
@@ -45,8 +53,9 @@ export default async function OperationsDirectoryPage({ searchParams }: { search
             <p className="text-xs font-black uppercase tracking-[0.24em] text-[#F2C200]">Operations Graph</p>
             <h1 className="mt-2 text-4xl font-black tracking-tight">Directory backend</h1>
             <p className="mt-2 text-sm font-semibold text-[#CAD7FF]">Same state → school → team graph as the public site, but wired for intake, review, and seeding.</p>
+            {params.status ? <div className="mt-3 rounded-2xl border border-[#F2C200]/30 bg-[#F2C200]/10 px-4 py-2 text-sm font-black text-[#FFE27A]">{params.status === "school-saved" ? "School attached to state." : params.status}</div> : null}
           </div>
-          <div className="flex gap-2"><Link className="rounded-2xl border border-white/10 bg-white/[0.08] px-4 py-3 text-sm font-black" href="/operations">Operations</Link><Link className="rounded-2xl bg-[#F2C200] px-4 py-3 text-sm font-black text-[#061331]" href="/operations/nces">NCES ingest</Link></div>
+          <div className="flex gap-2"><Link className="rounded-2xl border border-white/10 bg-white/[0.08] px-4 py-3 text-sm font-black" href="/operations">Platform Management</Link><Link className="rounded-2xl bg-[#F2C200] px-4 py-3 text-sm font-black text-[#061331]" href="/operations/nces">NCES ingest</Link></div>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
@@ -54,7 +63,7 @@ export default async function OperationsDirectoryPage({ searchParams }: { search
             <StateRail states={states} activeCode={selectedState?.code} />
             <div className="mt-4 rounded-[24px] border border-white/10 bg-white/[0.07] p-4">
               <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#F2C200]">Backend status</p>
-              <div className="mt-3 grid gap-2 text-xs font-black text-[#CAD7FF]"><div className="flex justify-between"><span>Intake records</span><span>{intake.length}</span></div><div className="flex justify-between"><span>NCES runs</span><span>{ncesRuns.length}</span></div><div className="flex justify-between"><span>Seeded schools</span><span>{ncesRuns.reduce((t, r) => t + (r.autoSeeded ?? 0), 0)}</span></div></div>
+              <div className="mt-3 grid gap-2 text-xs font-black text-[#CAD7FF]"><div className="flex justify-between"><span>Intake records</span><span>{intake.length}</span></div><div className="flex justify-between"><span>Manual schools</span><span>{operatorSchools.length}</span></div><div className="flex justify-between"><span>NCES runs</span><span>{ncesRuns.length}</span></div><div className="flex justify-between"><span>Seeded schools</span><span>{ncesRuns.reduce((t, r) => t + (r.autoSeeded ?? 0), 0)}</span></div></div>
             </div>
           </aside>
 
@@ -64,7 +73,7 @@ export default async function OperationsDirectoryPage({ searchParams }: { search
                 <div>
                   <p className="text-xs font-black uppercase tracking-[0.24em] text-[#F2C200]">{selectedState?.code ?? "--"} backend slot</p>
                   <h2 className="mt-2 text-3xl font-black">{selectedState ? `${selectedState.name} operations` : "Choose a state"}</h2>
-                  <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-[#CAD7FF]">Use this as the backend mirror for the public directory. Data entered here belongs to this state slot before it moves into schools, teams, coaches, athletes, and games.</p>
+                  <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-[#CAD7FF]">Schools saved here carry an explicit state code. That keeps the chain clean: State → School → Team → Athlete → Event/Game.</p>
                 </div>
                 <Link className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#F2C200] px-5 text-sm font-black text-[#061331]" href={`/operations?tab=data-intake&state=${selectedState?.code ?? ""}`}>Add data to this state <ArrowRight size={16} /></Link>
               </div>
@@ -80,13 +89,23 @@ export default async function OperationsDirectoryPage({ searchParams }: { search
               <div className="rounded-[30px] border border-white/12 bg-white/[0.045] p-5">
                 <div className="mb-5 flex items-center justify-between gap-3"><div><p className="text-xs font-black uppercase tracking-[0.22em] text-[#F2C200]">School slots</p><h3 className="mt-1 text-2xl font-black">Schools in {selectedState?.name ?? "selected state"}</h3></div><Link className="text-sm font-black text-[#F2C200] underline" href={`/schools/${selectedStateSlug}`}>View public</Link></div>
                 <div className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-3">{selectedState?.schools.map((school) => <SchoolTile key={school.id} school={school} stateCode={selectedStateSlug} />) ?? null}</div>
-                {!selectedState?.schools.length ? <div className="rounded-2xl border border-white/10 bg-[#071A43] p-5 text-sm font-black text-[#CAD7FF]">No schools seeded yet. Run NCES ingest or add state data.</div> : null}
+                {!selectedState?.schools.length ? <div className="rounded-2xl border border-white/10 bg-[#071A43] p-5 text-sm font-black text-[#CAD7FF]">No schools attached yet. Add one below, run NCES ingest, or add state data.</div> : null}
               </div>
 
               <div className="grid gap-5">
+                <form action={saveOperatorSchool} className="rounded-[30px] border border-[#F2C200]/25 bg-[#071A43] p-5">
+                  <div className="flex items-center gap-3"><PlusCircle className="text-[#F2C200]" /><h3 className="text-xl font-black">Attach school to state</h3></div>
+                  <p className="mt-2 text-sm font-semibold leading-6 text-[#CAD7FF]">This creates a school record directly under {selectedState?.name}. The saved record carries stateCode: {selectedState?.code}.</p>
+                  <input type="hidden" name="stateCode" value={selectedState?.code ?? "US"} />
+                  <div className="mt-4 grid gap-3"><Field label="School name" name="name" placeholder="Ogden High School" /><Field label="City" name="city" placeholder="Ogden" /><Field label="District" name="district" placeholder="District / organization" /><Field label="Type" name="type" placeholder="High School, Club, Gym" /><Field label="Mascot" name="mascot" /><Field label="Website" name="website" /></div>
+                  <label className="mt-3 grid gap-2 text-xs font-black uppercase tracking-[0.08em] text-white"><span>Notes</span><textarea name="notes" className="min-h-24 rounded-xl border border-white/10 bg-[#071A43] px-3 py-2 text-sm font-semibold normal-case tracking-normal text-white outline-none" /></label>
+                  <button className="mt-4 min-h-11 w-full rounded-xl bg-[#F2C200] px-4 text-sm font-black text-[#061331]">Save school to {selectedState?.code}</button>
+                </form>
+
                 <section className="rounded-[30px] border border-white/12 bg-white/[0.07] p-5"><div className="flex items-center gap-3"><FileSpreadsheet className="text-[#F2C200]" /><h3 className="text-xl font-black">State intake</h3></div><div className="mt-4 grid gap-3">{selectedStats.items.length ? selectedStats.items.slice(0, 8).map((item) => <div className="rounded-2xl bg-[#071A43] p-3" key={item.id}><div className="text-sm font-black">{item.school || item.sourceName || item.sourceType}</div><div className="mt-1 text-xs font-semibold text-[#9DB5FF]">{item.status ?? "queued"} · {item.extractedCount ?? 0} athletes · {item.extractedCoachCount ?? 0} coaches</div></div>) : <div className="rounded-2xl bg-[#071A43] p-3 text-sm font-black text-[#CAD7FF]">No intake attached to this state yet.</div>}</div></section>
+                <section className="rounded-[30px] border border-white/12 bg-white/[0.07] p-5"><div className="flex items-center gap-3"><Building2 className="text-[#F2C200]" /><h3 className="text-xl font-black">Manual schools</h3></div><div className="mt-4 grid gap-3">{selectedOperatorSchools.length ? selectedOperatorSchools.slice(0, 8).map((school) => <div className="rounded-2xl bg-[#071A43] p-3" key={school.id ?? school.name}><div className="text-sm font-black">{school.name}</div><div className="mt-1 text-xs font-semibold text-[#9DB5FF]">{school.city || "City not set"} · {school.stateCode}</div></div>) : <div className="rounded-2xl bg-[#071A43] p-3 text-sm font-black text-[#CAD7FF]">No manual school records for this state yet.</div>}</div></section>
                 <section className="rounded-[30px] border border-white/12 bg-white/[0.07] p-5"><div className="flex items-center gap-3"><ShieldCheck className="text-[#F2C200]" /><h3 className="text-xl font-black">Resolution queues</h3></div><div className="mt-4 grid gap-2 text-sm font-black text-[#CAD7FF]"><div className="flex justify-between rounded-2xl bg-[#071A43] p-3"><span>Creation candidates</span><span>{selectedState?.schools.length ?? 0}</span></div><div className="flex justify-between rounded-2xl bg-[#071A43] p-3"><span>Field conflicts</span><span>0</span></div><div className="flex justify-between rounded-2xl bg-[#071A43] p-3"><span>Merge candidates</span><span>0</span></div></div></section>
-                <section className="rounded-[30px] border border-white/12 bg-white/[0.07] p-5"><div className="flex items-center gap-3"><Database className="text-[#F2C200]" /><h3 className="text-xl font-black">Graph rule</h3></div><p className="mt-3 text-sm font-semibold leading-6 text-[#CAD7FF]">Operations writes to state and school slots. Public pages only project resolved graph data.</p></section>
+                <section className="rounded-[30px] border border-white/12 bg-white/[0.07] p-5"><div className="flex items-center gap-3"><Database className="text-[#F2C200]" /><h3 className="text-xl font-black">Graph rule</h3></div><p className="mt-3 text-sm font-semibold leading-6 text-[#CAD7FF]">Operations writes to explicit state and school slots. Public pages project resolved graph data.</p></section>
               </div>
             </div>
           </section>
