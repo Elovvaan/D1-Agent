@@ -9,6 +9,7 @@ import { getPageProfile } from "@/lib/data/page-profiles";
 import { appendUserState } from "@/lib/data/platform-storage";
 
 const PAGE_PROFILES_FILE = "page-profiles.json";
+const SCHOOL_PROFILES_FILE = "school-profiles.json";
 const PAGE_ASSET_MAX_BYTES = 25 * 1024 * 1024;
 
 function value(formData: FormData, key: string) { return String(formData.get(key) ?? "").trim(); }
@@ -39,10 +40,8 @@ function parseInlineEdits(raw: string) {
   } catch {}
   return output;
 }
-function firstValue(edits: Record<string, string>, words: string[]) {
-  for (const [key, entry] of Object.entries(edits)) if (words.some((word) => key.includes(word))) return entry;
-  return "";
-}
+function firstValue(edits: Record<string, string>, words: string[]) { for (const [key, entry] of Object.entries(edits)) if (words.some((word) => key.includes(word))) return entry; return ""; }
+
 export async function savePreviewPageProfile(formData: FormData) {
   const pageKey = value(formData, "pageKey") || "home";
   const previewPath = safePreviewPath(value(formData, "previewPath") || "/");
@@ -71,4 +70,28 @@ export async function savePreviewPageProfile(formData: FormData) {
   revalidatePath(previewPath);
   revalidatePath("/operations");
   redirect(`/operations/preview?path=${encodeURIComponent(previewPath)}&back=${encodeURIComponent(back)}&status=preview-saved`);
+}
+
+export async function savePreviewSchoolLogo(formData: FormData) {
+  const schoolId = value(formData, "schoolId");
+  const previewPath = safePreviewPath(value(formData, "previewPath") || "/schools");
+  const back = value(formData, "back").startsWith("/operations") ? value(formData, "back") : "/operations";
+  if (!schoolId) redirect(`/operations/preview?path=${encodeURIComponent(previewPath)}&back=${encodeURIComponent(back)}&status=missing-school`);
+  const removeLogo = value(formData, "removeLogo") === "1";
+  let logoImageUrl = "";
+  if (!removeLogo) {
+    const uploaded = formData.get("logoFile");
+    if (!(uploaded instanceof File) || uploaded.size === 0 || !uploaded.type.startsWith("image/")) redirect(`/operations/preview?path=${encodeURIComponent(previewPath)}&back=${encodeURIComponent(back)}&status=no-logo-file`);
+    if (uploaded.size > PAGE_ASSET_MAX_BYTES) redirect(`/operations/preview?path=${encodeURIComponent(previewPath)}&back=${encodeURIComponent(back)}&status=logo-too-large`);
+    const dir = resolve(process.cwd(), "..", "data", "user-state", "uploads");
+    await mkdir(dir, { recursive: true });
+    const safeName = `school-${schoolId}-logo-${Date.now()}-${cleanFileName(uploaded.name)}`;
+    await writeFile(resolve(dir, safeName), Buffer.from(await uploaded.arrayBuffer()));
+    logoImageUrl = `/api/uploads/${safeName}`;
+  }
+  await appendUserState(SCHOOL_PROFILES_FILE, { id: `school-profile-${schoolId}-${randomUUID()}`, schoolId, logoImageUrl, updatedAt: new Date().toISOString() });
+  revalidatePath("/schools");
+  revalidatePath(previewPath);
+  revalidatePath("/operations");
+  redirect(`/operations/preview?path=${encodeURIComponent(previewPath)}&back=${encodeURIComponent(back)}&status=school-logo-saved`);
 }
