@@ -1,8 +1,8 @@
 import { InlinePreviewEditor } from "./inline-preview-editor";
 
-type PreviewPageKey = "home" | "discover" | "search" | "about" | "schools" | "sports" | "games" | "events" | "locked-in";
+type PreviewPageKey = "home" | "discover" | "search" | "about" | "schools" | "sports" | "games" | "events" | "locked-in" | "app";
 
-const editablePages = new Set<PreviewPageKey>(["home", "discover", "search", "about", "schools", "sports", "games", "events", "locked-in"]);
+const editablePages = new Set<PreviewPageKey>(["home", "discover", "search", "about", "schools", "sports", "games", "events", "locked-in", "app"]);
 
 function pathToPageKey(path: string): PreviewPageKey {
   const noQuery = path.split("?")[0];
