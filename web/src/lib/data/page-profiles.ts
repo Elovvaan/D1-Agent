@@ -11,6 +11,7 @@ export type PageProfile = {
   featureVideoUrl?: string;
   ctaLabel?: string;
   ctaHref?: string;
+  inlineEdits?: Record<string, string>;
   updatedAt?: string;
 };
 
