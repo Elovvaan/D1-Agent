@@ -49,7 +49,7 @@ export function SchoolTile({ school, stateCode }: { school: SchoolNode; stateCod
   const profile = getSchoolProfile(school.id);
   return (
     <a href={`/schools/${stateCode}/${slug(school.title)}`} className="group rounded-[32px] border border-white/12 bg-white/[0.06] p-4 backdrop-blur transition duration-300 hover:-translate-y-1 hover:border-[#F2C200]/70 hover:bg-white/[0.09] hover:shadow-[0_26px_80px_rgba(0,0,0,0.28)]">
-      <div className="relative grid aspect-square place-items-center overflow-hidden rounded-[28px] border border-white/14 bg-[radial-gradient(circle_at_74%_18%,rgba(242,194,0,0.5),transparent_20%),linear-gradient(135deg,#10224D,#1B3FA0_54%,#061331)] p-5 transition group-hover:scale-[1.03]">
+      <div data-myd1-school-logo="true" data-myd1-school-id={school.id} data-myd1-school-name={school.title} className="relative grid aspect-square place-items-center overflow-hidden rounded-[28px] border border-white/14 bg-[radial-gradient(circle_at_74%_18%,rgba(242,194,0,0.5),transparent_20%),linear-gradient(135deg,#10224D,#1B3FA0_54%,#061331)] p-5 transition group-hover:scale-[1.03]">
         <div className="absolute inset-0 opacity-[0.16] [background-image:radial-gradient(circle_at_1px_1px,white_1px,transparent_0)] [background-size:16px_16px]" />
         {profile?.logoImageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
