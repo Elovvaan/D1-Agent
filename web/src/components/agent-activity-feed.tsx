@@ -1,0 +1,6 @@
+import { Activity, CheckCircle2, Clock3 } from "lucide-react";
+import type { AgentActivity } from "@/lib/services/ai-agent-service";
+
+export function AgentActivityFeed({ activity }: { activity: AgentActivity[] }) {
+  return <section className="rounded-[30px] border border-white/12 bg-white/[0.06] p-5 text-white"><div className="flex items-center gap-3"><Activity className="text-[#8CFF00]" /><div><p className="text-xs font-black uppercase tracking-[0.2em] text-[#F2C200]">Command Center</p><h2 className="text-2xl font-black">Agent Activity</h2></div></div><div className="mt-5 grid gap-3">{activity.map((item) => <div key={item.id} className="flex items-start gap-3 rounded-2xl border border-white/10 bg-[#071A43] p-4"><span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#8CFF00] text-[#061331]">{item.status === "review" ? <Clock3 size={17} /> : <CheckCircle2 size={17} />}</span><div className="min-w-0 flex-1"><div className="flex flex-wrap items-center gap-2"><p className="text-sm font-black text-white">{item.message}</p><span className="rounded-full bg-white/[0.08] px-2 py-0.5 text-[10px] font-black uppercase text-[#CAD7FF]">{item.status}</span></div>{item.target ? <p className="mt-1 text-xs font-semibold text-[#CAD7FF]">Target: {item.target}</p> : null}</div></div>)}</div></section>;
+}
