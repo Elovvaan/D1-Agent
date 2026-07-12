@@ -112,7 +112,19 @@ function CardFrame({ side, data, photo }: { side: "front" | "back"; data: CardDa
           </ul>
         </div>
         <div className="mt-3"><p className="text-[9px] font-black uppercase tracking-[0.15em] text-[#E6C45E]">About the Athlete</p><p className="mt-1 text-[7px] font-semibold leading-3 text-white/75">{data.bio}</p></div>
-        <div className="mt-auto border-t border-[#D7A92D]/40 pt-3"><div className="h-7 border-b border-white/50 text-center text-[8px] italic text-[#E6C45E]">Wet ink signature</div><div className="mt-2 flex items-end justify-between gap-3"><div><p className="text-[7px] font-black uppercase text-white/50">Collector Copy</p><p className="text-sm font-black">{serial}</p></div><div className="max-w-[54%] text-right"><p className="truncate text-[7px] font-bold text-[#E6C45E]">{data.profileUrl}</p><p className="mt-1 text-[6px] font-bold uppercase text-white/45">100 signed copies · archive copy retained by MYD1</p></div></div></div>
+        <div className="mt-auto border-t border-[#D7A92D]/40 pt-3">
+          <div className="h-7 border-b border-white/50 text-center text-[8px] italic text-[#E6C45E]">Wet ink signature</div>
+          <div className="mt-2 flex items-end justify-between gap-3">
+            <div>
+              <p className="text-[7px] font-black uppercase text-white/50">Collector Copy</p>
+              <p className="text-sm font-black">{serial}</p>
+            </div>
+            <div className="max-w-[54%] text-right">
+              <p className="truncate text-[7px] font-bold text-[#E6C45E]">{data.profileUrl}</p>
+              <p className="mt-1 text-[6px] font-bold uppercase text-white/45">{data.printRun} signed copies · archive copy retained by MYD1</p>
+            </div>
+          </div>
+        </div>
       </div>
     </article>
   );
