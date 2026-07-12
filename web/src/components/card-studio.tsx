@@ -10,7 +10,6 @@ type CardData = {
   school: string;
   cityState: string;
   classYear: string;
-  editionYear: string;
   collectorNumber: string;
   printRun: string;
   cardId: string;
@@ -34,7 +33,6 @@ const initialData: CardData = {
   school: "SCHOOL / TEAM",
   cityState: "CITY, STATE",
   classYear: "2027",
-  editionYear: "2026",
   collectorNumber: "001",
   printRun: "100",
   cardId: "MYD1-2026-001",
