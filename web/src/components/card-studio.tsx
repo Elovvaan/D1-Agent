@@ -127,10 +127,16 @@ export function CardStudio() {
 
   const onPhoto = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
+    // Allow re-uploading the same file by clearing the input value.
+    event.target.value = "";
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => setPhoto(String(reader.result ?? ""));
-    reader.readAsDataURL(file);
+    if (!file.type.startsWith("image/")) return;
+    if (file.size > 5 * 1024 * 1024) return;
+
+    setPhoto((current) => {
+      if (current.startsWith("blob:")) URL.revokeObjectURL(current);
+      return URL.createObjectURL(file);
+    });
   };
 
   return (
