@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { Bell, BrainCircuit, Calendar, ChevronDown, Clapperboard, Crown, Inbox, LineChart, Medal, MessageSquare, Radio, Search, Settings, ShieldCheck, Target, Upload, UserRound } from "lucide-react";
+import { Bell, BrainCircuit, Calendar, ChevronDown, Clapperboard, CreditCard, Crown, Inbox, LineChart, Medal, MessageSquare, Radio, Search, Settings, ShieldCheck, Target, Upload, UserRound } from "lucide-react";
 import { Badge } from "./design-system";
 import { StoredAvatar } from "./stored-avatar";
 import { brandConfig } from "@/lib/domain-config";
@@ -12,6 +12,7 @@ const navItems = [
   { href: "/film", label: "My Film", icon: Upload },
   { href: "/highlights", label: "Highlights", icon: Clapperboard },
   { href: "/media-connections", label: "Media Connections", icon: Radio },
+  { href: "/card-studio", label: "Card Studio", icon: CreditCard },
   { href: "/recruiting", label: "Recruiting", icon: Medal },
   { href: "/outreach", label: "Outreach", icon: MessageSquare },
   { href: "/messages", label: "Messages", icon: Inbox, badge: "5" },
