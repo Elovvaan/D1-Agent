@@ -86,8 +86,31 @@ function CardFrame({ side, data, photo }: { side: "front" | "back"; data: CardDa
       <div className="relative z-10 flex h-full flex-col">
         <div className="flex items-start justify-between gap-4"><div><div className="text-2xl font-black italic">MY<span className="text-[#D7A92D]">D1</span></div><p className="text-[8px] font-black uppercase tracking-[0.22em]">Sports Cards</p></div><div className="text-right text-[8px] font-bold uppercase text-[#E6C45E]"><div>Card ID</div><div className="mt-1 text-white">{data.cardId}</div></div></div>
         <div className="mt-4 border-b border-[#D7A92D]/40 pb-3"><h2 className="text-xl font-black uppercase text-[#F0D273]">{data.playerName}</h2><p className="text-[10px] font-black uppercase tracking-[0.12em]">{data.position} · #{data.jerseyNumber}</p><p className="mt-1 text-[8px] font-bold uppercase text-[#D7A92D]">{data.school} · {data.cityState}</p></div>
-        <div className="mt-3"><p className="text-[9px] font-black uppercase tracking-[0.15em] text-[#E6C45E]">Season Stats</p><div className="mt-2 grid grid-cols-3 overflow-hidden rounded-lg border border-[#D7A92D]/50">{[[data.stat1Label,data.stat1Value],[data.stat2Label,data.stat2Value],[data.stat3Label,data.stat3Value]].map(([label,value]) => <div key={label} className="border-r border-[#D7A92D]/30 px-2 py-2 text-center last:border-r-0"><div className="text-[7px] font-black text-white/60">{label}</div><div className="mt-1 text-sm font-black">{value}</div></div>)}</div></div>
-        <div className="mt-3"><p className="text-[9px] font-black uppercase tracking-[0.15em] text-[#E6C45E]">Achievements</p><ul className="mt-1.5 grid gap-1 text-[8px] font-semibold leading-4 text-white/85">{[data.achievement1,data.achievement2,data.achievement3].filter(Boolean).map((item) => <li key={item}>• {item}</li>)}</ul></div>
+        <div className="mt-3">
+          <p className="text-[9px] font-black uppercase tracking-[0.15em] text-[#E6C45E]">Season Stats</p>
+          <div className="mt-2 grid grid-cols-3 overflow-hidden rounded-lg border border-[#D7A92D]/50">
+            {[
+              [data.stat1Label, data.stat1Value],
+              [data.stat2Label, data.stat2Value],
+              [data.stat3Label, data.stat3Value],
+            ].map(([label, value], index) => (
+              <div key={`${index}-${label}`} className="border-r border-[#D7A92D]/30 px-2 py-2 text-center last:border-r-0">
+                <div className="text-[7px] font-black text-white/60">{label}</div>
+                <div className="mt-1 text-sm font-black">{value}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="mt-3">
+          <p className="text-[9px] font-black uppercase tracking-[0.15em] text-[#E6C45E]">Achievements</p>
+          <ul className="mt-1.5 grid gap-1 text-[8px] font-semibold leading-4 text-white/85">
+            {[data.achievement1, data.achievement2, data.achievement3]
+              .filter(Boolean)
+              .map((item, index) => (
+                <li key={`${index}-${item}`}>• {item}</li>
+              ))}
+          </ul>
+        </div>
         <div className="mt-3"><p className="text-[9px] font-black uppercase tracking-[0.15em] text-[#E6C45E]">About the Athlete</p><p className="mt-1 text-[7px] font-semibold leading-3 text-white/75">{data.bio}</p></div>
         <div className="mt-auto border-t border-[#D7A92D]/40 pt-3"><div className="h-7 border-b border-white/50 text-center text-[8px] italic text-[#E6C45E]">Wet ink signature</div><div className="mt-2 flex items-end justify-between gap-3"><div><p className="text-[7px] font-black uppercase text-white/50">Collector Copy</p><p className="text-sm font-black">{serial}</p></div><div className="max-w-[54%] text-right"><p className="truncate text-[7px] font-bold text-[#E6C45E]">{data.profileUrl}</p><p className="mt-1 text-[6px] font-bold uppercase text-white/45">100 signed copies · archive copy retained by MYD1</p></div></div></div>
       </div>
