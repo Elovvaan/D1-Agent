@@ -1,5 +1,6 @@
 import { CalendarDays, Database, Download, ListChecks, Play, School, Search, ShieldCheck, Table2, Trophy, Users, Video } from "lucide-react";
 import { allStates } from "@/components/schools-directory-navigator";
+import { runSmartPull } from "@/app/operations/smart-pull-actions";
 
 const pullScopes = [
   { value: "schools", label: "Schools only" },
@@ -57,7 +58,7 @@ export function SchoolRegionFields() {
             <label className="grid gap-2 text-sm font-black text-white">
               <span>State reference</span>
               <select className="min-h-12 rounded-2xl bg-white px-4 text-sm font-black text-[#061331] outline-none focus:ring-2 focus:ring-[#F2C200]" name="smartPullState" defaultValue="UT">
-                {allStates.map((state) => <option key={state.code} value={state.code}>{state.name} ({state.code})</option>)}
+                {allStates.map((state) => <option key={state.code} value={state.name}>{state.name} ({state.code})</option>)}
               </select>
             </label>
             <label className="grid gap-2 text-sm font-black text-white">
@@ -75,10 +76,10 @@ export function SchoolRegionFields() {
           </div>
 
           <div className="mt-5 flex flex-wrap items-end gap-3">
-            <button className="inline-flex min-h-14 items-center justify-center gap-3 rounded-2xl bg-[#F2C200] px-6 text-sm font-black text-[#061331] shadow-[0_18px_45px_rgba(242,194,0,0.22)]" type="button">
+            <button formAction={runSmartPull} className="inline-flex min-h-14 items-center justify-center gap-3 rounded-2xl bg-[#F2C200] px-6 text-sm font-black text-[#061331] shadow-[0_18px_45px_rgba(242,194,0,0.22)]" type="submit">
               <Database size={17} /> Start Smart Pull <Play size={16} />
             </button>
-            <EngineMetric label="Sources" value="24" />
+            <EngineMetric label="Sources" value="2 configured" />
             <EngineMetric label="Last Run" value="Never" />
             <EngineMetric label="Records Found" value="0" />
             <EngineMetric label="Imported" value="0" />
@@ -110,7 +111,7 @@ export function SchoolRegionFields() {
           <p className="text-sm font-black text-white">Recent Runs</p>
           <div className="mt-3 overflow-hidden rounded-2xl border border-white/10 bg-[#061331]/55">
             <div className="grid grid-cols-5 gap-2 px-4 py-3 text-xs font-black text-[#C8D6FF]"><span>Run ID</span><span>Started</span><span>Found</span><span>Imported</span><span>Status</span></div>
-            <div className="border-t border-white/10 px-4 py-4 text-center text-sm font-semibold text-[#C8D6FF]">No runs yet. Select a state and click Start Smart Pull.</div>
+            <div className="border-t border-white/10 px-4 py-4 text-center text-sm font-semibold text-[#C8D6FF]">No run loaded in this view yet. Select a state and click Start Smart Pull. Results return to this workstation.</div>
           </div>
         </section>
 
