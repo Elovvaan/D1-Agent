@@ -19,6 +19,7 @@ export async function runSmartPull(formData: FormData) {
   if (state) args.push("--state", state);
   if (sport) args.push("--sport", sport);
 
+  let destination = "/operations?tab=schools&status=smart-pull-failed";
   try {
     const { stdout } = await execFileAsync(process.execPath, args, {
       cwd: resolve(process.cwd(), ".."),
@@ -30,7 +31,6 @@ export async function runSmartPull(formData: FormData) {
     const found = stdout.match(/Records imported:\s*(\d+)/i)?.[1] ?? "0";
     const review = stdout.match(/Records requiring review:\s*(\d+)/i)?.[1] ?? "0";
     const noMatch = /No enabled public sources matched/i.test(stdout);
-
     const params = new URLSearchParams({
       tab: "schools",
       status: noMatch ? "smart-pull-no-sources" : "smart-pull-complete",
@@ -38,10 +38,11 @@ export async function runSmartPull(formData: FormData) {
       found,
       review
     });
-    redirect(`/operations?${params.toString()}`);
+    destination = `/operations?${params.toString()}`;
   } catch (error) {
     const message = error instanceof Error ? error.message.slice(0, 180) : "Smart Pull failed";
     const params = new URLSearchParams({ tab: "schools", status: "smart-pull-failed", detail: message });
-    redirect(`/operations?${params.toString()}`);
+    destination = `/operations?${params.toString()}`;
   }
+  redirect(destination);
 }
