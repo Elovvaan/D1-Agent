@@ -1,6 +1,7 @@
 import { ArrowRight, Bot, Building2, Camera, Clapperboard, Database, GraduationCap, PlayCircle, Search, ShieldCheck, UserRound, Zap } from "lucide-react";
 import { Button, StatCard } from "@/components/design-system";
 import { PublicSiteShell } from "@/components/public-site-shell";
+import { getPublishedGames } from "@/lib/data/published-games";
 
 const features = [
   { title: "Athlete Profiles", detail: "Build a visibility-safe public home for verified athletic identity.", icon: UserRound, tone: "blue" },
@@ -13,7 +14,11 @@ const features = [
   { title: "Public Sports Search", detail: "Search athletes, schools, teams, games, and events across public data.", icon: Search, tone: "blue" }
 ] as const;
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default function LandingPage() {
+  const featuredGames = getPublishedGames("home").filter((game) => game.videoUrl || game.thumbnailUrl).slice(0, 6);
   return (
     <PublicSiteShell variant="dark">
       <section className="relative overflow-hidden bg-[#061331] text-white">
@@ -42,6 +47,7 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+      {featuredGames.length ? <section className="bg-[#061331] px-4 pb-28 text-white sm:px-6 lg:px-8"><div className="mx-auto max-w-[1440px]"><div className="mb-6"><p className="text-xs font-black uppercase tracking-[0.24em] text-[#F2C200]">MyD1 Game Footage</p><h2 className="mt-2 text-4xl font-black">Live action from the game.</h2></div><div className="grid gap-5 lg:grid-cols-3">{featuredGames.map((game) => <article key={game.id} className="overflow-hidden rounded-[28px] border border-white/12 bg-white/[0.06]">{game.videoUrl ? <video className="aspect-video w-full bg-black object-cover" controls preload="metadata" poster={game.thumbnailUrl || undefined} src={game.videoUrl} /> : <img className="aspect-video w-full object-cover" src={game.thumbnailUrl} alt="" />}<div className="p-5"><div className="text-[10px] font-black uppercase tracking-[0.18em] text-[#F2C200]">{game.state} · {game.sport}</div><h3 className="mt-2 text-xl font-black">{game.title}</h3><p className="mt-1 text-sm font-semibold text-[#C8D6FF]">{game.homeTeam} vs {game.awayTeam}</p></div></article>)}</div></div></section> : null}
       <section className="relative -mt-20 px-4 pb-16 text-[#0A1A3F] sm:px-6 lg:px-8">
         <div className="relative mx-auto max-w-[1440px] rounded-tl-[58px] bg-white px-5 py-12 shadow-2xl sm:px-8 lg:px-12">
           <div className="mb-7 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
