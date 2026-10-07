@@ -36,6 +36,13 @@ export function GameIntakeForm() {
         <label className="grid gap-2 text-sm font-black text-white"><span>Game thumbnail</span><input className="rounded-2xl border border-white/10 bg-white px-4 py-3 text-sm font-black text-[#061331]" name="thumbnailFile" type="file" accept="image/*" /></label>
         <label className="grid gap-2 text-sm font-black text-white"><span>Game video</span><input className="rounded-2xl border border-white/10 bg-white px-4 py-3 text-sm font-black text-[#061331]" name="videoFile" type="file" accept="video/*" /></label>
       </div>
+      <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.05] p-4">
+        <p className="text-xs font-black uppercase tracking-[0.2em] text-[#F2C200]">Publish destinations</p>
+        <p className="mt-1 text-xs font-semibold text-[#9DB5FF]">Choose where this game media should appear. Games is always included.</p>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {[["home","Home"],["discover","Discover"],["sports","Sports"],["events","Events"],["locked-in","Locked In"]].map(([value,label]) => <label key={value} className="flex items-center gap-3 rounded-xl border border-white/10 bg-[#061331] px-4 py-3 text-sm font-black"><input name="publishTo" type="checkbox" value={value} className="h-4 w-4 accent-[#F2C200]" />{label}</label>)}
+        </div>
+      </div>
     </form>
   );
 }
