@@ -26,6 +26,7 @@ type GameRecord = {
   notes: string;
   thumbnailUrl: string;
   videoUrl: string;
+  publishTo: string[];
   createdAt: string;
   updatedAt: string;
 };
@@ -98,6 +99,7 @@ export async function saveGameIntake(formData: FormData) {
     notes: value(formData, "notes"),
     thumbnailUrl,
     videoUrl,
+    publishTo: ["games", ...formData.getAll("publishTo").map(String).filter(Boolean)],
     createdAt: now,
     updatedAt: now
   };
@@ -108,6 +110,11 @@ export async function saveGameIntake(formData: FormData) {
   await writeFile(resolve(root, "games.json"), `${JSON.stringify({ items: [record, ...(existing.items ?? [])] }, null, 2)}\n`, "utf8");
 
   revalidatePath("/games");
+  revalidatePath("/");
+  revalidatePath("/discover");
+  revalidatePath("/sports");
+  revalidatePath("/events");
+  revalidatePath("/locked-in");
   revalidatePath(`/games/${id}`);
   revalidatePath("/operations");
   redirect(`/operations?tab=games&status=game-saved&game=${encodeURIComponent(id)}`);
