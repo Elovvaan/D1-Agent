@@ -1,4 +1,5 @@
 import { getNcesSeedSchoolResults } from "./nces-seed";
+import { getSmartPullDirectoryResults } from "./smart-pull-directory";
 import { getOperationsIntakeDirectoryResults, searchOperationsIntakeDirectory } from "./public-intake-search";
 import { getOperatorSchoolResults } from "./operator-schools";
 import { searchPublicDirectory, type PublicDirectoryResult } from "./services";
@@ -21,7 +22,7 @@ function resolveStateCode(result: PublicDirectoryResult) { return explicitStateC
 function isSafe(node: OrgNode | undefined, kind?: OrgNodeKind): node is OrgNode { return !!node && (!kind || node.kind === kind) && node.reviewState === "resolved" && node.projectionSafe; }
 function mentions(result: PublicDirectoryResult, node: { label: string; id: string }) { const text = `${result.title} ${result.detail} ${result.href}`.toLowerCase(); return text.includes(node.label.toLowerCase()) || text.includes(node.id.toLowerCase()); }
 function resultToNode(result: PublicDirectoryResult, kind: OrgNodeKind, extra: Partial<OrgNode> = {}): OrgNode { return { id: `${kind.toLowerCase()}-${result.id}`, kind, label: decodeHtmlEntities(result.title), detail: decodeHtmlEntities(result.detail), href: result.href, reviewState: "resolved", projectionSafe: true, sourceTypeLabel: result.typeLabel, raw: result, ...extra }; }
-function allResults() { const base = ["", "school", "team", "athlete", "coach", "game"].flatMap((query) => searchPublicDirectory(query).flatMap((group) => group.results)); const intake = getOperationsIntakeDirectoryResults(); const operatorSchools = getOperatorSchoolResults(); const seeded = getNcesSeedSchoolResults(); const unique = new Map<string, PublicDirectoryResult>(); for (const item of [...seeded, ...base, ...intake, ...operatorSchools]) unique.set(`${item.group}-${item.id}-${item.href}-${item.sourceUrl ?? ""}`, item); return [...unique.values()]; }
+function allResults() { const base = ["", "school", "team", "athlete", "coach", "game"].flatMap((query) => searchPublicDirectory(query).flatMap((group) => group.results)); const intake = getOperationsIntakeDirectoryResults(); const operatorSchools = getOperatorSchoolResults(); const seeded = getNcesSeedSchoolResults(); const pulled = getSmartPullDirectoryResults(); const unique = new Map<string, PublicDirectoryResult>(); for (const item of [...seeded, ...base, ...intake, ...operatorSchools, ...pulled]) unique.set(`${item.group}-${item.id}-${item.href}-${item.sourceUrl ?? ""}`, item); return [...unique.values()]; }
 
 export function getOrganizationGraph(): OrganizationGraph {
   const results = allResults();
