@@ -1,5 +1,6 @@
 import { getPublicDirectoryCounters, searchPublicDirectory, type PublicDirectoryResult } from "./services";
 import { getOperationsIntakeDirectoryResults, searchOperationsIntakeDirectory } from "./public-intake-search";
+import { getSmartPullDirectoryResults } from "./smart-pull-directory";
 import { getNavigationGraph, type NavigationStateNode } from "./organization-graph";
 
 export type { PublicDirectoryResult };
@@ -22,8 +23,14 @@ function mergeGroups(groups: Array<{ group: PublicDirectoryResult["group"]; resu
   return groupOrder.map((group) => ({ group, results: buckets.get(group) ?? [] })).filter((group) => group.results.length > 0);
 }
 
+function smartPullGroups(query: string) {
+  const normalized=query.trim().toLowerCase();
+  const filtered=getSmartPullDirectoryResults().filter(item=>!normalized || [item.title,item.detail,item.group,item.stateCode||""].join(" ").toLowerCase().includes(normalized));
+  return groupOrder.map(group=>({group,results:filtered.filter(item=>item.group===group)}));
+}
+
 export function searchPublicData(query: string) {
-  return mergeGroups([...searchPublicDirectory(query), ...searchOperationsIntakeDirectory(query)]);
+  return mergeGroups([...searchPublicDirectory(query), ...searchOperationsIntakeDirectory(query), ...smartPullGroups(query)]);
 }
 
 export function getPublicDataCounters() {
